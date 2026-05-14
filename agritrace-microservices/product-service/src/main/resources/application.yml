@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: product-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/product_db?connectTimeout=30&socketTimeout=30&loginTimeout=30}
+    username: ${SPRING_DATASOURCE_USERNAME:agritrace}
+    password: ${SPRING_DATASOURCE_PASSWORD:agritrace2026}
+    hikari:
+      # Connection pool settings for Docker DNS lag
+      connection-timeout: 30000  # 30 seconds
+      initialization-fail-timeout: 60000  # 60 seconds (allow DNS to stabilize)
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    connect-retries: 10  # Retry 10 times
+    connect-retries-interval: 5  # Wait 5 seconds between retries
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: ${SERVER_PORT:8082}
+
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT:9092}
+  client:
+    user-service:
+      address: ${GRPC_USER_SERVICE:static://user-service:9090}
+      negotiationType: plaintext
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:9082}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  tracing:
+    sampling:
+      probability: 0.1
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://zipkin:9411/api/v2/spans}
+
+logging:
+  level:
+    root: WARN
+    com.agritrace: WARN

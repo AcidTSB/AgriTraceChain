@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package agritrace.common;
+
+option java_multiple_files = true;
+option java_package = "com.agritrace.proto.common";
+option java_outer_classname = "CommonProto";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+message Status {
+  int32 code = 1;
+  string message = 2;
+}
+
+message PageRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string sort_by = 3;
+  string sort_direction = 4;
+}
+
+message PageMetadata {
+  int32 page = 1;
+  int32 size = 2;
+  int64 total_elements = 3;
+  int32 total_pages = 4;
+}

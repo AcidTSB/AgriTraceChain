@@ -73,7 +73,7 @@ node_modules/
 **/node_modules/
 
 ### Legacy Monolith ###
-src/
+/src/
 
 ### Unnecessary / Archived ###
 _archived_assets/

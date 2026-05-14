@@ -1,0 +1,631 @@
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Card } from "../../components/ui/Card";
+import { OffsetPagination } from "../../components/ui/OffsetPagination";
+import { parseProductCatalogMetadata } from "../../helpers/productCatalog";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { productService } from "../../services/productService";
+import { batchService } from "../../services/batchService";
+import { useToast } from "../../hooks/useToast";
+
+const productGlyphs = ["nutrition", "local_florist", "grain", "eco", "spa", "agriculture"];
+
+function displayProductName(name = "") {
+  return String(name).replace(/^\[MOCK\]\s*/i, "").replace(/\s+Safe$/i, "").trim();
+}
+
+/* ─── Modal backdrop ─────────────────────────────────────────────────────── */
+function ModalShell({ children }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 px-4 py-4 backdrop-blur-sm sm:items-center">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Add Product Modal ───────────────────────────────────────────────────── */
+function AddProductModal({ onClose, onCreated }) {
+  const { t } = useTranslation();
+  const toast = useToast();
+  const [form, setForm] = useState({ name: "", description: "", variety: "", grade: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  function validate() {
+    const e = {};
+    if (!form.name.trim()) e.name = t("admin.nameRequired");
+    return e;
+  }
+
+  async function handleSubmit(ev) {
+    ev.preventDefault();
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setSubmitting(true);
+    try {
+      // Build description string that productCatalog.js can parse
+      const descParts = [form.variety, form.grade].filter(Boolean);
+      const description = descParts.length ? descParts.join(" | ") : form.description;
+      const created = await productService.createProduct({ name: form.name.trim(), description });
+      toast.success(t("admin.productCreated"));
+      onCreated(created);
+    } catch (err) {
+      toast.error(err?.userMessage ?? t("admin.failedCreateProduct"));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <ModalShell onClose={onClose}>
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4 sm:px-6">
+          <h2 className="font-headline text-lg font-bold text-on-surface">{t("admin.addProduct")}</h2>
+          <button type="button" onClick={onClose} className="rounded-full p-1 hover:bg-slate-100">
+            <span className="material-symbols-outlined text-[20px] text-slate-500">close</span>
+          </button>
+        </div>
+        <div className="max-h-[calc(100vh-200px)] space-y-4 overflow-y-auto px-4 py-5 sm:px-6">
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+              {t("admin.productName")} *
+            </label>
+            <input
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-400" : "border-outline-variant/40"}`}
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              placeholder="Ví dụ: Cà phê Arabica"
+            />
+            {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                {t("admin.varietyGrade").split(" / ")[0]}
+              </label>
+              <input
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.variety}
+                onChange={(e) => setForm((f) => ({ ...f, variety: e.target.value }))}
+                placeholder="Ví dụ: Arabica"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                {t("admin.varietyGrade").split(" / ")[1] ?? "Phân hạng"}
+              </label>
+              <input
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.grade}
+                onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
+                placeholder="Ví dụ: Grade A"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+              {t("admin.description")}
+            </label>
+            <textarea
+              className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              rows={3}
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              placeholder="Mô tả ngắn về sản phẩm..."
+            />
+          </div>
+        </div>
+        <div className="flex flex-col-reverse gap-2 border-t border-slate-100 px-4 py-4 sm:flex-row sm:justify-end sm:gap-3 sm:px-6">
+          <button type="button" onClick={onClose} className="w-full rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-200 sm:w-auto sm:py-2">
+            {t("common.cancel")}
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="btn-primary-gradient w-full rounded-lg px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 sm:w-auto sm:py-2"
+          >
+            {submitting ? t("admin.creating") : t("admin.createProduct")}
+          </button>
+        </div>
+      </form>
+    </ModalShell>
+  );
+}
+
+/* ─── Edit Product Modal ──────────────────────────────────────────────────── */
+function EditProductModal({ product, onClose, onUpdated }) {
+  const { t } = useTranslation();
+  const toast = useToast();
+  const meta = parseProductCatalogMetadata(product, "");
+  const [form, setForm] = useState({
+    name: displayProductName(product.name),
+    variety: meta.variety === "N/A" ? "" : meta.variety,
+    grade: meta.grade === "N/A" ? "" : meta.grade,
+    description: product.description ?? "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  async function handleSubmit(ev) {
+    ev.preventDefault();
+    if (!form.name.trim()) { setErrors({ name: t("admin.nameRequired") }); return; }
+    setSubmitting(true);
+    try {
+      const descParts = [form.variety, form.grade].filter(Boolean);
+      const description = descParts.length ? descParts.join(" | ") : form.description;
+      const updated = await productService.updateProduct(product.id, { name: form.name.trim(), description });
+      toast.success(t("admin.productUpdated"));
+      onUpdated(updated ?? { ...product, name: form.name.trim(), description });
+    } catch (err) {
+      toast.error(err?.userMessage ?? t("admin.failedUpdateProduct"));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <ModalShell onClose={onClose}>
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4 sm:px-6">
+          <h2 className="font-headline text-lg font-bold text-on-surface">{t("admin.editProduct")}</h2>
+          <button type="button" onClick={onClose} className="rounded-full p-1 hover:bg-slate-100">
+            <span className="material-symbols-outlined text-[20px] text-slate-500">close</span>
+          </button>
+        </div>
+        <div className="max-h-[calc(100vh-200px)] space-y-4 overflow-y-auto px-4 py-5 sm:px-6">
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+              {t("admin.productName")} *
+            </label>
+            <input
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-400" : "border-outline-variant/40"}`}
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            />
+            {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                Giống
+              </label>
+              <input
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.variety}
+                onChange={(e) => setForm((f) => ({ ...f, variety: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                Phân hạng
+              </label>
+              <input
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.grade}
+                onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+              {t("admin.description")}
+            </label>
+            <textarea
+              className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              rows={3}
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col-reverse gap-2 border-t border-slate-100 px-4 py-4 sm:flex-row sm:justify-end sm:gap-3 sm:px-6">
+          <button type="button" onClick={onClose} className="w-full rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-200 sm:w-auto sm:py-2">
+            {t("common.cancel")}
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="btn-primary-gradient w-full rounded-lg px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 sm:w-auto sm:py-2"
+          >
+            {submitting ? t("common.processing") : t("common.confirm")}
+          </button>
+        </div>
+      </form>
+    </ModalShell>
+  );
+}
+
+/* ─── Confirm Delete Dialog ───────────────────────────────────────────────── */
+function ConfirmDeleteDialog({ product, onClose, onDeleted }) {
+  const { t } = useTranslation();
+  const toast = useToast();
+  const [checking, setChecking] = useState(true);
+  const [hasBatches, setHasBatches] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    batchService.getBatchesByProduct(product.id).then((batches) => {
+      if (active) {
+        setHasBatches(batches.length > 0);
+        setChecking(false);
+      }
+    });
+    return () => { active = false; };
+  }, [product.id]);
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await productService.deleteProduct(product.id);
+      toast.success(t("admin.productDeleted"));
+      onDeleted(product.id);
+    } catch (err) {
+      toast.error(err?.userMessage ?? t("admin.failedDeleteProduct"));
+      onClose();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  return (
+    <ModalShell onClose={onClose}>
+      <div className="max-h-[calc(100vh-220px)] overflow-y-auto px-4 py-5 sm:px-6">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+          <span className="material-symbols-outlined text-red-600">delete</span>
+        </div>
+        <h2 className="font-headline text-lg font-bold text-on-surface">{t("admin.deleteProduct")}</h2>
+        <p className="mt-1 text-sm text-on-surface-variant">
+          {t("admin.confirmDeleteDesc", { name: displayProductName(product.name) })}
+        </p>
+
+        {checking && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-on-surface-variant">
+            <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+            {t("admin.checkingBatches")}
+          </div>
+        )}
+
+        {!checking && hasBatches && (
+          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <p className="flex items-start gap-2 text-sm font-medium text-amber-800">
+              <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0">warning</span>
+              {t("admin.productHasBatches")}
+            </p>
+          </div>
+        )}
+
+        {!checking && !hasBatches && (
+          <div className="mt-4 rounded-lg border border-red-100 bg-red-50 p-4">
+            <p className="text-sm text-red-700">{t("admin.confirmDeleteWarning")}</p>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col-reverse gap-2 border-t border-slate-100 px-4 py-4 sm:flex-row sm:justify-end sm:gap-3 sm:px-6">
+        <button type="button" onClick={onClose} className="w-full rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-200 sm:w-auto sm:py-2">
+          {t("common.cancel")}
+        </button>
+        {!checking && !hasBatches && (
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={handleDelete}
+            className="w-full rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60 sm:w-auto sm:py-2"
+          >
+            {deleting ? t("common.processing") : t("admin.deleteProduct")}
+          </button>
+        )}
+        {!checking && hasBatches && (
+          <button type="button" onClick={onClose} className="btn-primary-gradient w-full rounded-lg px-5 py-2.5 text-sm font-semibold text-white sm:w-auto sm:py-2">
+            {t("common.close")}
+          </button>
+        )}
+      </div>
+    </ModalShell>
+  );
+}
+
+/* ─── Row Dropdown ────────────────────────────────────────────────────────── */
+function RowDropdown({ product, onSuspend, onDelete, open, onToggle }) {
+  const { t } = useTranslation();
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) onToggle();
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open, onToggle]);
+
+  const isActive = product.isActive !== false;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="rounded-md p-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+        aria-label={t("admin.moreActions")}
+      >
+        <span className="material-symbols-outlined text-[18px]">more_vert</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-30 mt-1 w-52 rounded-xl border border-outline-variant/20 bg-white py-1 shadow-xl">
+          <button
+            type="button"
+            onClick={() => { onSuspend(product); onToggle(); }}
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-low"
+          >
+            <span className="material-symbols-outlined text-[18px] text-amber-600">
+              {isActive ? "pause_circle" : "play_circle"}
+            </span>
+            {isActive ? t("admin.suspendTraceability") : t("admin.activateTraceability")}
+          </button>
+          <div className="my-1 border-t border-outline-variant/20" />
+          <button
+            type="button"
+            onClick={() => { onDelete(product); onToggle(); }}
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
+          >
+            <span className="material-symbols-outlined text-[18px]">delete</span>
+            {t("admin.deleteProduct")}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Main Page ───────────────────────────────────────────────────────────── */
+export function AdminProductManagementPage() {
+  const PAGE_SIZE = 10;
+  const { t } = useTranslation();
+  const toast = useToast();
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+
+  // Modal states
+  const [showAdd, setShowAdd] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+
+  const load = async (targetPage = page, targetQuery = query) => {
+    setLoading(true);
+    setError("");
+    try {
+      const payload = await productService.getProductsPage({
+        page: targetPage,
+        size: PAGE_SIZE,
+        q: targetQuery.trim(),
+        sort: "updatedAt,desc",
+      });
+      setProducts(Array.isArray(payload?.content) ? payload.content : []);
+      setTotalPages(Number(payload?.totalPages ?? 0));
+      setTotalElements(Number(payload?.totalElements ?? 0));
+    } catch (err) {
+      setError(err?.userMessage ?? t("admin.cannotLoadProducts"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      load(page, query);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [page, query]);
+
+  function handleCreated(created) {
+    setShowAdd(false);
+    if (created && page === 0 && query.trim() === "") {
+      setProducts((prev) => [created, ...prev].slice(0, PAGE_SIZE));
+      setTotalElements((prev) => prev + 1);
+    } else {
+      setPage(0);
+    }
+  }
+
+  function handleUpdated(updated) {
+    setEditTarget(null);
+    setProducts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+  }
+
+  function handleDeleted(id) {
+    setDeleteTarget(null);
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    setTotalElements((prev) => Math.max(0, prev - 1));
+  }
+
+  async function handleSuspend(product) {
+      const isActive = product.isActive !== false;
+    try {
+      if (isActive) {
+        await productService.deactivateProduct(product.id);
+        toast.success(t("admin.productDeactivated"));
+        setProducts((prev) => prev.map((p) => p.id === product.id ? { ...p, isActive: false } : p));
+      } else {
+        await productService.activateProduct(product.id);
+        toast.success(t("admin.productActivated"));
+        setProducts((prev) => prev.map((p) => p.id === product.id ? { ...p, isActive: true } : p));
+      }
+    } catch (err) {
+      toast.error(err?.userMessage ?? t("admin.failedUpdateProduct"));
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        <Skeleton className="h-10 w-56" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <h2 className="text-xl font-semibold text-slate-900">{t("admin.cannotLoadProducts")}</h2>
+        <p className="mt-2 text-sm text-slate-600">{error}</p>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <div className="space-y-6 md:space-y-8">
+        <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="font-headline text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl">
+              {t("admin.productDirectoryTitle")}
+            </h1>
+            <p className="mt-1 text-sm leading-relaxed text-on-surface-variant">{t("admin.productDirectorySubtitle")}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            className="btn-primary-gradient inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 sm:w-auto"
+          >
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            {t("admin.addProduct")}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 rounded-xl bg-surface-container-lowest p-2.5 ghost-border ambient-shadow sm:p-3">
+          <div className="relative min-w-0 flex-1">
+            <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+            <input
+              type="text"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(0);
+              }}
+              placeholder={t("farmer.search")}
+              className="w-full rounded-lg bg-surface-container-low py-2.5 pl-10 pr-3 text-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant transition-colors hover:bg-surface-dim"
+            aria-label={t("admin.filter")}
+          >
+            <span className="material-symbols-outlined text-[18px]">tune</span>
+          </button>
+        </div>
+
+        {products.length === 0 ? (
+          <Card>
+            <h2 className="text-lg font-semibold text-slate-900">{t("admin.noProducts")}</h2>
+            <p className="mt-2 text-sm text-slate-600">{t("admin.noProductsDesc")}</p>
+          </Card>
+        ) : (
+          <section className="min-h-[460px] rounded-xl bg-surface-container-low p-2 ambient-shadow">
+            <div className="hidden grid-cols-[minmax(260px,3fr)_minmax(220px,2fr)_minmax(120px,1.2fr)_minmax(190px,1.7fr)_90px] gap-4 border-b border-outline-variant/30 px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant lg:grid">
+              <div>{t("admin.productIdentity")}</div>
+              <div>{t("admin.varietyGrade")}</div>
+              <div>{t("admin.skuCode")}</div>
+              <div>{t("admin.status")}</div>
+              <div className="text-right">{t("admin.actions")}</div>
+            </div>
+
+            <div className="flex flex-col gap-2 p-2 md:gap-3">
+              {products.map((product, index) => {
+                const metadata = parseProductCatalogMetadata(product, t("common.nA"));
+                const subtitle = metadata.summary || `${t("admin.productId")}: ${String(product.id).slice(0, 8)}`;
+                const glyph = productGlyphs[index % productGlyphs.length];
+                const isActive = product.isActive !== false;
+
+                return (
+                  <article
+                    key={product.id}
+                    className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-3.5 shadow-sm transition-colors hover:bg-surface-bright sm:p-4"
+                  >
+                    <div className={`absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full ${isActive ? "bg-primary" : "bg-slate-300"}`} />
+                    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(260px,3fr)_minmax(220px,2fr)_minmax(120px,1.2fr)_minmax(190px,1.7fr)_90px] lg:items-center">
+                      <div className="flex min-w-0 items-center gap-3 pl-1.5 sm:gap-4 sm:pl-2">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
+                          <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <h2 className="truncate font-headline text-sm font-semibold text-on-surface sm:text-base">
+                            {displayProductName(product.name)}
+                          </h2>
+                          <p className="mt-0.5 truncate text-xs text-on-surface-variant">{subtitle}</p>
+                        </div>
+                      </div>
+
+                      <p className="min-w-0 truncate text-sm text-on-surface">
+                        <span className="font-medium">{metadata.variety}</span>
+                        <span className="mx-1 text-outline">|</span>
+                        {metadata.grade}
+                      </p>
+
+                      <p className="text-xs font-mono text-on-surface-variant">
+                        {product.code || t("common.nA")}
+                      </p>
+
+                      <div>
+                        {isActive ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-secondary-container sm:text-xs sm:normal-case sm:tracking-normal">
+                              <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
+                              {t("admin.traceabilityActive")}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs sm:normal-case sm:tracking-normal">
+                              <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                              {t("admin.traceabilitySuspended")}
+                            </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-start gap-2 lg:justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setEditTarget(product)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+                          aria-label={t("admin.editProduct")}
+                        >
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <RowDropdown
+                          product={product}
+                          open={dropdownOpenId === product.id}
+                          onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
+                          onSuspend={handleSuspend}
+                          onDelete={setDeleteTarget}
+                        />
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-xs text-on-surface-variant">{totalElements} products</span>
+          <OffsetPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      </div>
+
+      {showAdd && <AddProductModal onClose={() => setShowAdd(false)} onCreated={handleCreated} />}
+      {editTarget && <EditProductModal product={editTarget} onClose={() => setEditTarget(null)} onUpdated={handleUpdated} />}
+      {deleteTarget && <ConfirmDeleteDialog product={deleteTarget} onClose={() => setDeleteTarget(null)} onDeleted={handleDeleted} />}
+    </>
+  );
+}

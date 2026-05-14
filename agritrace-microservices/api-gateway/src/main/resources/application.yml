@@ -1,0 +1,116 @@
+spring:
+  application:
+    name: api-gateway
+  
+  cloud:
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+    gateway:
+      routes:
+        - id: user-service-v1
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/**, /api/v1/auth/**, /api/v1/farms/**
+          filters:
+            - StripPrefix=0
+
+        - id: user-service-legacy
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**, /api/auth/**, /api/farms/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /api/v1/${segment}
+
+        - id: product-service-v1
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/batches/**, /api/v1/products/**
+          filters:
+            - StripPrefix=0
+
+        - id: product-service-legacy
+          uri: lb://product-service
+          predicates:
+            - Path=/api/batches/**, /api/products/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /api/v1/${segment}
+        
+        - id: trace-service-v1
+          uri: lb://trace-service
+          predicates:
+            - Path=/api/v1/trace/**, /api/v1/trace-logs/**, /api/v1/audit-logs/**, /api/v1/internal/**
+          filters:
+            - StripPrefix=0
+
+        - id: trace-service-legacy
+          uri: lb://trace-service
+          predicates:
+            - Path=/api/trace/**, /api/trace-logs/**
+          filters:
+            - RewritePath=/api/trace-logs/(?<segment>.*), /api/v1/trace-logs/${segment}
+            - RewritePath=/api/trace/(?<segment>.*), /api/v1/trace/${segment}
+        
+        - id: media-service-v1
+          uri: lb://media-service
+          predicates:
+            - Path=/api/v1/media/**, /api/v1/qrcode/**
+          filters:
+            - StripPrefix=0
+
+        - id: media-service-legacy
+          uri: lb://media-service
+          predicates:
+            - Path=/api/media/**, /api/qrcode/**
+          filters:
+            - RewritePath=/api/media/(?<segment>.*), /api/v1/media/${segment}
+            - RewritePath=/api/qrcode/(?<segment>.*), /api/v1/qrcode/${segment}
+      
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+server:
+  port: ${SERVER_PORT:8080}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+
+jwt:
+  secret: ${JWT_SECRET:agritrace-super-secret-key-2026-must-be-at-least-256-bits}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:9080}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 0.1
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://zipkin:9411/api/v2/spans}
+
+logging:
+  level:
+    root: WARN
+    org.springframework.cloud.gateway: WARN
+    com.agritrace: WARN

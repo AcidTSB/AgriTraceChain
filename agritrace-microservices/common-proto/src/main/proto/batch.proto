@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package agritrace.batch;
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.agritrace.proto.batch";
+option java_outer_classname = "BatchServiceProto";
+
+service BatchService {
+  rpc GetBatchById (GetBatchByIdRequest) returns (BatchResponse);
+  rpc ValidateBatchOwnership (ValidateBatchOwnershipRequest) returns (OwnershipResponse);
+  rpc CheckBatchStatus (CheckBatchStatusRequest) returns (BatchStatusResponse);
+  rpc GetBatchesByFarmer (GetBatchesByFarmerRequest) returns (BatchListResponse);
+}
+
+message GetBatchByIdRequest {
+  string batch_id = 1;
+}
+
+message ValidateBatchOwnershipRequest {
+  string batch_id = 1;
+  string user_id = 2;
+}
+
+message CheckBatchStatusRequest {
+  string batch_id = 1;
+}
+
+message GetBatchesByFarmerRequest {
+  string farmer_id = 1;
+  agritrace.common.PageRequest page = 2;
+}
+
+message BatchResponse {
+  string id = 1;
+  string batch_number = 2;
+  string product_id = 3;
+  string product_name = 4;
+  double quantity = 5;
+  string unit = 6;
+  string harvest_date = 7;
+  string status = 8;
+  string farmer_id = 9;
+  string farmer_name = 10;
+  string facility_id = 11;
+  string facility_name = 12;
+  bool is_compromised = 13;
+  string created_at = 14;
+  agritrace.common.Status grpc_status = 15;
+  double farm_latitude = 16;
+  double farm_longitude = 17;
+}
+
+message OwnershipResponse {
+  bool is_owner = 1;
+  string batch_id = 2;
+  string user_id = 3;
+  agritrace.common.Status status = 4;
+}
+
+message BatchStatusResponse {
+  string batch_id = 1;
+  string status = 2;
+  bool is_compromised = 3;
+  string reason = 4;
+  agritrace.common.Status grpc_status = 5;
+}
+
+message BatchListResponse {
+  repeated BatchResponse batches = 1;
+  agritrace.common.PageMetadata page_metadata = 2;
+  agritrace.common.Status status = 3;
+}

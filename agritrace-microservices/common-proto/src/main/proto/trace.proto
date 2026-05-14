@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package agritrace.trace;
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.agritrace.proto.trace";
+option java_outer_classname = "TraceServiceProto";
+
+service TraceService {
+  rpc VerifyHashChain (VerifyHashChainRequest) returns (VerificationResponse);
+  rpc VerifySignature (VerifySignatureRequest) returns (SignatureVerificationResponse);
+  rpc GetTraceHistory (GetTraceHistoryRequest) returns (TraceHistoryResponse);
+  rpc VerifyTraceLogIntegrity (VerifyTraceLogRequest) returns (IntegrityResponse);
+}
+
+message VerifyHashChainRequest {
+  string batch_id = 1;
+}
+
+message VerifySignatureRequest {
+  string trace_log_id = 1;
+  string user_id = 2;
+}
+
+message GetTraceHistoryRequest {
+  string batch_id = 1;
+  agritrace.common.PageRequest page = 2;
+}
+
+message VerifyTraceLogRequest {
+  string trace_log_id = 1;
+}
+
+message VerificationResponse {
+  bool is_valid = 1;
+  string batch_id = 2;
+  int32 total_logs = 3;
+  int32 verified_logs = 4;
+  repeated string broken_links = 5;
+  agritrace.common.Status status = 6;
+}
+
+message SignatureVerificationResponse {
+  bool is_valid = 1;
+  string trace_log_id = 2;
+  string signed_by_user_id = 3;
+  string signed_by_username = 4;
+  string signature_algorithm = 5;
+  string verification_timestamp = 6;
+  agritrace.common.Status status = 7;
+}
+
+message TraceHistoryResponse {
+  repeated TraceLogEntry entries = 1;
+  agritrace.common.PageMetadata page_metadata = 2;
+  agritrace.common.Status status = 3;
+}
+
+message TraceLogEntry {
+  string id = 1;
+  string batch_id = 2;
+  string action = 3;
+  string description = 4;
+  string location = 5;
+  double temperature = 6;
+  double humidity = 7;
+  string actor_id = 8;
+  string actor_name = 9;
+  string actor_role = 10;
+  string timestamp = 11;
+  string current_hash = 12;
+  string previous_hash = 13;
+  string signature = 14;
+  bool signature_verified = 15;
+}
+
+message IntegrityResponse {
+  bool is_valid = 1;
+  string trace_log_id = 2;
+  bool hash_chain_valid = 3;
+  bool signature_valid = 4;
+  string error_message = 5;
+  agritrace.common.Status status = 6;
+}

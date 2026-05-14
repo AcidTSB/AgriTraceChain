@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package agritrace.user;
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.agritrace.proto.user";
+option java_outer_classname = "UserServiceProto";
+
+service UserService {
+  rpc GetUserById (GetUserByIdRequest) returns (UserResponse);
+  rpc GetUserByUsername (GetUserByUsernameRequest) returns (UserResponse);
+  rpc GetUsersByIds (GetUsersByIdsRequest) returns (UserListResponse);
+  rpc VerifyCredentials (VerifyCredentialsRequest) returns (VerifyCredentialsResponse);
+  rpc GetUserPublicKey (GetUserPublicKeyRequest) returns (PublicKeyResponse);
+}
+
+message GetUserByIdRequest {
+  string user_id = 1;
+}
+
+message GetUserByUsernameRequest {
+  string username = 1;
+}
+
+message GetUsersByIdsRequest {
+  repeated string user_ids = 1;
+}
+
+message VerifyCredentialsRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message GetUserPublicKeyRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string full_name = 4;
+  string role = 5;
+  string facility_id = 6;
+  string facility_name = 7;
+  bool active = 8;
+  string created_at = 9;
+  agritrace.common.Status status = 10;
+}
+
+message UserListResponse {
+  repeated UserResponse users = 1;
+  agritrace.common.Status status = 2;
+}
+
+message VerifyCredentialsResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string role = 3;
+  agritrace.common.Status status = 4;
+}
+
+message PublicKeyResponse {
+  string user_id = 1;
+  string public_key = 2;
+  string algorithm = 3;
+  agritrace.common.Status status = 4;
+}

@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: media-service
+
+server:
+  port: ${SERVER_PORT:8084}
+
+grpc:
+  client:
+    product-service:
+      address: ${GRPC_PRODUCT_SERVICE:static://product-service:9090}
+      negotiationType: plaintext
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:9084}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  tracing:
+    sampling:
+      probability: 0.1
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://zipkin:9411/api/v2/spans}
+
+qrcode:
+  width: 300
+  height: 300
+
+logging:
+  level:
+    root: WARN
+    com.agritrace: WARN
