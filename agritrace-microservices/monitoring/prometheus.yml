@@ -1,0 +1,45 @@
+global:
+  scrape_interval: 20s
+  evaluation_interval: 20s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - prometheus:9090
+
+  - job_name: eureka-server
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - eureka-server:9761
+
+  - job_name: api-gateway
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - api-gateway:9080
+
+  - job_name: user-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - user-service:9081
+
+  - job_name: product-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - product-service:9082
+
+  - job_name: trace-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - trace-service:9083
+
+  - job_name: media-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - media-service:9084

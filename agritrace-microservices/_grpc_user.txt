@@ -1,0 +1,30 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.agritrace:user-service >---------------------
+[INFO] Building AgriTrace User Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.6.1:tree (default-cli) @ user-service ---
+[INFO] com.agritrace:user-service:jar:1.0.0
+[INFO] +- net.devh:grpc-spring-boot-starter:jar:2.15.0.RELEASE:compile
+[INFO] |  \- net.devh:grpc-server-spring-boot-starter:jar:2.15.0.RELEASE:compile
+[INFO] |     \- net.devh:grpc-server-spring-boot-autoconfigure:jar:2.15.0.RELEASE:compile
+[INFO] |        +- net.devh:grpc-common-spring-boot:jar:2.15.0.RELEASE:compile
+[INFO] |        |  \- io.grpc:grpc-core:jar:1.58.0:compile
+[INFO] |        |     \- io.grpc:grpc-context:jar:1.58.0:runtime
+[INFO] |        +- io.grpc:grpc-inprocess:jar:1.58.0:compile
+[INFO] |        +- io.grpc:grpc-netty-shaded:jar:1.58.0:compile
+[INFO] |        \- io.grpc:grpc-services:jar:1.58.0:compile
+[INFO] |           \- io.grpc:grpc-util:jar:1.58.0:compile
+[INFO] \- com.agritrace:common-proto:jar:1.0.0:compile
+[INFO]    +- io.grpc:grpc-stub:jar:1.60.0:compile
+[INFO]    |  \- io.grpc:grpc-api:jar:1.60.0:compile
+[INFO]    \- io.grpc:grpc-protobuf:jar:1.60.0:compile
+[INFO]       \- io.grpc:grpc-protobuf-lite:jar:1.60.0:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.240 s
+[INFO] Finished at: 2026-04-19T02:48:40+07:00
+[INFO] ------------------------------------------------------------------------

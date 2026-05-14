@@ -1,0 +1,85 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.bak
+*.tmp
+*.log
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+### Eclipse ###
+.metadata
+.classpath
+.project
+.settings/
+bin/
+tmp/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### Spring Boot ###
+HELP.md
+.spring-boot-devtools.properties
+
+### Logs ###
+*.log
+logs/
+log/
+
+### OS Files ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+### Application Specific ###
+application-local.yml
+application-dev.yml
+application-prod.yml
+
+### Database ###
+*.db
+*.sqlite
+
+### Build ###
+build/
+dist/
+
+### Node ###
+node_modules/
+**/node_modules/
+
+### Legacy Monolith ###
+src/
+
+### Unnecessary / Archived ###
+_archived_assets/
+fe_template/
+project_context.md
+
+### Tooling Artifacts ###
+.github/
+# .vscode/ is already ignored above

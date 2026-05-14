@@ -1,0 +1,747 @@
+{
+  "generatedAt": "2026-05-09T09:18:31.319123Z",
+  "baseUrl": "http://localhost:8080/api/v1",
+  "notes": [
+    "Seeder aligned with current backend contracts (products are global, farm relation is via batches).",
+    "Product image is stored as metadata in description and explicit manifest.imageUrl for FE mocking.",
+    "Public trace API is expected to return 200 only for batches with INSPECTION and valid integrity chain.",
+    "Inspector-focused batches added with multiple inspection states for queue testing.",
+    "Search suggestions exported for frontend search bar autocomplete."
+  ],
+  "accounts": [
+    {
+      "role": "ADMIN",
+      "username": "admin_mock",
+      "userId": "b6b849f3-0a4b-4d92-869e-86bcb99e9223"
+    },
+    {
+      "role": "FARMER",
+      "username": "farmer_mock",
+      "userId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+    },
+    {
+      "role": "INSPECTOR",
+      "username": "inspector_mock",
+      "userId": "0147f262-809f-4c8c-9be3-8a342a4a9116"
+    }
+  ],
+  "products": [
+    {
+      "id": "e94b28c7-ae47-4261-806c-bca84cbd261d",
+      "name": "[MOCK] Hass Avocado",
+      "baseName": "Hass Avocado",
+      "variety": "Hass",
+      "grade": "Premium Grade A",
+      "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
+      "description": "MOCK|Hass|Premium Grade A|Hass Avocado",
+      "source": "created"
+    },
+    {
+      "id": "259acb2d-7d35-4640-bbd2-0f999a35c1f9",
+      "name": "[MOCK] Organic Tomato",
+      "baseName": "Organic Tomato",
+      "variety": "Ruby Cluster",
+      "grade": "Grade A",
+      "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
+      "description": "MOCK|Ruby Cluster|Grade A|Organic Tomato",
+      "source": "created"
+    },
+    {
+      "id": "9e940e29-acd9-4c90-8cf5-8fab4bde6154",
+      "name": "[MOCK] Jasmine Rice",
+      "baseName": "Jasmine Rice",
+      "variety": "ST25",
+      "grade": "Export Premium",
+      "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
+      "description": "MOCK|ST25|Export Premium|Jasmine Rice",
+      "source": "created"
+    },
+    {
+      "id": "fbc1b80c-773a-4dc8-a52b-5870d9a184a7",
+      "name": "[MOCK] Dragon Fruit",
+      "baseName": "Dragon Fruit",
+      "variety": "Red Flesh",
+      "grade": "VietGAP",
+      "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
+      "description": "MOCK|Red Flesh|VietGAP|Dragon Fruit",
+      "source": "created"
+    },
+    {
+      "id": "976d178f-d740-4d6e-a2ca-7f4906abe5ee",
+      "name": "[MOCK] Arabica Coffee",
+      "baseName": "Arabica Coffee",
+      "variety": "Arabica Catuai",
+      "grade": "Specialty",
+      "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
+      "description": "MOCK|Arabica Catuai|Specialty|Arabica Coffee",
+      "source": "created"
+    }
+  ],
+  "farms": [
+    {
+      "id": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+      "name": "[MOCK] Dalat Farm",
+      "location": "Da Lat, Lam Dong - Plot 4B",
+      "region": "DALAT",
+      "plot": "Plot 4B",
+      "latitude": 11.9404,
+      "longitude": 108.4583,
+      "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+    },
+    {
+      "id": "9e49dd81-aa9b-4329-b40b-4aef2af85996",
+      "name": "[MOCK] Mekong Green Farm",
+      "location": "Can Tho, Mekong Delta - Sector C2",
+      "region": "MEKONG",
+      "plot": "Sector C2",
+      "latitude": 10.0452,
+      "longitude": 105.7469,
+      "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+    },
+    {
+      "id": "9c9651a1-3ca5-4adb-96b9-451c9e158597",
+      "name": "[MOCK] Highland Organic Hub",
+      "location": "Buon Ma Thuot, Dak Lak - Block A7",
+      "region": "HIGHLAND",
+      "plot": "Block A7",
+      "latitude": 12.6666,
+      "longitude": 108.0372,
+      "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+    }
+  ],
+  "farmProductMap": {
+    "[MOCK] Dalat Farm": [
+      {
+        "batchCode": "BATCH-20260509-4A271112",
+        "productName": "[MOCK] Hass Avocado",
+        "scenario": "VERIFIED_SHIPPING"
+      },
+      {
+        "batchCode": "BATCH-20260509-114E19DE",
+        "productName": "[MOCK] Jasmine Rice",
+        "scenario": "VERIFIED_PACKAGED"
+      },
+      {
+        "batchCode": "BATCH-20260509-B8549FCE",
+        "productName": "[MOCK] Dragon Fruit",
+        "scenario": "PENDING_INSPECTION_PARTIAL"
+      }
+    ],
+    "[MOCK] Mekong Green Farm": [
+      {
+        "batchCode": "BATCH-20260509-2ACE845F",
+        "productName": "[MOCK] Organic Tomato",
+        "scenario": "PENDING_INSPECTION"
+      },
+      {
+        "batchCode": "BATCH-20260509-9FBD2C5B",
+        "productName": "[MOCK] Arabica Coffee",
+        "scenario": "PENDING_INSPECTION_HARVEST"
+      }
+    ],
+    "[MOCK] Highland Organic Hub": [
+      {
+        "batchCode": "BATCH-20260509-A8601093",
+        "productName": "[MOCK] Dragon Fruit",
+        "scenario": "EARLY_GROWTH"
+      },
+      {
+        "batchCode": "BATCH-20260509-3D81216B",
+        "productName": "[MOCK] Organic Tomato",
+        "scenario": "PENDING_INSPECTION_INCOMPLETE"
+      }
+    ]
+  },
+  "searchSuggestions": {
+    "batchCodes": [
+      "BATCH-20260509-114E19DE",
+      "BATCH-20260509-2ACE845F",
+      "BATCH-20260509-3D81216B",
+      "BATCH-20260509-4A271112",
+      "BATCH-20260509-9FBD2C5B",
+      "BATCH-20260509-A8601093",
+      "BATCH-20260509-B8549FCE"
+    ],
+    "productNames": [
+      "[MOCK] Arabica Coffee",
+      "[MOCK] Dragon Fruit",
+      "[MOCK] Hass Avocado",
+      "[MOCK] Jasmine Rice",
+      "[MOCK] Organic Tomato"
+    ],
+    "farmNames": [
+      "[MOCK] Dalat Farm",
+      "[MOCK] Highland Organic Hub",
+      "[MOCK] Mekong Green Farm"
+    ],
+    "scenarioTags": [
+      "AWAITING_INSPECTION",
+      "EARLY_GROWTH",
+      "NONE",
+      "PARTIAL_INSPECTION",
+      "PENDING_INSPECTION",
+      "PENDING_INSPECTION_HARVEST",
+      "PENDING_INSPECTION_INCOMPLETE",
+      "PENDING_INSPECTION_PARTIAL",
+      "VERIFIED",
+      "VERIFIED_PACKAGED",
+      "VERIFIED_SHIPPING"
+    ],
+    "inspectionStates": [
+      "VERIFIED",
+      "PARTIAL_INSPECTION",
+      "AWAITING_INSPECTION",
+      "AWAITING_QUALITY_CHECK",
+      "IN_PROGRESS",
+      "NONE"
+    ]
+  },
+  "batches": [
+    {
+      "label": "living-ledger-main",
+      "scenario": "VERIFIED_SHIPPING",
+      "uiState": "VERIFIED",
+      "batch": {
+        "id": "12a7af16-4bc3-461d-b810-5041165597ad",
+        "batchCode": "BATCH-20260509-4A271112",
+        "farmId": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "farmName": "[MOCK] Dalat Farm",
+        "productId": "e94b28c7-ae47-4261-806c-bca84cbd261d",
+        "productName": "[MOCK] Hass Avocado",
+        "quantity": 500.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-25"
+      },
+      "farm": {
+        "id": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "name": "[MOCK] Dalat Farm",
+        "location": "Da Lat, Lam Dong - Plot 4B",
+        "region": "DALAT",
+        "plot": "Plot 4B",
+        "latitude": 11.9404,
+        "longitude": 108.4583,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "e94b28c7-ae47-4261-806c-bca84cbd261d",
+        "name": "[MOCK] Hass Avocado",
+        "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Hass",
+        "grade": "Premium Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": 500.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DALAT Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DALAT Packaging Station",
+          "quantity": 470.0,
+          "created": true
+        },
+        {
+          "action": "SHIPPING",
+          "actorRole": "FARMER",
+          "location": "DALAT Distribution Hub",
+          "quantity": 460.6,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "VERIFIED"
+    },
+    {
+      "label": "review-queue-candidate",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "PENDING_INSPECTION",
+      "batch": {
+        "id": "cdeb3298-6cc1-4a47-99d8-38cbfd077202",
+        "batchCode": "BATCH-20260509-2ACE845F",
+        "farmId": "9e49dd81-aa9b-4329-b40b-4aef2af85996",
+        "farmName": "[MOCK] Mekong Green Farm",
+        "productId": "259acb2d-7d35-4640-bbd2-0f999a35c1f9",
+        "productName": "[MOCK] Organic Tomato",
+        "quantity": 320.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-24"
+      },
+      "farm": {
+        "id": "9e49dd81-aa9b-4329-b40b-4aef2af85996",
+        "name": "[MOCK] Mekong Green Farm",
+        "location": "Can Tho, Mekong Delta - Sector C2",
+        "region": "MEKONG",
+        "plot": "Sector C2",
+        "latitude": 10.0452,
+        "longitude": 105.7469,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "259acb2d-7d35-4640-bbd2-0f999a35c1f9",
+        "name": "[MOCK] Organic Tomato",
+        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Ruby Cluster",
+        "grade": "Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": 320.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "AWAITING_INSPECTION"
+    },
+    {
+      "label": "batch-card-ready",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "READY_FOR_QR",
+      "batch": {
+        "id": "9b0a059f-c03a-4c2d-991d-315da3985676",
+        "batchCode": "BATCH-20260509-114E19DE",
+        "farmId": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "farmName": "[MOCK] Dalat Farm",
+        "productId": "9e940e29-acd9-4c90-8cf5-8fab4bde6154",
+        "productName": "[MOCK] Jasmine Rice",
+        "quantity": 900.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-23"
+      },
+      "farm": {
+        "id": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "name": "[MOCK] Dalat Farm",
+        "location": "Da Lat, Lam Dong - Plot 4B",
+        "region": "DALAT",
+        "plot": "Plot 4B",
+        "latitude": 11.9404,
+        "longitude": 108.4583,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "9e940e29-acd9-4c90-8cf5-8fab4bde6154",
+        "name": "[MOCK] Jasmine Rice",
+        "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
+        "variety": "ST25",
+        "grade": "Export Premium"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": 900.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DALAT Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DALAT Packaging Station",
+          "quantity": 846.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "VERIFIED"
+    },
+    {
+      "label": "dashboard-in-progress",
+      "scenario": "EARLY_GROWTH",
+      "uiState": "IN_PROGRESS",
+      "batch": {
+        "id": "b9d2310f-a182-4881-a74d-387d0735ebcc",
+        "batchCode": "BATCH-20260509-A8601093",
+        "farmId": "9c9651a1-3ca5-4adb-96b9-451c9e158597",
+        "farmName": "[MOCK] Highland Organic Hub",
+        "productId": "fbc1b80c-773a-4dc8-a52b-5870d9a184a7",
+        "productName": "[MOCK] Dragon Fruit",
+        "quantity": 450.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-22"
+      },
+      "farm": {
+        "id": "9c9651a1-3ca5-4adb-96b9-451c9e158597",
+        "name": "[MOCK] Highland Organic Hub",
+        "location": "Buon Ma Thuot, Dak Lak - Block A7",
+        "region": "HIGHLAND",
+        "plot": "Block A7",
+        "latitude": 12.6666,
+        "longitude": 108.0372,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "fbc1b80c-773a-4dc8-a52b-5870d9a184a7",
+        "name": "[MOCK] Dragon Fruit",
+        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Red Flesh",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "SPRAYING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "inspector-queue-harvest",
+      "scenario": "PENDING_INSPECTION_HARVEST",
+      "uiState": "AWAITING_QUALITY_CHECK",
+      "batch": {
+        "id": "c691120d-0ae1-46b6-995e-19a52c3fd2b5",
+        "batchCode": "BATCH-20260509-9FBD2C5B",
+        "farmId": "9e49dd81-aa9b-4329-b40b-4aef2af85996",
+        "farmName": "[MOCK] Mekong Green Farm",
+        "productId": "976d178f-d740-4d6e-a2ca-7f4906abe5ee",
+        "productName": "[MOCK] Arabica Coffee",
+        "quantity": 280.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-26"
+      },
+      "farm": {
+        "id": "9e49dd81-aa9b-4329-b40b-4aef2af85996",
+        "name": "[MOCK] Mekong Green Farm",
+        "location": "Can Tho, Mekong Delta - Sector C2",
+        "region": "MEKONG",
+        "plot": "Sector C2",
+        "latitude": 10.0452,
+        "longitude": 105.7469,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "976d178f-d740-4d6e-a2ca-7f4906abe5ee",
+        "name": "[MOCK] Arabica Coffee",
+        "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Arabica Catuai",
+        "grade": "Specialty"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "SPRAYING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": 280.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "AWAITING_INSPECTION"
+    },
+    {
+      "label": "inspector-queue-partial",
+      "scenario": "PENDING_INSPECTION_PARTIAL",
+      "uiState": "PARTIAL_INSPECTION",
+      "batch": {
+        "id": "c83563d3-d076-447d-85c2-6f5129d7a1dc",
+        "batchCode": "BATCH-20260509-B8549FCE",
+        "farmId": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "farmName": "[MOCK] Dalat Farm",
+        "productId": "fbc1b80c-773a-4dc8-a52b-5870d9a184a7",
+        "productName": "[MOCK] Dragon Fruit",
+        "quantity": 320.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-21"
+      },
+      "farm": {
+        "id": "baf747fa-37a1-4736-8c22-ef9079b5a945",
+        "name": "[MOCK] Dalat Farm",
+        "location": "Da Lat, Lam Dong - Plot 4B",
+        "region": "DALAT",
+        "plot": "Plot 4B",
+        "latitude": 11.9404,
+        "longitude": 108.4583,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "fbc1b80c-773a-4dc8-a52b-5870d9a184a7",
+        "name": "[MOCK] Dragon Fruit",
+        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Red Flesh",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": 320.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DALAT Inspection Center",
+          "quantity": null,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "PARTIAL_INSPECTION"
+    },
+    {
+      "label": "inspector-queue-incomplete",
+      "scenario": "PENDING_INSPECTION_INCOMPLETE",
+      "uiState": "INCOMPLETE_LOGS",
+      "batch": {
+        "id": "8d2eca5a-42cc-49d4-bf24-cd89672edaa5",
+        "batchCode": "BATCH-20260509-3D81216B",
+        "farmId": "9c9651a1-3ca5-4adb-96b9-451c9e158597",
+        "farmName": "[MOCK] Highland Organic Hub",
+        "productId": "259acb2d-7d35-4640-bbd2-0f999a35c1f9",
+        "productName": "[MOCK] Organic Tomato",
+        "quantity": 200.0,
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-20"
+      },
+      "farm": {
+        "id": "9c9651a1-3ca5-4adb-96b9-451c9e158597",
+        "name": "[MOCK] Highland Organic Hub",
+        "location": "Buon Ma Thuot, Dak Lak - Block A7",
+        "region": "HIGHLAND",
+        "plot": "Block A7",
+        "latitude": 12.6666,
+        "longitude": 108.0372,
+        "ownerId": "180da06d-50d4-41da-9e7c-e12b19301cd0"
+      },
+      "product": {
+        "id": "259acb2d-7d35-4640-bbd2-0f999a35c1f9",
+        "name": "[MOCK] Organic Tomato",
+        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Ruby Cluster",
+        "grade": "Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": 200.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 401,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "No details"
+      },
+      "inspectionState": "AWAITING_INSPECTION"
+    }
+  ]
+}
