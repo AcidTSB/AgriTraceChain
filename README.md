@@ -48,9 +48,9 @@ AgriTrace được xây dựng để giải quyết các vấn đề trên bằn
 
 ---
 
-# Highlights
+# Điểm nổi bật
 
-## Backend Engineering Highlights
+## Điểm nổi bật (Backend)
 
 - Kiến trúc Microservices với Database-per-Service
 - gRPC communication cho internal services
@@ -65,16 +65,17 @@ AgriTrace được xây dựng để giải quyết các vấn đề trên bằn
 
 ---
 
-# System Architecture
+
+# Kiến trúc hệ thống
 
 ```mermaid
 graph TD
-    Client((Client App)) --> Gateway[API Gateway]
+    Client((Ứng dụng Khách)) --> Gateway[Cổng API]
 
-    Gateway --> UserSvc[User Service]
-    Gateway --> ProductSvc[Product Service]
-    Gateway --> TraceSvc[Trace Service]
-    Gateway --> MediaSvc[Media Service]
+    Gateway --> UserSvc[Dịch vụ Người Dùng]
+    Gateway --> ProductSvc[Dịch vụ Sản Phẩm]
+    Gateway --> TraceSvc[Dịch vụ Truy Vết]
+    Gateway --> MediaSvc[Dịch vụ Media]
 
     subgraph Infrastructure
         Eureka[Eureka Server]
@@ -82,47 +83,47 @@ graph TD
         Redis[Redis]
     end
 
-    UserSvc --> UserDB[(User DB)]
-    ProductSvc --> ProductDB[(Product DB)]
-    TraceSvc --> TraceDB[(Trace DB)]
+    UserSvc --> UserDB[(Cơ sở dữ liệu Người Dùng)]
+    ProductSvc --> ProductDB[(Cơ sở dữ liệu Sản Phẩm)]
+    TraceSvc --> TraceDB[(Cơ sở dữ liệu Truy Vết)]
 
     TraceSvc -->|gRPC| UserSvc
     TraceSvc -->|gRPC| ProductSvc
 
-    TraceSvc -. Publish Events .-> Kafka
-    ProductSvc -. Publish Events .-> Kafka
+    TraceSvc -. Xuất sự kiện .-> Kafka
+    ProductSvc -. Xuất sự kiện .-> Kafka
 ```
 
 ## Kiến trúc tổng thể
 
 Hệ thống được thiết kế theo mô hình:
 
-- **API Gateway Pattern** cho centralized routing & security
-- **Service Discovery** bằng Netflix Eureka
-- **Database-per-Service** để giảm coupling
-- **Event-Driven Architecture** cho audit logging
-- **gRPC Internal Communication** nhằm tối ưu latency
+- Mẫu Cổng API cho routing tập trung và bảo mật
+- Phát hiện dịch vụ (Service Discovery) bằng Netflix Eureka
+- Mỗi dịch vụ một cơ sở dữ liệu (Database-per-Service)
+- Kiến trúc hướng sự kiện (Event-Driven) cho ghi audit
+- Giao tiếp nội bộ bằng gRPC để tối ưu độ trễ
 
-Việc lựa chọn Microservices giúp:
+Việc lựa chọn Microservices mang lại:
 
-- independent deployment
-- horizontal scaling
-- fault isolation
-- maintainability tốt hơn khi hệ thống mở rộng
+- Triển khai độc lập
+- Mở rộng theo chiều ngang
+- Cô lập lỗi (fault isolation)
+- Dễ bảo trì khi hệ thống mở rộng
 
 ---
 
-# Microservices Breakdown
+# Danh sách dịch vụ (Microservices)
 
-| Service | Responsibility |
+| Dịch vụ | Trách nhiệm |
 |---|---|
-| API Gateway | Routing, JWT Validation, Security Filtering |
-| Eureka Server | Service Discovery |
-| User Service | Authentication, RBAC, RSA Key Management |
-| Product Service | Product & Batch Management |
-| Trace Service | Trace Logging, Hash Chain, Geofencing |
-| Media Service | QR Code & Media Processing |
-| Audit Service | Kafka Consumer & Immutable Audit Ledger |
+| Cổng API (API Gateway) | Định tuyến, xác thực JWT, lọc bảo mật |
+| Eureka Server | Đăng ký và phát hiện dịch vụ |
+| Dịch vụ Người Dùng (User Service) | Quản lý định danh, RBAC, quản lý khóa RSA |
+| Dịch vụ Sản Phẩm (Product Service) | Quản lý sản phẩm và lô hàng |
+| Dịch vụ Truy Vết (Trace Service) | Ghi nhật ký truy vết, Hash Chain, Geofencing |
+| Dịch vụ Media (Media Service) | Tạo mã QR và xử lý media |
+| Audit Service | Tiêu thụ Kafka và ghi sổ cái WORM (immutable audit ledger) |
 
 ---
 
@@ -145,43 +146,43 @@ SHA256(trace_data + previous_hash)
 
 Điều này tạo thành chuỗi liên kết dữ liệu.
 
-Nếu một bản ghi bị chỉnh sửa trực tiếp trong database:
+Nếu một bản ghi bị chỉnh sửa trực tiếp trong cơ sở dữ liệu:
 
 - hash hiện tại sẽ thay đổi
-- toàn bộ chuỗi phía sau bị invalid
+- toàn bộ chuỗi phía sau sẽ không hợp lệ
 - hệ thống phát hiện dữ liệu đã bị can thiệp
 
 ---
 
-## 2. RSA Digital Signature
+## 2. Chữ ký số RSA
 
 Sau khi tạo hash:
 
 - hệ thống ký `current_hash` bằng RSA Private Key
 - lưu `signature` vào Trace Log
-- verify bằng Public Key khi đọc dữ liệu
+- xác minh bằng Public Key khi đọc dữ liệu
 
 ---
 
-## 3. Immutable Audit Ledger (WORM)
+## 3. Sổ cái kiểm toán bất biến (WORM)
 
-Mọi thay đổi trạng thái hệ thống đều publish event vào Kafka.
+Mọi thay đổi trạng thái hệ thống đều được đẩy dưới dạng sự kiện vào Kafka.
 
-Audit Service consume và ghi vào audit ledger theo cơ chế:
+Audit Service tiêu thụ các sự kiện và ghi vào sổ cái theo cơ chế:
 
-> Write Once Read Many
+> Ghi một lần, đọc nhiều lần (Write Once Read Many - WORM)
 
-Không tồn tại API UPDATE hoặc DELETE cho audit data.
+Không cung cấp API để UPDATE hoặc DELETE dữ liệu kiểm toán.
 
 ---
 
-## 4. Geofencing Validation
+## 4. Xác thực vị trí (Geofencing)
 
-Khi Farmer ghi nhật ký canh tác:
+Khi Nhà vườn ghi nhật ký canh tác:
 
-- thiết bị gửi GPS coordinates
-- hệ thống tính khoảng cách bằng Haversine Formula
-- validate theo business rules
+- thiết bị gửi tọa độ GPS
+- hệ thống tính khoảng cách bằng công thức Haversine
+- xác thực theo quy tắc nghiệp vụ
 
 Nếu vượt quá giới hạn:
 
@@ -191,7 +192,7 @@ GeofenceViolationException
 
 ---
 
-# Authentication Flow
+# Luồng xác thực (Authentication)
 
 ```mermaid
 sequenceDiagram
@@ -200,20 +201,20 @@ sequenceDiagram
     participant UserService
     participant ProductService
 
-    Client->>UserService: Login
-    UserService-->>Client: JWT Access Token
+    Client->>UserService: Đăng nhập
+    UserService-->>Client: Trả về JWT (Access Token)
 
-    Client->>Gateway: Request + JWT
-    Gateway->>Gateway: Verify JWT
-    Gateway->>Gateway: RBAC Validation
-    Gateway->>ProductService: Forward Request
+    Client->>Gateway: Yêu cầu + JWT
+    Gateway->>Gateway: Xác thực JWT
+    Gateway->>Gateway: Kiểm tra RBAC
+    Gateway->>ProductService: Chuyển tiếp yêu cầu
 
-    ProductService-->>Client: Response
+    ProductService-->>Client: Trả về phản hồi
 ```
 
 ---
 
-# Tech Stack
+# Công nghệ
 
 ## Backend
 
@@ -225,7 +226,7 @@ sequenceDiagram
 - Spring Cloud Netflix Eureka
 - Resilience4j
 
-## Infrastructure
+## Hạ tầng
 
 - PostgreSQL
 - Redis
@@ -233,54 +234,54 @@ sequenceDiagram
 - Docker
 - Docker Compose
 
-## Communication
+## Giao tiếp
 
 - REST API
 - gRPC
-- Kafka Event Streaming
+- Kafka (Event Streaming)
 
 ---
 
-# Engineering Challenges
+# Thách thức kỹ thuật
 
-## Distributed Transaction Problem
+## Vấn đề giao dịch phân tán
 
-Giải quyết vấn đề consistency giữa nhiều services bằng:
+Giải quyết bài toán tính nhất quán giữa nhiều dịch vụ bằng:
 
 - Soft Delete
-- Cross-service validation bằng gRPC
-- Historical data protection
+- Kiểm tra chéo giữa các dịch vụ (cross-service validation) bằng gRPC
+- Bảo vệ dữ liệu lịch sử (historical data protection)
 
-## Detecting Tampered Data
+## Phát hiện dữ liệu bị can thiệp
 
-Nếu DBA sửa trực tiếp database:
+Nếu DBA sửa trực tiếp cơ sở dữ liệu:
 
 - Hash Chain bị đứt
-- Signature verification fail
+- Xác thực chữ ký (signature) thất bại
 - hệ thống đánh dấu `COMPROMISED`
 
 ---
 
-# Scalability Considerations
+# Cân nhắc về khả năng mở rộng
 
-- Stateless API Gateway
-- Horizontal scaling
-- Kafka async processing
-- Database-per-Service isolation
-- Read replica ready
+- API Gateway ở trạng thái stateless
+- Mở rộng theo chiều ngang (horizontal scaling)
+- Xử lý bất đồng bộ bằng Kafka
+- Cô lập theo mô hình Database-per-Service
+- Hỗ trợ read-replica
 
 ---
 
-# Local Development Setup
+# Cài đặt & chạy cục bộ
 
-## Requirements
+## Yêu cầu
 
 - Java 21
 - Maven
 - Docker
 - Docker Compose
 
-## Run Project
+## Chạy dự án
 
 ```bash
 git clone https://github.com/your-username/AgriTraceChain.git
@@ -294,35 +295,33 @@ docker-compose up -d
 
 ---
 
-# Future Improvements
+# Cải tiến tương lai
 
-- Kubernetes Deployment
-- CI/CD Pipeline với GitHub Actions
-- ElasticSearch/OpenSearch Audit Analytics
-- Real-time Notification System
-- Distributed Tracing Dashboard
-
----
-
-# What I Learned
-
-- Distributed System Design
-- Event-Driven Architecture
-- gRPC & Kafka Communication
-- JWT Security & RBAC
-- Applied Cryptography
-- Dockerized Infrastructure
+- Triển khai lên Kubernetes
+- Thiết lập CI/CD với GitHub Actions
+- ElasticSearch/OpenSearch cho phân tích audit
+- Hệ thống thông báo thời gian thực
+- Dashboard phân tích Distributed Tracing
 
 ---
 
-# Author
+# Những điều tôi đã học
 
-**Role:** Backend Developer / System Designer
-
-- GitHub: [your-github]
-- LinkedIn: [your-linkedin]
-- Email: [your-email]
+- Thiết kế hệ thống phân tán
+- Kiến trúc hướng sự kiện
+- Giao tiếp gRPC & Kafka
+- Bảo mật JWT & RBAC
+- Ứng dụng mật mã học (RSA, SHA-256)
+- Docker hóa môi trường
 
 ---
 
-> “Good architecture is not about complexity. It's about designing systems that remain trustworthy as they scale.”
+# Tác giả
+
+- GitHub: github.com/AcidTSB
+- Email: acidg694@gmail.com
+
+
+---
+
+> “2026, drownincloud.”
