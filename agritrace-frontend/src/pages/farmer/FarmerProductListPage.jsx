@@ -151,7 +151,7 @@ export function FarmerProductListPage() {
                       {metadata.grade}
                     </p>
 
-                    <p className="text-xs font-mono text-on-surface-variant">{t("common.nA")}</p>
+                    <p className="text-xs font-mono text-on-surface-variant">{product.sku ?? "Chưa cập nhật"}</p>
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-xs font-medium text-on-secondary-container">

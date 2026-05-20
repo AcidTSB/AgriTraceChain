@@ -1,4 +1,6 @@
 import { apiClient, unwrapApiResponse } from "./apiClient";
+import { resolveBatchId } from "./batchResolver";
+import { traceService } from "./traceService";
 
 export const batchService = {
   async createBatch(payload) {
@@ -21,7 +23,7 @@ export const batchService = {
     page = 0,
     size = 20,
     sort = "updatedAt,desc",
-    status = "PENDING_INSPECTION",
+    status = "ALL",
     q = "",
     farmId,
   } = {}) {
@@ -40,8 +42,11 @@ export const batchService = {
         allBatches = results.flat();
       }
 
+      // Enrich batches with real inspection status from trace logs
+      allBatches = await enrichBatchesWithInspectionStatus(allBatches);
+
       if (status && status !== "ALL") {
-        allBatches = allBatches.filter((b) => b.status === status);
+        allBatches = allBatches.filter((b) => b.inspectionStatus === status);
       }
       if (q) {
         const qLower = q.toLowerCase();
@@ -81,3 +86,34 @@ export const batchService = {
     }
   },
 };
+
+/**
+ * Enrich batch objects with real inspection status derived from trace logs.
+ * The product-service only stores PENDING_INSPECTION / COMPROMISED on the entity,
+ * but actual inspection status is determined by whether an INSPECTION action
+ * exists in the trace-service logs for that batch.
+ */
+async function enrichBatchesWithInspectionStatus(batches) {
+  const enriched = await Promise.all(
+    batches.map(async (batch) => {
+      // Compromised batches keep their status
+      if (batch.status === "COMPROMISED" || batch.isCompromised) {
+        return { ...batch, inspectionStatus: "COMPROMISED" };
+      }
+
+      try {
+        const batchId = batch.id || (await resolveBatchId(batch.batchCode));
+        const logs = await traceService.getTraceLogsByBatchId(batchId);
+        const hasInspection = logs.some((log) => log.action === "INSPECTION");
+        return {
+          ...batch,
+          inspectionStatus: hasInspection ? "INSPECTED" : "PENDING_INSPECTION",
+        };
+      } catch {
+        // If trace logs can't be fetched, fall back to backend status
+        return { ...batch, inspectionStatus: batch.status || "PENDING_INSPECTION" };
+      }
+    }),
+  );
+  return enriched;
+}

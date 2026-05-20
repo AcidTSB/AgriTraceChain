@@ -29,6 +29,12 @@ public class UserResponse {
 
     private UserRole role;
 
+    private UUID facilityId;
+
+    private String facilityName;
+
+    private Boolean active;
+
     private String branch;
 
     private String publicKey;

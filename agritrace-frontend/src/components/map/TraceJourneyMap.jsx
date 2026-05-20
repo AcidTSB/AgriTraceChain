@@ -52,8 +52,10 @@ export function TraceJourneyMap({ logs = [] }) {
 
     return logs
       .map((l, idx) => {
-        const lat = typeof l?.lat === "string" ? Number(l.lat) : l?.lat;
-        const lng = typeof l?.lng === "string" ? Number(l.lng) : l?.lng;
+        const rawLat = l?.latitude ?? l?.lat;
+        const rawLng = l?.longitude ?? l?.lng;
+        const lat = typeof rawLat === "string" ? Number(rawLat) : rawLat;
+        const lng = typeof rawLng === "string" ? Number(rawLng) : rawLng;
 
         return {
           action: l?.action ?? `ACTION_${idx}`,

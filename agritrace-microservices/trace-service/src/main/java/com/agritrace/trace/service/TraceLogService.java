@@ -156,13 +156,13 @@ public class TraceLogService {
 
         TraceLog traceLog = TraceLog.builder()
                 .batchId(batchId)
-                .batchCode(batch.getBatchNumber())
+                .batchCode(resolveBatchCode(batch))
                 .actionType(action.name())
                 .location(request.getLocation())
                 .description(request.getNotes())
                 .quantity(quantity)
-                .latitude(String.valueOf(request.getLatitude()))
-                .longitude(String.valueOf(request.getLongitude()))
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
                 .distanceFromFarmKm(distanceFromFarmKm)
                 .withinGeofence(withinGeofence)
                 .createdBy(userId)
@@ -267,10 +267,11 @@ public class TraceLogService {
         return TraceLogResponse.builder()
                 .id(log.getId().toString())
                 .batchId(log.getBatchId() == null ? "" : log.getBatchId().toString())
+                .batchCode(log.getBatchCode())
                 .action(log.getActionType())
                 .location(log.getLocation())
-                .latitude(parseDouble(log.getLatitude()))
-                .longitude(parseDouble(log.getLongitude()))
+                .latitude(log.getLatitude())
+                .longitude(log.getLongitude())
                 .notes(log.getDescription())
                 .quantity(log.getQuantity())
                 .distanceFromFarmKm(log.getDistanceFromFarmKm())
@@ -279,10 +280,8 @@ public class TraceLogService {
                 .createdBy(log.getCreatedBy() == null ? "" : log.getCreatedBy().toString())
                 .createdById(log.getCreatedBy() == null ? "" : log.getCreatedBy().toString())
                 .previousHash(log.getPreviousHash())
-                .currentHash(log.getCurrentHash())
                 .signature(log.getSignature())
                 .hashValue(log.getCurrentHash())
-                .digitalSignature(log.getSignature())
                 .hashVerified(hashVerified)
                 .signatureVerified(signatureVerified)
                 .chainVerified(chainVerified)
@@ -370,18 +369,18 @@ public class TraceLogService {
             throw new IllegalArgumentException("Business rule violation: PACKAGING/SHIPPING requires prior INSPECTION approval");
         }
 
-        if (nextAction == TraceAction.SHIPPING) {
+        if (nextAction == TraceAction.SHIPPING || nextAction == TraceAction.PACKAGING) {
             BigDecimal totalProduced = traceLogRepository.sumQuantityByBatchIdAndActionType(batchId, TraceAction.HARVESTING.name());
-            BigDecimal totalExported = traceLogRepository.sumQuantityByBatchIdAndActionType(batchId, TraceAction.SHIPPING.name());
+            BigDecimal totalExported = traceLogRepository.sumQuantityByBatchIdAndActionType(batchId, nextAction.name());
             BigDecimal projectedExport = totalExported.add(nextQuantity == null ? BigDecimal.ZERO : nextQuantity);
 
             if (totalProduced.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Business rule violation: SHIPPING requires available production quantity");
+                throw new IllegalArgumentException("Business rule violation: " + nextAction.name() + " requires available production quantity");
             }
 
             if (projectedExport.compareTo(totalProduced) > 0) {
                 throw new IllegalArgumentException(
-                        String.format("Business rule violation: export quantity exceeds production (export %.3f > production %.3f)",
+                        String.format("Business rule violation: action quantity exceeds production (total %.3f > production %.3f)",
                                 projectedExport.doubleValue(),
                                 totalProduced.doubleValue()));
             }
@@ -411,5 +410,15 @@ public class TraceLogService {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    private String resolveBatchCode(BatchResponse batch) {
+        if (batch.getBatchCode() != null && !batch.getBatchCode().isBlank()) {
+            return batch.getBatchCode();
+        }
+        if (batch.getBatchNumber() != null && !batch.getBatchNumber().isBlank()) {
+            return batch.getBatchNumber();
+        }
+        return null;
     }
 }

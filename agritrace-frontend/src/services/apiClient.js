@@ -1,4 +1,5 @@
 import axios from "axios";
+import { router } from "../routes/AppRouter";
 
 const API_BASE_URL = "http://localhost:8080";
 const AUTH_STORAGE_KEY = "agritrace-auth-storage";
@@ -61,7 +62,7 @@ function handleResponseError(error) {
     clearAuthStorage();
     emitApiEvent("api:unauthorized", { status });
     if (window.location.pathname !== "/login") {
-      window.location.assign("/login");
+      router.navigate("/login", { replace: true });
     }
   }
 

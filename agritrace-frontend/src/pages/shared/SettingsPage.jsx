@@ -114,6 +114,22 @@ function ProfileTab({ user }) {
                 />
               </div>
             </div>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                Wallet Address (Read-only)
+              </label>
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 text-[18px]">
+                  account_balance_wallet
+                </span>
+                <input
+                  readOnly
+                  className="w-full cursor-not-allowed rounded-lg border-0 bg-surface-dim/30 pl-10 pr-4 py-3 font-mono text-sm font-medium text-on-surface-variant"
+                  value={user?.walletAddress || "N/A"}
+                />
+              </div>
+            </div>
             <div className="flex justify-end pt-2">
               <button
                 type="submit"

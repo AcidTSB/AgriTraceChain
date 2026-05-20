@@ -51,6 +51,8 @@ message BatchResponse {
   agritrace.common.Status grpc_status = 15;
   double farm_latitude = 16;
   double farm_longitude = 17;
+  string batch_code = 18;
+  string product_type = 19;
 }
 
 message OwnershipResponse {

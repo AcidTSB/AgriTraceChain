@@ -3,6 +3,7 @@ package com.agritrace.product.dto;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +50,9 @@ public class CreateBatchRequest {
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Double quantity;
+    
+    @NotBlank(message = "Unit is required (e.g., kg, tấn)")
+    private String unit;
     
     // Accept both yyyy-MM-dd and yyyy-MM-ddTHH:mm:ss, parse in service layer.
     private String harvestDate;

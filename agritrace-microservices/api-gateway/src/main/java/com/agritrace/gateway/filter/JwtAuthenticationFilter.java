@@ -119,6 +119,10 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         }
 
         if (("/api/v1/batches".equals(path) || path.startsWith("/api/v1/batches/")) && HttpMethod.GET.equals(method)) {
+            // /page endpoint requires authentication for X-User-Id and X-User-Role headers
+            if (path.matches(".*/page/?$") || path.endsWith("/page")) {
+                return false;
+            }
             return true;
         }
         if (("/api/batches".equals(path) || path.startsWith("/api/batches/")) && HttpMethod.GET.equals(method)) {
@@ -167,12 +171,19 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             if (HttpMethod.GET.equals(method) && path.matches(".*/my/?$")) {
                 return "FARMER".equals(role);
             }
+            if (HttpMethod.GET.equals(method) && path.matches(".*/page/?$")) {
+                return "ADMIN".equals(role);
+            }
             if (HttpMethod.GET.equals(method)
                     && ("/api/v1/farms".equals(path)
                     || "/api/v1/farms/".equals(path)
                     || "/api/farms".equals(path)
                     || "/api/farms/".equals(path))) {
                 return "ADMIN".equals(role);
+            }
+            // POST create farm = FARMER; other GET endpoints = FARMER
+            if (HttpMethod.GET.equals(method)) {
+                return "FARMER".equals(role) || "ADMIN".equals(role);
             }
             return "FARMER".equals(role);
         }

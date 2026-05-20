@@ -60,9 +60,9 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")  // Phase 2.5: ADMIN only for user management
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable UUID id) {
         UserResponse response = userService.getUserById(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), "User retrieved", response));
     }
 
     /**

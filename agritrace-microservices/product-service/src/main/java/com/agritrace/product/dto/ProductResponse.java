@@ -24,6 +24,11 @@ public class ProductResponse {
     private UUID id;
     private String name;
     private String description;
+    /** SKU — manually assigned code, e.g. AT-TOM-001. Null if not yet assigned. */
+    private String sku;
+    /** Product category, e.g. Rau củ, Trái cây. Null if not yet assigned. */
+    private String category;
+    private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

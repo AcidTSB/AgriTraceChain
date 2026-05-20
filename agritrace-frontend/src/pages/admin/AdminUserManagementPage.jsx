@@ -93,7 +93,7 @@ export function AdminUserManagementPage() {
                     <p className="truncate text-sm font-semibold text-on-surface">{user.username}</p>
                     <p className="mt-0.5 truncate text-xs text-on-surface-variant">{user.email || "—"}</p>
                   </div>
-                  <Badge status="ACTIVE" />
+                  <Badge status={user?.active === false ? "INACTIVE" : "ACTIVE"} />
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                   <div className="min-w-0">
@@ -128,7 +128,7 @@ export function AdminUserManagementPage() {
                     <td className="py-3 px-1 text-slate-700">{user.email || "—"}</td>
                     <td className="py-3 px-1 text-slate-700">{user.role}</td>
                     <td className="py-3 px-1">
-                      <Badge status="ACTIVE" />
+                      <Badge status={user?.active === false ? "INACTIVE" : "ACTIVE"} />
                     </td>
                   </tr>
                 ))}

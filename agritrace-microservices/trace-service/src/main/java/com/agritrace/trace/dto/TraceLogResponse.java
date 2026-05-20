@@ -10,6 +10,7 @@ import lombok.Data;
 public class TraceLogResponse {
     private String id;
     private String batchId;
+    private String batchCode;
     private String action;
     private String location;
     private Double latitude;
@@ -22,10 +23,8 @@ public class TraceLogResponse {
     private String createdBy;
     private String createdById;
     private String previousHash;
-    private String currentHash;
     private String signature;
     private String hashValue;
-    private String digitalSignature;
     private Boolean hashVerified;
     private Boolean signatureVerified;
     private Boolean chainVerified;

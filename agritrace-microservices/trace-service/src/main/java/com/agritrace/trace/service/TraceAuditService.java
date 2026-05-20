@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class TraceAuditService {
 
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void recordCreate(TraceLog traceLog, String actorRole, String actorRegion, UUID actorFacilityId) {
         Map<String, Object> after = new LinkedHashMap<>();
@@ -75,6 +77,21 @@ public class TraceAuditService {
                             String afterSnapshot,
                             String notes) {
         try {
+            Map<String, Object> kafkaMessage = new LinkedHashMap<>();
+            kafkaMessage.put("traceLogId", traceLogId);
+            kafkaMessage.put("batchCode", batchCode);
+            kafkaMessage.put("operation", operation);
+            kafkaMessage.put("actorId", actorId);
+            kafkaMessage.put("actorRole", actorRole);
+            kafkaMessage.put("actorRegion", actorRegion);
+            kafkaMessage.put("actorFacilityId", actorFacilityId);
+            kafkaMessage.put("beforeSnapshot", beforeSnapshot);
+            kafkaMessage.put("afterSnapshot", afterSnapshot);
+            kafkaMessage.put("notes", notes);
+            kafkaMessage.put("timestamp", LocalDateTime.now().toString());
+
+            kafkaTemplate.send("audit-ledger-topic", batchCode, toJson(kafkaMessage));
+
             jdbcTemplate.update(
                     """
                     INSERT INTO trace_audit_logs (

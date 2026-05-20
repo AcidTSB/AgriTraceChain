@@ -167,6 +167,10 @@ message BatchResponse {
   bool is_compromised = 13;
   string created_at = 14;
   agritrace.common.Status grpc_status = 15;
+  double farm_latitude = 16;
+  double farm_longitude = 17;
+  string batch_code = 18;
+  string product_type = 19;
 }
 
 message OwnershipResponse {
@@ -257,8 +261,8 @@ message TraceLogEntry {
   string action = 3;
   string description = 4;
   string location = 5;
-  double temperature = 6;
-  double humidity = 7;
+  string quantity = 6;
+  string distance_from_farm_km = 7;
   string actor_id = 8;
   string actor_name = 9;
   string actor_role = 10;
@@ -267,6 +271,13 @@ message TraceLogEntry {
   string previous_hash = 13;
   string signature = 14;
   bool signature_verified = 15;
+  double latitude = 16;
+  double longitude = 17;
+  bool within_geofence = 18;
+  bool hash_verified = 19;
+  bool chain_verified = 20;
+  string integrity_status = 21;
+  string batch_code = 22;
 }
 
 message IntegrityResponse {

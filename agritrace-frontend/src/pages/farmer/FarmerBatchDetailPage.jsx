@@ -282,7 +282,10 @@ export function FarmerBatchDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Sản phẩm</p>
-                  <p className="font-headline text-lg font-bold text-white">{batch?.productName ?? "Không rõ"}</p>
+                  <p className="font-headline text-lg font-bold text-white">{batch?.productName ?? "Chưa cập nhật"}</p>
+                  {batch?.productType && (
+                    <p className="text-xs text-emerald-400 mt-0.5">{batch.productType}</p>
+                  )}
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -291,7 +294,7 @@ export function FarmerBatchDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Nông trại</p>
-                  <p className="font-headline text-lg font-bold text-white">{batch?.farmName ?? "Không rõ"}</p>
+                  <p className="font-headline text-lg font-bold text-white">{batch?.farmName ?? "Chưa cập nhật"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -300,7 +303,23 @@ export function FarmerBatchDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Số lượng</p>
-                  <p className="font-headline text-lg font-bold text-emerald-300">{batch?.quantity ?? "Không rõ"}</p>
+                  <p className="font-headline text-lg font-bold text-emerald-300">
+                    {batch?.quantity ?? "Chưa cập nhật"}
+                    {batch?.unit && <span className="text-sm font-normal text-slate-400 ml-1">{batch.unit}</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-emerald-400 shrink-0 border border-slate-700">
+                  <span className="material-symbols-outlined">calendar_month</span>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Ngày thu hoạch</p>
+                  <p className="font-headline text-base font-semibold text-white">
+                    {batch?.harvestDate
+                      ? new Date(batch.harvestDate).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+                      : "Chưa cập nhật"}
+                  </p>
                 </div>
               </div>
             </div>

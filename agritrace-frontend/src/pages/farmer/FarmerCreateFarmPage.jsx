@@ -72,10 +72,6 @@ export function FarmerCreateFarmPage() {
         longitude: form.longitude,
       };
 
-      if (form.description.trim()) {
-        payload.description = form.description.trim();
-      }
-
       await farmService.createFarm(payload);
 
       success(t("farmer.farmCreated"));

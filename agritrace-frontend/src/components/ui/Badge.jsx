@@ -30,6 +30,12 @@ const STATUS_CONFIG = {
     bg: "bg-error-container/30",
     text: "text-on-error-container",
   },
+  COMPROMISED: {
+    label: "Vi phạm toàn vẹn",
+    dot: "bg-error",
+    bg: "bg-error-container/30",
+    text: "text-on-error-container",
+  },
   HARVESTED: {
     label: "Đã thu hoạch",
     dot: "bg-outline",

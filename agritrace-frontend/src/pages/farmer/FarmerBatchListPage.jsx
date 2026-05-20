@@ -20,10 +20,15 @@ export function FarmerBatchListPage() {
   const [batchesPage, setBatchesPage] = useState({ content: [], totalPages: 0, totalElements: 0 });
   const [farmFilter, setFarmFilter] = useState("all");
   const [search, setSearch] = useState(topbarQuery);
-  const [statusFilter, setStatusFilter] = useState("PENDING_INSPECTION");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value);
+    setPage(0);
+  };
 
   useEffect(() => {
     setSearch(topbarQuery);
@@ -152,15 +157,13 @@ export function FarmerBatchListPage() {
 
         <select
           value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setPage(0);
-          }}
+          onChange={handleStatusChange}
           className="bg-slate-50 rounded-xl px-3 py-2 text-sm ghost-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-on-surface"
         >
-          <option value="PENDING_INSPECTION">{t("inspection.awaiting")}</option>
-          <option value="COMPROMISED">COMPROMISED</option>
           <option value="ALL">{t("farmer.filterAllInspections")}</option>
+          <option value="PENDING_INSPECTION">{t("inspection.awaiting")}</option>
+          <option value="INSPECTED">{t("inspection.inspected")}</option>
+          <option value="COMPROMISED">{t("inspection.compromised")}</option>
         </select>
       </div>
 
@@ -179,7 +182,7 @@ export function FarmerBatchListPage() {
                 key={item.id}
                 batchCode={item.batchCode}
                 productName={item.productName}
-                status={item.status}
+                status={item.inspectionStatus || item.status}
                 updatedAt={item.updatedAt}
                 detailTo={`/farmer/batches/${encodeURIComponent(item.batchCode)}`}
               />

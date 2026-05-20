@@ -48,6 +48,7 @@ message UserResponse {
   bool active = 8;
   string created_at = 9;
   agritrace.common.Status status = 10;
+  string wallet_address = 11;
 }
 
 message UserListResponse {

@@ -22,6 +22,9 @@ public class Batch {
     
     @Column(name = "product_name", nullable = false)
     private String productName;
+
+    @Column(name = "product_id")
+    private UUID productId;
     
     @Column(name = "product_type")
     private String productType;
@@ -29,7 +32,7 @@ public class Batch {
     @Column(name = "harvest_date")
     private LocalDateTime harvestDate;
     
-    private Integer quantity;
+    private Double quantity;
     
     private String unit;
     

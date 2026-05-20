@@ -37,12 +37,23 @@ import java.util.UUID;
 public class BatchResponse {
     
     private UUID id;
+    private UUID productId;
     private UUID farmId;
     private String batchCode;
     private String farmName;      // Display name of farm
     private String productName;   // Display name of product
+    private String productType;   // Product type / category from batch record
     private Double quantity;
+    /**
+     * Unit of measurement for this batch (at Batch level — business decision).
+     * Examples: kg, tấn, thùng. Defaults to "kg" if not specified.
+     */
+    private String unit;
+    /** Harvest date — when the batch was harvested. */
+    private LocalDateTime harvestDate;
     private BatchStatus status;
+    /** Whether this batch has been flagged as compromised (integrity violation). */
+    private Boolean isCompromised;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

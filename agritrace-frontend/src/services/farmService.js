@@ -19,28 +19,13 @@ export const farmService = {
   },
 
   async getAllFarmsPage({ page = 0, size = 20, q = "", sort = "updatedAt,desc" } = {}) {
-    try {
-      const response = await apiClient.get("/api/v1/farms");
-      let allFarms = unwrapApiResponse(response);
-      if (!Array.isArray(allFarms)) allFarms = [];
-
-      if (q) {
-        const qLower = q.toLowerCase();
-        allFarms = allFarms.filter((f) => f.name?.toLowerCase().includes(qLower));
-      }
-
-      allFarms.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-      const start = page * size;
-      const content = allFarms.slice(start, start + size);
-      return {
-        content,
-        totalElements: allFarms.length,
-        totalPages: Math.ceil(allFarms.length / size),
-      };
-    } catch (err) {
-      console.error("Failed to fetch farms:", err);
-      throw err;
-    }
+    const params = new URLSearchParams({
+      page: String(page),
+      size: String(size),
+      q,
+      sort,
+    });
+    const response = await apiClient.get(`/api/v1/farms/page?${params.toString()}`);
+    return unwrapApiResponse(response);
   },
 };

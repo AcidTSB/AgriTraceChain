@@ -40,7 +40,7 @@ import { NotFoundPage } from "../pages/shared/NotFoundPage";
 import { SettingsPage } from "../pages/shared/SettingsPage";
 import { RoleGuard } from "./RoleGuard";
 
-const router = createBrowserRouter(
+export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route element={<PublicLayout />}>

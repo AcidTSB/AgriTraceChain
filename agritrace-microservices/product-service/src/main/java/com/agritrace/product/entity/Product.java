@@ -23,7 +23,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "products", indexes = {
-    @Index(name = "idx_products_name", columnList = "name")
+    @Index(name = "idx_products_name", columnList = "name"),
+    @Index(name = "idx_products_sku", columnList = "sku"),
+    @Index(name = "idx_products_category", columnList = "category")
 })
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -43,6 +45,29 @@ public class Product {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    /**
+     * SKU — Stock Keeping Unit.
+     * Manually assigned by Admin (e.g. AT-TOM-001).
+     * Nullable: not required on creation, can be added later.
+     */
+    @Column(name = "sku", unique = true, length = 50)
+    private String sku;
+
+    /**
+     * Product category for display and filtering.
+     * Examples: Rau củ, Trái cây, Ngũ cốc, Thủy sản, Cây công nghiệp.
+     */
+    @Column(name = "category", length = 100)
+    private String category;
+
+    /**
+     * Soft activation flag for traceability catalog governance.
+     * True = selectable in admin/farmer UI. False = suspended.
+     */
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

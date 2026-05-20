@@ -3,6 +3,7 @@ package com.agritrace.product.service;
 import com.agritrace.common.exception.ResourceNotFoundException;
 import com.agritrace.product.dto.CreateProductRequest;
 import com.agritrace.product.dto.ProductResponse;
+import com.agritrace.product.dto.UpdateProductRequest;
 import com.agritrace.product.entity.Product;
 import com.agritrace.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,16 +44,65 @@ public class ProductService {
 
         // Build product entity
         Product product = Product.builder()
-                .name(request.getName())
-                .description(request.getDescription())
+                .name(request.getName().trim())
+                .description(normalizeNullableText(request.getDescription()))
+                .sku(normalizeNullableText(request.getSku()))
+                .category(normalizeNullableText(request.getCategory()))
+                .isActive(request.getIsActive() == null ? true : request.getIsActive())
                 .build();
 
         // Save (createdAt and updatedAt auto-populated by JPA Auditing)
         Product savedProduct = productRepository.save(product);
 
-        log.info("Product created successfully with ID: {}", savedProduct.getId());
+        log.info("Product created successfully with ID: {}, SKU: {}, Category: {}",
+                savedProduct.getId(), savedProduct.getSku(), savedProduct.getCategory());
 
         return mapToResponse(savedProduct);
+    }
+
+    /**
+     * Update product metadata or activation flag.
+     * - Activation-only patch: payload contains only isActive.
+     * - Catalog update: requires name and overwrites nullable text fields.
+     */
+    @Transactional
+    public ProductResponse updateProduct(UUID id, UpdateProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+
+        boolean activationOnly = request.getIsActive() != null
+                && request.getName() == null
+                && request.getDescription() == null
+                && request.getSku() == null
+                && request.getCategory() == null;
+
+        if (!activationOnly) {
+            if (request.getName() == null) {
+                throw new IllegalArgumentException("Product name is required for catalog updates");
+            }
+            String normalizedName = request.getName().trim();
+            if (normalizedName.isBlank()) {
+                throw new IllegalArgumentException("Product name cannot be blank");
+            }
+            product.setName(normalizedName);
+            product.setDescription(normalizeNullableText(request.getDescription()));
+            product.setSku(normalizeNullableText(request.getSku()));
+            product.setCategory(normalizeNullableText(request.getCategory()));
+        }
+
+        if (request.getIsActive() != null) {
+            product.setIsActive(request.getIsActive());
+        }
+
+        Product saved = productRepository.save(product);
+        return mapToResponse(saved);
+    }
+
+    @Transactional
+    public void deleteProduct(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+        productRepository.delete(product);
     }
 
     /**
@@ -105,8 +155,19 @@ public class ProductService {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
+                .sku(product.getSku())
+                .category(product.getCategory())
+                .isActive(product.getIsActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
+    }
+
+    private String normalizeNullableText(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isBlank() ? null : normalized;
     }
 }

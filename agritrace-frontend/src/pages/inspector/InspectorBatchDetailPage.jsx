@@ -293,8 +293,29 @@ export function InspectorBatchDetailPage() {
           <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Đánh giá kiểm định</p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Lô {batch?.batchCode}</h1>
           <p className="mt-2 text-sm text-slate-600">
-            Sản phẩm: {batch?.productName || "Không rõ"} | Nông trại: {batch?.farmName || "Không rõ"}
+            Sản phẩm: <span className="font-medium">{batch?.productName ?? "Chưa cập nhật"}</span>
+            {batch?.productType && <span className="text-slate-400"> · {batch.productType}</span>}
+            {" | "}
+            Nông trại: <span className="font-medium">{batch?.farmName ?? "Chưa cập nhật"}</span>
           </p>
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">scale</span>
+              {batch?.quantity ?? "?"}{batch?.unit ? ` ${batch.unit}` : ""}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">calendar_month</span>
+              Thu hoạch: {batch?.harvestDate
+                ? new Date(batch.harvestDate).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+                : "Chưa cập nhật"}
+            </span>
+            {batch?.isCompromised && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-700">
+                <span className="material-symbols-outlined text-[12px]">warning</span>
+                Tính toàn vẹn bị vi phạm
+              </span>
+            )}
+          </div>
         </div>
 
         <Link to="/inspector/review">

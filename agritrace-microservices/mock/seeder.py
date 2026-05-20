@@ -16,7 +16,6 @@ except ImportError:
 
 BASE_URL = "http://localhost:8080/api/v1"
 faker = Faker("vi_VN")
-PRODUCT_TYPE_SAFE_MAX_LEN = 96
 
 
 ACCOUNTS = {
@@ -47,6 +46,8 @@ ACCOUNTS = {
 PRODUCT_CATALOG = [
     {
         "name": "Hass Avocado",
+        "sku": "AT-AVO-001",
+        "category": "Trái cây",
         "variety": "Hass",
         "grade": "Premium Grade A",
         "description": "Bo huu co canh tac theo quy trinh ben vung, theo doi day du tu trong den thu hoach.",
@@ -54,6 +55,8 @@ PRODUCT_CATALOG = [
     },
     {
         "name": "Organic Tomato",
+        "sku": "AT-TOM-002",
+        "category": "Rau củ",
         "variety": "Ruby Cluster",
         "grade": "Grade A",
         "description": "Ca chua huu co tuoi, ghi nhat ky moi cong doan tu giong den dong goi.",
@@ -61,6 +64,8 @@ PRODUCT_CATALOG = [
     },
     {
         "name": "Jasmine Rice",
+        "sku": "AT-RIC-003",
+        "category": "Ngũ cốc",
         "variety": "ST25",
         "grade": "Export Premium",
         "description": "Gao chat luong cao, duoc quan ly theo lo va doi soat dinh ky boi inspector.",
@@ -68,6 +73,8 @@ PRODUCT_CATALOG = [
     },
     {
         "name": "Dragon Fruit",
+        "sku": "AT-DRA-004",
+        "category": "Trái cây",
         "variety": "Red Flesh",
         "grade": "VietGAP",
         "description": "Thanh long canh tac tai vung nang cao, theo doi sat sao qua tung trace event.",
@@ -75,6 +82,8 @@ PRODUCT_CATALOG = [
     },
     {
         "name": "Arabica Coffee",
+        "sku": "AT-COF-005",
+        "category": "Cây công nghiệp",
         "variety": "Arabica Catuai",
         "grade": "Specialty",
         "description": "Ca phe thu hoach chon loc, bao gom du lieu do am va thong so bao quan.",
@@ -282,15 +291,8 @@ def register_and_login(session, account):
 
 
 def build_product_description(catalog_item):
-    # product-service currently persists Product.description into batches.product_type (varchar(100)).
-    # Keep description compact to prevent 500 on batch insert due to overflow.
-    compact = (
-        f"MOCK|{catalog_item['variety']}|{catalog_item['grade']}|"
-        f"{catalog_item['name']}"
-    )
-    if len(compact) <= PRODUCT_TYPE_SAFE_MAX_LEN:
-        return compact
-    return compact[:PRODUCT_TYPE_SAFE_MAX_LEN]
+    # Keep full mock metadata so frontend parsing and product DTO stay aligned.
+    return str(catalog_item.get("description") or "").strip()
 
 
 def ensure_products(session, admin_headers):
@@ -307,10 +309,7 @@ def ensure_products(session, admin_headers):
                     existing_by_name[item["name"]] = item
 
     def existing_product_is_batch_safe(item):
-        desc = item.get("description")
-        if not isinstance(desc, str):
-            return False
-        return len(desc) <= PRODUCT_TYPE_SAFE_MAX_LEN
+        return isinstance(item, dict) and bool(item.get("id"))
 
     products = []
     for catalog_item in PRODUCT_CATALOG:
@@ -331,6 +330,9 @@ def ensure_products(session, admin_headers):
                     "id": current.get("id"),
                     "name": current.get("name"),
                     "baseName": catalog_item["name"],
+                    "sku": catalog_item.get("sku"),
+                    "category": catalog_item.get("category"),
+                    "isActive": current.get("isActive", True),
                     "variety": catalog_item["variety"],
                     "grade": catalog_item["grade"],
                     "imageUrl": catalog_item["imageUrl"],
@@ -351,6 +353,8 @@ def ensure_products(session, admin_headers):
         create_payload = {
             "name": target_name,
             "description": build_product_description(catalog_item),
+            "sku": catalog_item.get("sku"),
+            "category": catalog_item.get("category"),
         }
         create_res = session.post(
             f"{BASE_URL}/products",
@@ -370,6 +374,9 @@ def ensure_products(session, admin_headers):
                 "id": data.get("id"),
                 "name": target_name,
                 "baseName": catalog_item["name"],
+                "sku": catalog_item.get("sku"),
+                "category": catalog_item.get("category"),
+                "isActive": data.get("isActive", True),
                 "variety": catalog_item["variety"],
                 "grade": catalog_item["grade"],
                 "imageUrl": catalog_item["imageUrl"],
@@ -447,11 +454,13 @@ def create_batch(session, farmer_headers, farm, product, quantity, harvest_date)
         "batchCode": data.get("batchCode"),
         "farmId": farm["id"],
         "farmName": farm["name"],
-        "productId": product["id"],
+        "productId": data.get("productId") or product["id"],
         "productName": product["name"],
-        "quantity": float(quantity),
+        "productType": data.get("productType"),
+        "quantity": float(data.get("quantity") if data.get("quantity") is not None else quantity),
+        "unit": data.get("unit"),
         "status": data.get("status"),
-        "harvestDate": harvest_date,
+        "harvestDate": data.get("harvestDate") or harvest_date,
     }
 
 

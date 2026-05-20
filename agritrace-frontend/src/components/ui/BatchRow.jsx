@@ -13,7 +13,7 @@ function accentColor(status = "") {
   const s = status.toUpperCase();
   if (s === "INSPECTED" || s === "APPROVED" || s === "COMPLETED") return "bg-primary";
   if (s === "PENDING_INSPECTION") return "bg-tertiary";
-  if (s === "REJECTED") return "bg-error";
+  if (s === "REJECTED" || s === "COMPROMISED") return "bg-error";
   return "bg-surface-variant";
 }
 

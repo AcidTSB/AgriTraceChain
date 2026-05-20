@@ -142,6 +142,29 @@ public class BatchController {
     }
 
     /**
+     * Get batches by product ID.
+     *
+     * Authorization: ADMIN only
+     */
+    @GetMapping(params = "productId")
+    public ResponseEntity<ApiResponse<List<BatchResponse>>> getBatchesByProduct(
+            @RequestParam UUID productId,
+            @RequestHeader(value = "X-User-Role", required = false) String role) {
+        if (!hasRole(role, "ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can query batches by product");
+        }
+
+        List<BatchResponse> response = batchService.getBatchesByProduct(productId);
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Product batches retrieved successfully",
+                        response
+                )
+        );
+    }
+
+    /**
      * Transactional pagination with filters and default sort updatedAt DESC.
      */
     @GetMapping("/page")

@@ -236,6 +236,8 @@
     "verified": "Đã xác minh",
     "partial": "Một phần",
     "awaiting": "Chờ kiểm định",
+    "inspected": "Đã kiểm định",
+    "compromised": "Bị xâm phạm",
     "none": "Chưa có"
   },
   "inspector": {

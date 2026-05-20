@@ -47,9 +47,9 @@ public class TraceLog {
     @Column(name = "quantity", precision = 18, scale = 3)
     private BigDecimal quantity;
     
-    private String latitude;
+    private Double latitude;
     
-    private String longitude;
+    private Double longitude;
 
     @Column(name = "distance_from_farm_km", precision = 10, scale = 3)
     private BigDecimal distanceFromFarmKm;

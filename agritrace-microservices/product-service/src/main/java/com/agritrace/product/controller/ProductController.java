@@ -3,6 +3,7 @@ package com.agritrace.product.controller;
 import com.agritrace.common.dto.ApiResponse;
 import com.agritrace.product.dto.CreateProductRequest;
 import com.agritrace.product.dto.ProductResponse;
+import com.agritrace.product.dto.UpdateProductRequest;
 import com.agritrace.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ import java.util.UUID;
  * Endpoints:
  * - POST /api/v1/products - Create product (ADMIN only)
  * - GET /api/v1/products - Get all products (Public)
+ * - PUT /api/v1/products/{id} - Update product (ADMIN only)
+ * - DELETE /api/v1/products/{id} - Delete product (ADMIN only)
  * - GET /api/v1/products/{id} - Get product by ID (Public)
  * 
  * Authorization:
@@ -131,6 +134,46 @@ public class ProductController {
                         HttpStatus.OK.value(),
                         "Product retrieved successfully",
                         response
+                )
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateProductRequest request,
+            @RequestHeader(value = "X-User-Role", required = false) String role) {
+
+        if (!hasRole(role, "ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can update products");
+        }
+
+        ProductResponse response = productService.updateProduct(id, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Product updated successfully",
+                        response
+                )
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(
+            @PathVariable UUID id,
+            @RequestHeader(value = "X-User-Role", required = false) String role) {
+
+        if (!hasRole(role, "ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can delete products");
+        }
+
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Product deleted successfully",
+                        null
                 )
         );
     }

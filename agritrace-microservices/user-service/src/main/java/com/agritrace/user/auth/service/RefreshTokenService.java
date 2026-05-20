@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.UUID;
 
 /**
  * RefreshTokenService
@@ -40,27 +39,19 @@ public class RefreshTokenService {
     private long refreshTokenExpiration;
 
     /**
-     * Create new refresh token for user
-     * 
-     * Process:
-     * 1. Generate UUID as token string (secure, unpredictable)
-     * 2. Calculate expiration time
-     * 3. Save to database
-     * 4. Return RefreshToken entity
-     * 
-     * Note: This creates the DB record, but the actual JWT refresh token
-     * is generated separately by JwtService using this record's token value
-     * 
-     * @param user User who will own this token
+     * Persist a refresh token for user.
+     *
+     * @param user User who owns this token
+     * @param tokenValue refresh token string returned to client
      * @return Created RefreshToken entity
      */
     @Transactional
-    public RefreshToken createRefreshToken(User user) {
+    public RefreshToken createRefreshToken(User user, String tokenValue) {
         log.debug("Creating refresh token for user: {}", user.getUsername());
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
-                .token(UUID.randomUUID().toString())  // Unique token identifier
+                .token(tokenValue)
                 .expiryDate(Instant.now().plusMillis(refreshTokenExpiration))
                 .revoked(false)
                 .createdAt(Instant.now())

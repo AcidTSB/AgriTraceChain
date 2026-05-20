@@ -20,8 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,6 +50,9 @@ public class BatchServiceImpl implements BatchService {
     private final BatchRepository batchRepository;
     
     private final ProductRepository productRepository;
+    
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * Create a new batch - Phase 3.1
@@ -80,10 +85,11 @@ public class BatchServiceImpl implements BatchService {
                 .farmLatitude(request.getFarmLatitude())
                 .farmLongitude(request.getFarmLongitude())
                 .productName(product.getName())
-                .productType(product.getDescription()) // Using description as type
-                .quantity(request.getQuantity().intValue()) // Convert to Integer
-                .unit("kg") // Default unit - TODO: Add unit field to Product entity
-                .ownerId(request.getOwnerId() != null ? request.getOwnerId() : null) // From Gateway header
+                .productId(product.getId())
+                .productType(resolveProductType(product))
+                .quantity(request.getQuantity())
+                .unit(request.getUnit() != null ? request.getUnit() : "kg") // Default fallback to kg
+                .ownerId(request.getOwnerId() != null ? request.getOwnerId() : null)
                 .ownerName("Farmer") // TODO: Get from User Service via gRPC
             .harvestDate(parseHarvestDate(request.getHarvestDate()))
                 .isCompromised(false)
@@ -93,6 +99,22 @@ public class BatchServiceImpl implements BatchService {
 
         log.info("Batch created successfully - Code: {}, Product: {}, Quantity: {}", 
                  savedBatch.getBatchCode(), product.getName(), savedBatch.getQuantity());
+
+        try {
+            java.util.Map<String, Object> auditMsg = new java.util.LinkedHashMap<>();
+            auditMsg.put("batchId", savedBatch.getId());
+            auditMsg.put("batchCode", savedBatch.getBatchCode());
+            auditMsg.put("operation", "CREATE_BATCH");
+            auditMsg.put("actorId", request.getOwnerId());
+            auditMsg.put("actorRole", "FARMER");
+            auditMsg.put("actorFacilityId", request.getFarmId());
+            auditMsg.put("afterSnapshot", savedBatch);
+            auditMsg.put("timestamp", LocalDateTime.now().toString());
+            
+            kafkaTemplate.send("audit-ledger-topic", savedBatch.getBatchCode(), objectMapper.writeValueAsString(auditMsg));
+        } catch (Exception ex) {
+            log.warn("Failed to publish audit event for batch creation: {}", ex.getMessage());
+        }
 
         return mapToResponse(savedBatch);
     }
@@ -132,6 +154,15 @@ public class BatchServiceImpl implements BatchService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<BatchResponse> getBatchesByProduct(UUID productId) {
+        log.debug("Fetching batches for product: {}", productId);
+        return batchRepository.findByProductId(productId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public BatchResponse getBatchById(UUID id) {
         log.debug("Fetching batch with ID: {}", id);
         
@@ -162,6 +193,13 @@ public class BatchServiceImpl implements BatchService {
         return "BATCH-" + datePrefix + "-" + randomSuffix;
     }
 
+    private String resolveProductType(Product product) {
+        if (product.getCategory() != null && !product.getCategory().isBlank()) {
+            return product.getCategory().trim();
+        }
+        return product.getName();
+    }
+
     private LocalDateTime parseHarvestDate(String harvestDate) {
         if (harvestDate == null || harvestDate.isBlank()) {
             return LocalDateTime.now();
@@ -185,7 +223,8 @@ public class BatchServiceImpl implements BatchService {
     // }
 
     /**
-     * Map Batch entity to BatchResponse DTO
+     * Map Batch entity to BatchResponse DTO.
+     * Exposes all meaningful fields including unit, harvestDate, productType, isCompromised.
      */
     private BatchResponse mapToResponse(Batch batch) {
         BatchStatus status = Boolean.TRUE.equals(batch.getIsCompromised())
@@ -194,12 +233,17 @@ public class BatchServiceImpl implements BatchService {
         
         return BatchResponse.builder()
                 .id(batch.getId())
+                .productId(batch.getProductId())
                 .farmId(batch.getFacilityId())
                 .batchCode(batch.getBatchCode())
                 .farmName(batch.getFacilityName())
                 .productName(batch.getProductName())
-                .quantity(batch.getQuantity() != null ? batch.getQuantity().doubleValue() : 0.0)
-                .status(status) // Can be null for compromised batches
+                .productType(batch.getProductType())
+                .quantity(batch.getQuantity())
+                .unit(batch.getUnit())
+                .harvestDate(batch.getHarvestDate())
+                .status(status)
+                .isCompromised(batch.getIsCompromised())
                 .createdAt(batch.getCreatedAt())
                 .updatedAt(batch.getUpdatedAt())
                 .build();

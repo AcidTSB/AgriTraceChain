@@ -29,8 +29,7 @@ function RegisterFacilityModal({ onClose, onRegistered }) {
       const payload = {
         name: form.name.trim(),
         location: form.location.trim(),
-        region: form.region.trim(),
-        certificationCode: form.certCode.trim(),
+        certificateCode: form.certCode.trim(),
       };
       const created = await farmService.createFarm(payload);
       toast.success(t("admin.facilityRegistered"));
@@ -152,11 +151,17 @@ export function AdminFacilityManagementPage() {
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const [showRegister, setShowRegister] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+
+  function handleApplyFilter() {
+    setAppliedSearch(searchInput.trim());
+    setPage(0);
+  }
 
   useEffect(() => {
     let active = true;
@@ -167,7 +172,7 @@ export function AdminFacilityManagementPage() {
         const payload = await farmService.getAllFarmsPage({
           page,
           size: PAGE_SIZE,
-          q: search.trim(),
+          q: appliedSearch,
           sort: "updatedAt,desc",
         });
         if (active) {
@@ -189,7 +194,7 @@ export function AdminFacilityManagementPage() {
       active = false;
       clearTimeout(timer);
     };
-  }, [page, search, t]);
+  }, [appliedSearch, page, t]);
 
   const mappedFacilities = useMemo(
     () =>
@@ -255,29 +260,32 @@ export function AdminFacilityManagementPage() {
 
       <div className="grid gap-5 md:gap-6 lg:grid-cols-3">
         <div className="space-y-3 sm:space-y-4 lg:col-span-2">
-          <div className="flex flex-col gap-3 rounded-xl bg-surface-container-lowest p-3 ghost-border ambient-shadow sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3">
+          <form
+            className="flex flex-col gap-3 rounded-xl bg-surface-container-lowest p-3 ghost-border ambient-shadow sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleApplyFilter();
+            }}
+          >
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <span className="material-symbols-outlined shrink-0 text-on-surface-variant">search</span>
-               <input
-                 type="text"
-                 value={search}
-                onChange={(event) => {
-                  setSearch(event.target.value);
-                  setPage(0);
-                }}
-                 placeholder={t("admin.searchFacilities")}
-                 className="w-full border-none bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-0"
-               />
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={(event) => setSearchInput(event.target.value)}
+                  placeholder={t("admin.searchFacilities")}
+                  className="w-full border-none bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-0"
+                />
             </div>
             <div className="hidden h-6 w-px bg-outline-variant/30 sm:block" />
             <button
-              type="button"
+              type="submit"
               className="inline-flex w-full items-center justify-center gap-1 rounded-lg bg-surface-container px-3 py-2 text-sm text-on-surface-variant transition-colors hover:text-primary sm:w-auto sm:bg-transparent sm:p-0"
             >
               <span className="material-symbols-outlined text-[18px]">filter_list</span>
               {t("admin.filter")}
             </button>
-          </div>
+          </form>
 
           {mappedFacilities.length === 0 ? (
             <section className="rounded-xl bg-surface-container-lowest p-5 ghost-border ambient-shadow sm:p-6">
@@ -379,12 +387,12 @@ export function AdminFacilityManagementPage() {
       {showRegister && (
         <RegisterFacilityModal
           onClose={() => setShowRegister(false)}
-          onRegistered={(created) => {
-            setShowRegister(false);
-            if (created && page === 0 && search.trim() === "") {
-              setFacilities((prev) => [created, ...prev].slice(0, PAGE_SIZE));
-              setTotalElements((prev) => prev + 1);
-            } else {
+            onRegistered={(created) => {
+              setShowRegister(false);
+              if (created && page === 0 && appliedSearch === "") {
+                setFacilities((prev) => [created, ...prev].slice(0, PAGE_SIZE));
+                setTotalElements((prev) => prev + 1);
+              } else {
               setPage(0);
             }
           }}

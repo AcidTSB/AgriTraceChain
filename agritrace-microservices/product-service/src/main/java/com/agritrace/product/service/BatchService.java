@@ -48,6 +48,12 @@ public interface BatchService {
     List<BatchResponse> getBatchesByFarm(UUID farmId);
 
     /**
+     * Find batches linked to a product ID.
+     * Used by admin catalog safeguards (delete/suspend checks).
+     */
+    List<BatchResponse> getBatchesByProduct(UUID productId);
+
+    /**
      * Get batch by ID (legacy method)
      *
      * @param id batch ID

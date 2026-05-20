@@ -97,11 +97,10 @@ public class AuthService {
             accessClaims.put("role", user.getRole().name());
             String accessToken = jwtService.generateAccessToken(accessClaims, userDetails);
 
-            // Step 4: Create refresh token in database
-            com.agritrace.auth.entity.RefreshToken refreshTokenEntity = refreshTokenService.createRefreshToken(user);
-
-            // Step 5: Generate JWT refresh token using the database token
+            // Step 4: Generate JWT refresh token
             String refreshToken = jwtService.generateRefreshToken(userDetails);
+            // Step 5: Persist the exact refresh token returned to client
+            refreshTokenService.createRefreshToken(user, refreshToken);
 
             log.info("Login successful for user: {} with role: {}", user.getUsername(), user.getRole());
 
@@ -161,8 +160,7 @@ public class AuthService {
 
             // Step 2: Verify refresh token exists in database and is valid
             // This will throw exception if token invalid, expired, or revoked
-            com.agritrace.auth.entity.RefreshToken oldRefreshToken = 
-                    refreshTokenService.verifyToken(refreshToken);
+            refreshTokenService.verifyToken(refreshToken);
 
             // Step 3: Load user
             User user = userRepository.findByUsername(username)
@@ -186,11 +184,10 @@ public class AuthService {
             log.debug("Old refresh token revoked for security");
 
             // Step 7: Create new refresh token in database
-            com.agritrace.auth.entity.RefreshToken newRefreshTokenEntity = 
-                    refreshTokenService.createRefreshToken(user);
-
-            // Step 8: Generate JWT for new refresh token
+            // Step 7: Generate JWT for new refresh token
             String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+            // Step 8: Persist rotated refresh token
+            refreshTokenService.createRefreshToken(user, newRefreshToken);
 
             log.info("Tokens rotated successfully for user: {}", username);
 

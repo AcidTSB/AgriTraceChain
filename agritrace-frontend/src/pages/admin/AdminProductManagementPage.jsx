@@ -29,7 +29,7 @@ function ModalShell({ children }) {
 function AddProductModal({ onClose, onCreated }) {
   const { t } = useTranslation();
   const toast = useToast();
-  const [form, setForm] = useState({ name: "", description: "", variety: "", grade: "" });
+  const [form, setForm] = useState({ name: "", description: "", variety: "", grade: "", sku: "", category: "" });
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -48,7 +48,12 @@ function AddProductModal({ onClose, onCreated }) {
       // Build description string that productCatalog.js can parse
       const descParts = [form.variety, form.grade].filter(Boolean);
       const description = descParts.length ? descParts.join(" | ") : form.description;
-      const created = await productService.createProduct({ name: form.name.trim(), description });
+      const created = await productService.createProduct({
+        name: form.name.trim(),
+        description,
+        sku: form.sku.trim() || null,
+        category: form.category.trim() || null,
+      });
       toast.success(t("admin.productCreated"));
       onCreated(created);
     } catch (err) {
@@ -83,25 +88,32 @@ function AddProductModal({ onClose, onCreated }) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-                {t("admin.varietyGrade").split(" / ")[0]}
+                SKU <span className="normal-case text-on-surface-variant/60">(Mã sản phẩm)</span>
               </label>
               <input
-                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                value={form.variety}
-                onChange={(e) => setForm((f) => ({ ...f, variety: e.target.value }))}
-                placeholder="Ví dụ: Arabica"
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.sku}
+                onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
+                placeholder="VD: AT-TOM-002"
               />
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-                {t("admin.varietyGrade").split(" / ")[1] ?? "Phân hạng"}
+                Danh mục
               </label>
-              <input
-                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                value={form.grade}
-                onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
-                placeholder="Ví dụ: Grade A"
-              />
+              <select
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+              >
+                <option value="">-- Chọn danh mục --</option>
+                <option value="Rau củ">Rau củ</option>
+                <option value="Trái cây">Trái cây</option>
+                <option value="Ngũ cốc">Ngũ cốc</option>
+                <option value="Thủy sản">Thủy sản</option>
+                <option value="Cây công nghiệp">Cây công nghiệp</option>
+                <option value="Gia súc / Gia cầm">Gia súc / Gia cầm</option>
+              </select>
             </div>
           </div>
           <div>
@@ -144,6 +156,8 @@ function EditProductModal({ product, onClose, onUpdated }) {
     variety: meta.variety === "N/A" ? "" : meta.variety,
     grade: meta.grade === "N/A" ? "" : meta.grade,
     description: product.description ?? "",
+    sku: product.sku ?? "",
+    category: product.category ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
@@ -155,7 +169,12 @@ function EditProductModal({ product, onClose, onUpdated }) {
     try {
       const descParts = [form.variety, form.grade].filter(Boolean);
       const description = descParts.length ? descParts.join(" | ") : form.description;
-      const updated = await productService.updateProduct(product.id, { name: form.name.trim(), description });
+      const updated = await productService.updateProduct(product.id, {
+        name: form.name.trim(),
+        description,
+        sku: form.sku.trim() || null,
+        category: form.category.trim() || null,
+      });
       toast.success(t("admin.productUpdated"));
       onUpdated(updated ?? { ...product, name: form.name.trim(), description });
     } catch (err) {
@@ -189,23 +208,32 @@ function EditProductModal({ product, onClose, onUpdated }) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-                Giống
+                SKU <span className="normal-case text-on-surface-variant/60">(Mã sản phẩm)</span>
               </label>
               <input
-                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                value={form.variety}
-                onChange={(e) => setForm((f) => ({ ...f, variety: e.target.value }))}
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.sku}
+                onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
+                placeholder="VD: AT-TOM-002"
               />
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-                Phân hạng
+                Danh mục
               </label>
-              <input
-                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                value={form.grade}
-                onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
-              />
+              <select
+                className="w-full rounded-lg border border-outline-variant/40 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+              >
+                <option value="">-- Chọn danh mục --</option>
+                <option value="Rau củ">Rau củ</option>
+                <option value="Trái cây">Trái cây</option>
+                <option value="Ngũ cốc">Ngũ cốc</option>
+                <option value="Thủy sản">Thủy sản</option>
+                <option value="Cây công nghiệp">Cây công nghiệp</option>
+                <option value="Gia súc / Gia cầm">Gia súc / Gia cầm</option>
+              </select>
             </div>
           </div>
           <div>
@@ -534,12 +562,10 @@ export function AdminProductManagementPage() {
           </Card>
         ) : (
           <section className="min-h-[460px] rounded-xl bg-surface-container-low p-2 ambient-shadow">
-            <div className="hidden grid-cols-[minmax(260px,3fr)_minmax(220px,2fr)_minmax(120px,1.2fr)_minmax(190px,1.7fr)_90px] gap-4 border-b border-outline-variant/30 px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant lg:grid">
-              <div>{t("admin.productIdentity")}</div>
+            <div className="hidden md:grid grid-cols-5 gap-4 border-b border-outline-variant/30 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
+              <div className="col-span-2">{t("admin.productIdentity")}</div>
               <div>{t("admin.varietyGrade")}</div>
-              <div>{t("admin.skuCode")}</div>
-              <div>{t("admin.status")}</div>
-              <div className="text-right">{t("admin.actions")}</div>
+              <div className="col-span-2">{t("admin.status")} / {t("admin.actions")}</div>
             </div>
 
             <div className="flex flex-col gap-2 p-2 md:gap-3">
@@ -548,6 +574,8 @@ export function AdminProductManagementPage() {
                 const subtitle = metadata.summary || `${t("admin.productId")}: ${String(product.id).slice(0, 8)}`;
                 const glyph = productGlyphs[index % productGlyphs.length];
                 const isActive = product.isActive !== false;
+                const displayName = displayProductName(product.name);
+                const varietyGradeText = `${metadata.variety} | ${metadata.grade}`;
 
                 return (
                   <article
@@ -555,59 +583,113 @@ export function AdminProductManagementPage() {
                     className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-3.5 shadow-sm transition-colors hover:bg-surface-bright sm:p-4"
                   >
                     <div className={`absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full ${isActive ? "bg-primary" : "bg-slate-300"}`} />
-                    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(260px,3fr)_minmax(220px,2fr)_minmax(120px,1.2fr)_minmax(190px,1.7fr)_90px] lg:items-center">
-                      <div className="flex min-w-0 items-center gap-3 pl-1.5 sm:gap-4 sm:pl-2">
+                    
+                    {/* Mobile Layout */}
+                    <div className="md:hidden space-y-3">
+                      <div className="flex min-w-0 items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
                           <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
                         </div>
-                        <div className="min-w-0">
-                          <h2 className="truncate font-headline text-sm font-semibold text-on-surface sm:text-base">
-                            {displayProductName(product.name)}
+                        <div className="min-w-0 flex-1">
+                          <h2 className="line-clamp-2 font-headline text-sm font-semibold text-on-surface break-words" title={displayName}>
+                            {displayName}
                           </h2>
-                          <p className="mt-0.5 truncate text-xs text-on-surface-variant">{subtitle}</p>
+                          <p className="line-clamp-1 text-xs text-on-surface-variant break-words" title={subtitle}>{subtitle}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-between gap-3 pl-1.5">
+                        <div>
+                          <p className="text-xs text-on-surface-variant mb-1">Loại / Cấp</p>
+                          <p className="text-sm text-on-surface line-clamp-1 break-words" title={varietyGradeText}>{varietyGradeText}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-on-surface-variant mb-1">Mã</p>
+                          <p className="text-xs font-mono text-on-surface">{product.sku ?? "–"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 pl-1.5">
+                        {isActive ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-secondary-container">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
+                            {t("admin.traceabilityActive")}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                            {t("admin.traceabilitySuspended")}
+                          </span>
+                        )}
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setEditTarget(product)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+                            aria-label={t("admin.editProduct")}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                          </button>
+                          <RowDropdown
+                            product={product}
+                            open={dropdownOpenId === product.id}
+                            onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
+                            onSuspend={handleSuspend}
+                            onDelete={setDeleteTarget}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden md:grid grid-cols-5 gap-4 items-center">
+                      <div className="col-span-2 flex min-w-0 items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
+                          <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h2 className="line-clamp-2 font-headline text-sm font-semibold text-on-surface break-words" title={displayName}>
+                            {displayName}
+                          </h2>
+                          <p className="line-clamp-1 text-xs text-on-surface-variant break-words" title={subtitle}>{subtitle}</p>
                         </div>
                       </div>
 
-                      <p className="min-w-0 truncate text-sm text-on-surface">
-                        <span className="font-medium">{metadata.variety}</span>
-                        <span className="mx-1 text-outline">|</span>
-                        {metadata.grade}
-                      </p>
-
-                      <p className="text-xs font-mono text-on-surface-variant">
-                        {product.code || t("common.nA")}
-                      </p>
-
-                      <div>
-                        {isActive ? (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-secondary-container sm:text-xs sm:normal-case sm:tracking-normal">
-                              <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
-                              {t("admin.traceabilityActive")}
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs sm:normal-case sm:tracking-normal">
-                              <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                              {t("admin.traceabilitySuspended")}
-                            </span>
-                        )}
+                      <div className="min-w-0">
+                        <p className="line-clamp-2 text-sm text-on-surface break-words" title={varietyGradeText}>
+                          <span className="font-medium">{metadata.variety}</span>
+                          <span className="mx-1 text-outline">|</span>
+                          <span>{metadata.grade}</span>
+                        </p>
                       </div>
 
-                      <div className="flex items-center justify-start gap-2 lg:justify-end">
-                        <button
-                          type="button"
-                          onClick={() => setEditTarget(product)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
-                          aria-label={t("admin.editProduct")}
-                        >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
-                        </button>
-                        <RowDropdown
-                          product={product}
-                          open={dropdownOpenId === product.id}
-                          onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
-                          onSuspend={handleSuspend}
-                          onDelete={setDeleteTarget}
-                        />
+                      <div className="col-span-2 flex items-center justify-between gap-2">
+                        {isActive ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-xs font-semibold text-on-secondary-container">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
+                            {t("admin.traceabilityActive")}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                            {t("admin.traceabilitySuspended")}
+                          </span>
+                        )}
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setEditTarget(product)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+                            aria-label={t("admin.editProduct")}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                          </button>
+                          <RowDropdown
+                            product={product}
+                            open={dropdownOpenId === product.id}
+                            onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
+                            onSuspend={handleSuspend}
+                            onDelete={setDeleteTarget}
+                          />
+                        </div>
                       </div>
                     </div>
                   </article>

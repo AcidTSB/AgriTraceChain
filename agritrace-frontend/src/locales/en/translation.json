@@ -306,6 +306,8 @@
     "verified": "Verified",
     "partial": "Partial",
     "awaiting": "Awaiting inspection",
+    "inspected": "Inspected",
+    "compromised": "Compromised",
     "none": "None"
   },
   "inspector": {

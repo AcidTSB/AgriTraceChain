@@ -58,6 +58,7 @@ public class FarmService {
         Facility facility = Facility.builder()
                 .name(request.getName())
                 .address(request.getLocation())
+                .certificateCode(request.getCertificateCode())
                 .ownerId(ownerId)
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())

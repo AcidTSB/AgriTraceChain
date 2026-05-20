@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { StatCard } from "../../components/ui/StatCard";
 import { Skeleton } from "../../components/ui/Skeleton";
-import { inspectorQueueService } from "../../services/inspectorQueueService";
-import { batchService } from "../../services/batchService";
+import { apiClient, unwrapApiResponse } from "../../services/apiClient";
 import { traceService } from "../../services/traceService";
 
 function isPending(logs) {
@@ -26,19 +25,20 @@ export function InspectorDashboardPage() {
     const load = async () => {
       setLoading(true);
       try {
-        const codes = inspectorQueueService.getCodes();
+        // Fetch ALL batches from the backend (inspector role can access /page endpoint)
+        const response = await apiClient.get("/api/v1/batches/page?page=0&size=200&status=ALL&sort=updatedAt,desc");
+        const payload = unwrapApiResponse(response);
+        const batches = Array.isArray(payload?.content) ? payload.content : [];
+
         const summary = await Promise.all(
-          codes.map(async (code) => {
-            if (!inspectorQueueService.isSupportedCode(code)) {
+          batches.map(async (batch) => {
+            if (batch.isCompromised || batch.status === "COMPROMISED") {
               return "inaccessible";
             }
 
             try {
-              const batch = await batchService.getBatchByCode(code);
-              const batchId = batch?.id;
-              if (!batchId) {
-                return "inaccessible";
-              }
+              const batchId = batch.id;
+              if (!batchId) return "inaccessible";
               const logs = await traceService.getTraceLogsByBatchId(batchId);
               return isPending(logs) ? "pending" : "reviewed";
             } catch {
@@ -50,7 +50,10 @@ export function InspectorDashboardPage() {
         const pending = summary.filter((item) => item === "pending").length;
         const reviewed = summary.filter((item) => item === "reviewed").length;
         const inaccessible = summary.filter((item) => item === "inaccessible").length;
-        setStats({ total: codes.length, pending, reviewed, inaccessible });
+        setStats({ total: batches.length, pending, reviewed, inaccessible });
+      } catch {
+        // If the API call fails, fall back to zeros
+        if (active) setStats({ total: 0, pending: 0, reviewed: 0, inaccessible: 0 });
       } finally {
         if (active) setLoading(false);
       }

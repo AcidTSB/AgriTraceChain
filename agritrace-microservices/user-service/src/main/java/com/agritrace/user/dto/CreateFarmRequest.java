@@ -1,5 +1,6 @@
 package com.agritrace.user.dto;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,11 @@ public class CreateFarmRequest {
 
     private String location;  // Future: This could be expanded to address fields
 
+    private String certificateCode;
+
+    @NotNull(message = "Latitude is required for Geofencing")
     private Double latitude;
 
+    @NotNull(message = "Longitude is required for Geofencing")
     private Double longitude;
 }

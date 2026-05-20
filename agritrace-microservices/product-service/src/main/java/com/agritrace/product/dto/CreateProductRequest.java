@@ -31,4 +31,23 @@ public class CreateProductRequest {
     private String name;
 
     private String description;
+
+    /**
+     * Optional SKU — manually assigned by Admin.
+     * Example: AT-TOM-001
+     * Must be unique across all products if provided.
+     */
+    private String sku;
+
+    /**
+     * Optional product category.
+     * Examples: Rau củ, Trái cây, Ngũ cốc, Thủy sản, Cây công nghiệp
+     */
+    private String category;
+
+    /**
+     * Optional activation flag for admin-managed catalog lifecycle.
+     * Defaults to true when not provided.
+     */
+    private Boolean isActive;
 }
