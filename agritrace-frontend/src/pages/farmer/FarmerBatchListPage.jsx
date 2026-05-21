@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 import { BatchRow } from "../../components/ui/BatchRow";
@@ -8,6 +8,7 @@ import { Skeleton } from "../../components/ui/Skeleton";
 import { StateCard } from "../../components/ui/StateCard";
 import { batchService } from "../../services/batchService";
 import { farmService } from "../../services/farmService";
+import { traceService } from "../../services/traceService";
 
 const PAGE_SIZE = 10;
 
@@ -17,11 +18,13 @@ export function FarmerBatchListPage() {
   const topbarQuery = searchParams.get("q")?.trim() ?? "";
 
   const [farms, setFarms] = useState([]);
-  const [batchesPage, setBatchesPage] = useState({ content: [], totalPages: 0, totalElements: 0 });
+  const [allBatches, setAllBatches] = useState([]);
+  
   const [farmFilter, setFarmFilter] = useState("all");
   const [search, setSearch] = useState(topbarQuery);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(0);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -37,53 +40,101 @@ export function FarmerBatchListPage() {
 
   useEffect(() => {
     let active = true;
-    const loadFarms = async () => {
-      try {
-        const payload = await farmService.getMyFarms();
-        if (active) setFarms(payload);
-      } catch {
-        if (active) setFarms([]);
-      }
-    };
-    loadFarms();
-    return () => {
-      active = false;
-    };
-  }, []);
 
-  useEffect(() => {
-    let active = true;
-    const timer = setTimeout(async () => {
+    const loadData = async () => {
       setLoading(true);
       setError("");
+
       try {
-        const payload = await batchService.getBatchesPage({
-          page,
-          size: PAGE_SIZE,
-          sort: "updatedAt,desc",
-          status: statusFilter,
-          q: search.trim(),
-          farmId: farmFilter === "all" ? undefined : farmFilter,
-        });
+        const nextFarms = await farmService.getMyFarms();
         if (!active) return;
-        setBatchesPage({
-          content: Array.isArray(payload?.content) ? payload.content : [],
-          totalPages: Number(payload?.totalPages ?? 0),
-          totalElements: Number(payload?.totalElements ?? 0),
-        });
+        setFarms(nextFarms);
+
+        if (nextFarms.length > 0) {
+          // Fetch all batches for all farms at once to compute trace log status
+          const farmBatches = await Promise.all(
+            nextFarms.map((farm) => batchService.getBatchesByFarm(farm.id))
+          );
+          const flatBatches = farmBatches.flat();
+
+          // Compute inspection flags
+          const inspectionFlags = await Promise.all(
+            flatBatches.map(async (batch) => {
+              if (batch.isCompromised || batch.status === "COMPROMISED") return false;
+              try {
+                const batchId = batch.id;
+                if (!batchId) return false;
+                const logs = await traceService.getTraceLogsByBatchId(batchId);
+                return logs.some((log) => log.action === "INSPECTION");
+              } catch {
+                return false;
+              }
+            })
+          );
+
+          const enrichedBatches = flatBatches.map((batch, index) => {
+            const isInspected = inspectionFlags[index];
+            let displayStatus = batch.status;
+            if (displayStatus === "ACTIVE" || displayStatus === "PENDING_INSPECTION" || !displayStatus) {
+              displayStatus = isInspected ? "INSPECTED" : "PENDING_INSPECTION";
+            }
+            if (batch.isCompromised) {
+              displayStatus = "COMPROMISED";
+            }
+            return { ...batch, displayStatus };
+          });
+
+          // Sort by date descending
+          enrichedBatches.sort((a, b) => {
+            const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+            const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+            return dateB - dateA;
+          });
+
+          if (active) {
+            setAllBatches(enrichedBatches);
+          }
+        }
       } catch (err) {
-        if (!active) return;
-        setError(err?.userMessage ?? t("farmer.batchListUnavailable"));
+        if (active) {
+          setError(err?.userMessage ?? t("farmer.batchListUnavailable"));
+        }
       } finally {
         if (active) setLoading(false);
       }
-    }, 250);
-
-    return () => {
-      active = false;
-      clearTimeout(timer);
     };
-  }, [page, farmFilter, search, statusFilter, t]);
+
+    loadData();
+    return () => { active = false; };
+  }, [t]);
+
+  // Local filtering and pagination
+  const { visibleBatches, totalElements, totalPages } = useMemo(() => {
+    let filtered = allBatches;
+
+    if (farmFilter !== "all") {
+      filtered = filtered.filter(b => b.farmId === farmFilter);
+    }
+
+    if (statusFilter !== "ALL") {
+      filtered = filtered.filter(b => b.displayStatus === statusFilter);
+    }
+
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(b => 
+        (b.batchCode?.toLowerCase().includes(q)) || 
+        (b.productName?.toLowerCase().includes(q))
+      );
+    }
+
+    const totalElements = filtered.length;
+    const totalPages = Math.ceil(totalElements / PAGE_SIZE) || 1;
+    const start = page * PAGE_SIZE;
+    const visibleBatches = filtered.slice(start, start + PAGE_SIZE);
+
+    return { visibleBatches, totalElements, totalPages };
+  }, [allBatches, farmFilter, statusFilter, search, page]);
 
   if (loading) {
     return (
@@ -99,8 +150,6 @@ export function FarmerBatchListPage() {
   if (error) {
     return <StateCard title={t("farmer.batchListUnavailable")} message={error} tone="error" />;
   }
-
-  const rows = batchesPage.content ?? [];
 
   return (
     <div className="space-y-10">
@@ -167,22 +216,24 @@ export function FarmerBatchListPage() {
         </select>
       </div>
 
-      {rows.length === 0 ? (
+      {allBatches.length === 0 ? (
         <StateCard title={t("farmer.noBatchesYet")} message={t("farmer.createFirstBatchDesc")} />
+      ) : visibleBatches.length === 0 ? (
+        <StateCard title="Không tìm thấy kết quả" message="Không có lô hàng nào phù hợp với bộ lọc." />
       ) : (
         <section>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-headline text-lg font-bold text-on-surface">Tất cả lô hàng</h3>
-            <span className="text-sm text-on-surface-variant font-mono">{batchesPage.totalElements} kết quả</span>
+            <span className="text-sm text-on-surface-variant font-mono">{totalElements} kết quả</span>
           </div>
 
           <div className="space-y-3">
-            {rows.map((item) => (
+            {visibleBatches.map((item) => (
               <BatchRow
                 key={item.id}
                 batchCode={item.batchCode}
                 productName={item.productName}
-                status={item.inspectionStatus || item.status}
+                status={item.displayStatus}
                 updatedAt={item.updatedAt}
                 detailTo={`/farmer/batches/${encodeURIComponent(item.batchCode)}`}
               />
@@ -191,9 +242,11 @@ export function FarmerBatchListPage() {
         </section>
       )}
 
-      <div className="flex items-center justify-end">
-        <OffsetPagination page={page} totalPages={batchesPage.totalPages} onPageChange={setPage} />
-      </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-end">
+          <OffsetPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+      )}
     </div>
   );
 }

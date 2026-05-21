@@ -150,18 +150,13 @@ export function AdminFacilityManagementPage() {
   const { t } = useTranslation();
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [appliedSearch, setAppliedSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [showRegister, setShowRegister] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-
-  function handleApplyFilter() {
-    setAppliedSearch(searchInput.trim());
-    setPage(0);
-  }
 
   useEffect(() => {
     let active = true;
@@ -172,7 +167,7 @@ export function AdminFacilityManagementPage() {
         const payload = await farmService.getAllFarmsPage({
           page,
           size: PAGE_SIZE,
-          q: appliedSearch,
+          q: query.trim(),
           sort: "updatedAt,desc",
         });
         if (active) {
@@ -187,6 +182,7 @@ export function AdminFacilityManagementPage() {
       } finally {
         if (active) {
           setLoading(false);
+          setInitialLoad(false);
         }
       }
     }, 250);
@@ -194,7 +190,7 @@ export function AdminFacilityManagementPage() {
       active = false;
       clearTimeout(timer);
     };
-  }, [appliedSearch, page, t]);
+  }, [query, page, t]);
 
   const mappedFacilities = useMemo(
     () =>
@@ -216,7 +212,7 @@ export function AdminFacilityManagementPage() {
   const activeCount = mappedFacilities.filter((facility) => facility.status === "ACTIVE").length;
   const activePercent = mappedFacilities.length === 0 ? 0 : Math.round((activeCount / mappedFacilities.length) * 100);
 
-  if (loading) {
+  if (loading && initialLoad) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-80" />
@@ -260,32 +256,34 @@ export function AdminFacilityManagementPage() {
 
       <div className="grid gap-5 md:gap-6 lg:grid-cols-3">
         <div className="space-y-3 sm:space-y-4 lg:col-span-2">
-          <form
-            className="flex flex-col gap-3 rounded-xl bg-surface-container-lowest p-3 ghost-border ambient-shadow sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3"
-            onSubmit={(event) => {
-              event.preventDefault();
-              handleApplyFilter();
-            }}
-          >
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <span className="material-symbols-outlined shrink-0 text-on-surface-variant">search</span>
-                <input
-                  type="text"
-                  value={searchInput}
-                  onChange={(event) => setSearchInput(event.target.value)}
-                  placeholder={t("admin.searchFacilities")}
-                  className="w-full border-none bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-0"
-                />
+          <div className="flex flex-col gap-3 rounded-xl bg-surface-container-lowest p-3 ghost-border ambient-shadow sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3 relative">
+              <span className="material-symbols-outlined shrink-0 text-on-surface-variant pointer-events-none">search</span>
+              <input
+                type="text"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setPage(0);
+                }}
+                placeholder={t("admin.searchFacilities")}
+                className="w-full border-none bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-0 pr-8"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(0);
+                  }}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
+                  aria-label={t("common.clear")}
+                >
+                  <span className="material-symbols-outlined text-[18px]">close</span>
+                </button>
+              )}
             </div>
-            <div className="hidden h-6 w-px bg-outline-variant/30 sm:block" />
-            <button
-              type="submit"
-              className="inline-flex w-full items-center justify-center gap-1 rounded-lg bg-surface-container px-3 py-2 text-sm text-on-surface-variant transition-colors hover:text-primary sm:w-auto sm:bg-transparent sm:p-0"
-            >
-              <span className="material-symbols-outlined text-[18px]">filter_list</span>
-              {t("admin.filter")}
-            </button>
-          </form>
+          </div>
 
           {mappedFacilities.length === 0 ? (
             <section className="rounded-xl bg-surface-container-lowest p-5 ghost-border ambient-shadow sm:p-6">
@@ -360,7 +358,7 @@ export function AdminFacilityManagementPage() {
             <div className="mt-4 space-y-4">
               <div className="flex items-center justify-between border-b border-outline-variant/30 pb-3">
                 <span className="text-sm text-on-surface-variant">{t("admin.totalFacilities")}</span>
-                <span className="font-headline text-2xl font-bold text-on-surface">{mappedFacilities.length}</span>
+                <span className="font-headline text-2xl font-bold text-on-surface">{totalElements}</span>
               </div>
               <div className="flex items-center justify-between border-b border-outline-variant/30 pb-3">
                 <span className="inline-flex items-center gap-2 text-sm text-on-surface-variant">
@@ -389,7 +387,7 @@ export function AdminFacilityManagementPage() {
           onClose={() => setShowRegister(false)}
             onRegistered={(created) => {
               setShowRegister(false);
-              if (created && page === 0 && appliedSearch === "") {
+              if (created && page === 0 && query.trim() === "") {
                 setFacilities((prev) => [created, ...prev].slice(0, PAGE_SIZE));
                 setTotalElements((prev) => prev + 1);
               } else {

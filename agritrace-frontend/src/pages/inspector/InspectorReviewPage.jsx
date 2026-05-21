@@ -22,6 +22,7 @@ export function InspectorReviewPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [processingCode, setProcessingCode] = useState("");
+  const [filterType, setFilterType] = useState("UNINSPECTED");
 
   const topbarQuery = searchParams.get("q")?.trim().toLowerCase() ?? "";
 
@@ -105,13 +106,21 @@ export function InspectorReviewPage() {
   );
 
   const visibleRows = useMemo(() => {
-    if (!topbarQuery) return rows;
-    return rows.filter((row) => {
-      const text =
-        `${row.code} ${row.batch?.productName ?? ""} ${row.batch?.farmName ?? ""}`.toLowerCase();
-      return text.includes(topbarQuery);
-    });
-  }, [rows, topbarQuery]);
+    let filtered = rows;
+    if (filterType === "UNINSPECTED") {
+      filtered = filtered.filter((r) => r.pending && !r.compromised);
+    } else if (filterType === "INSPECTED") {
+      filtered = filtered.filter((r) => !r.pending && !r.compromised && !r.error);
+    }
+
+    if (topbarQuery) {
+      filtered = filtered.filter((row) => {
+        const text = `${row.code} ${row.batch?.productName ?? ""} ${row.batch?.farmName ?? ""}`.toLowerCase();
+        return text.includes(topbarQuery);
+      });
+    }
+    return filtered;
+  }, [rows, topbarQuery, filterType]);
 
   const isQueueBusy = loading || refreshing;
 
@@ -174,17 +183,31 @@ export function InspectorReviewPage() {
         </div>
       ) : (
         <div className="bg-surface-container-lowest rounded-xl ambient-shadow overflow-hidden ghost-border">
-          {/* Summary bar */}
-          <div className="px-6 py-3 bg-surface-container-high/30 border-b border-surface-container-high flex items-center gap-6 text-xs text-on-surface-variant">
-            <span className="font-semibold">{rows.length} lô hàng</span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" />
-              {pendingCount} chờ kiểm định
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-container" />
-              {rows.filter((r) => !r.pending && !r.compromised && !r.error).length} đã kiểm định
-            </span>
+          {/* Summary bar and Filters */}
+          <div className="px-6 py-3 bg-surface-container-high/30 border-b border-surface-container-high flex flex-wrap items-center justify-between gap-4 text-xs text-on-surface-variant">
+            <div className="flex items-center gap-6">
+              <span className="font-semibold">{rows.length} lô hàng</span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-tertiary" />
+                {pendingCount} chờ kiểm định
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary-container" />
+                {rows.filter((r) => !r.pending && !r.compromised && !r.error).length} đã kiểm định
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-on-surface">Lọc:</span>
+              <select 
+                className="bg-white border border-outline-variant/30 rounded-md px-2 py-1.5 focus:outline-none focus:border-primary text-on-surface"
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="UNINSPECTED">Chưa kiểm định</option>
+                <option value="INSPECTED">Đã kiểm định</option>
+                <option value="ALL">Tất cả</option>
+              </select>
+            </div>
           </div>
 
           {/* Table header */}

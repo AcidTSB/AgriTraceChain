@@ -8,7 +8,7 @@ import { Skeleton } from "../../components/ui/Skeleton";
 import { StateCard } from "../../components/ui/StateCard";
 import { batchService } from "../../services/batchService";
 import { farmService } from "../../services/farmService";
-import { resolveBatchId } from "../../services/batchResolver";
+
 import { traceService } from "../../services/traceService";
 
 function todayLabel() {
@@ -48,7 +48,8 @@ export function FarmerDashboardPage() {
           const inspectionFlags = await Promise.all(
             flatBatches.map(async (batch) => {
               try {
-                const batchId = await resolveBatchId(batch.batchCode);
+                const batchId = batch.id;
+                if (!batchId) return false;
                 const logs = await traceService.getTraceLogsByBatchId(batchId);
                 return logs.some((log) => log.action === "INSPECTION");
               } catch {
@@ -60,10 +61,25 @@ export function FarmerDashboardPage() {
           const reviewed = inspectionFlags.filter(Boolean).length;
           const pendingInspection = Math.max(flatBatches.length - reviewed, 0);
 
+          const enrichedBatches = flatBatches.map((batch, index) => {
+            const isInspected = inspectionFlags[index];
+            let displayStatus = batch.status;
+            if (displayStatus === "ACTIVE" || displayStatus === "PENDING_INSPECTION" || !displayStatus) {
+              displayStatus = isInspected ? "INSPECTED" : "PENDING_INSPECTION";
+            }
+            return { ...batch, displayStatus };
+          });
+
+          enrichedBatches.sort((a, b) => {
+            const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+            const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+            return dateB - dateA;
+          });
+
           if (active) {
             setOverview({ totalBatches: flatBatches.length, pendingInspection, reviewed });
             // Show 5 most recent
-            setRecentBatches(flatBatches.slice(0, 5));
+            setRecentBatches(enrichedBatches.slice(0, 5));
           }
         }
       } catch (err) {
@@ -195,7 +211,7 @@ export function FarmerDashboardPage() {
                 key={batch.id}
                 batchCode={batch.batchCode}
                 productName={batch.productName}
-                status={batch.status}
+                status={batch.displayStatus}
                 updatedAt={batch.createdAt}
                 detailTo={`/farmer/batches/${encodeURIComponent(batch.batchCode)}`}
               />

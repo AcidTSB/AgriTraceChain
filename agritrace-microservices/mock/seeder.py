@@ -195,6 +195,64 @@ BATCH_BLUEPRINTS = [
 ]
 
 
+# --- BẮT ĐẦU: DYNAMIC GENERATION BỔ SUNG (V2 - FULL DATA) ---
+
+# 1. Bơm thêm 5 Nông sản (Products) đặc trưng
+extra_products = [
+    {"name": "Sầu Riêng Ri6", "sku": "AT-DUR-006", "category": "Trái cây", "variety": "Ri6", "grade": "Export", "description": "Sầu riêng chuẩn xuất khẩu.", "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80"},
+    {"name": "Cà Phê Robusta", "sku": "AT-COF-007", "category": "Cây công nghiệp", "variety": "Robusta", "grade": "Grade 1", "description": "Cà phê Robusta Tây Nguyên.", "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80"},
+    {"name": "Chanh Dây Tím", "sku": "AT-PAS-008", "category": "Trái cây", "variety": "Tai Nong", "grade": "GlobalGAP", "description": "Chanh dây giống Đài Loan.", "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80"},
+    {"name": "Hạt Điều Rang", "sku": "AT-CAS-009", "category": "Cây công nghiệp", "variety": "Bình Phước", "grade": "Premium", "description": "Hạt điều nguyên hạt loại 1.", "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80"},
+    {"name": "Xoài Cát Hòa Lộc", "sku": "AT-MAN-010", "category": "Trái cây", "variety": "Hòa Lộc", "grade": "VietGAP", "description": "Xoài cát Hòa Lộc thượng hạng.", "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80"},
+]
+PRODUCT_CATALOG.extend(extra_products)
+
+# 2. Bơm thêm 12 User (6 Farmer, 6 Inspector)
+for i in range(1, 13):
+    role = "FARMER" if i % 2 == 0 else "INSPECTOR"
+    ACCOUNTS[f"EXTRA_{i}"] = {
+        "username": f"{role.lower()}_{i}_mock",
+        "email": f"{role.lower()}_{i}_mock@mock.com",
+        "password": "password123",
+        "role": role,
+        "fullName": f"Mock {role.capitalize()} {i}",
+    }
+
+# 3. Bơm thêm 12 Farm (Nông trại)
+additional_locations = [
+    ("Dong Nai", 10.946, 107.039),
+    ("Tien Giang", 10.385, 106.335),
+    ("Binh Thuan", 11.087, 108.081),
+    ("Son La", 21.328, 103.901),
+    ("Dak Nong", 12.012, 107.822)
+]
+for i in range(12):
+    loc_name, lat, lon = additional_locations[i % len(additional_locations)]
+    FARM_BLUEPRINTS.append({
+        "name": f"Farm Extra {i+1} - {loc_name}",
+        "location": loc_name,
+        "latitude": round(lat + random.uniform(-0.1, 0.1), 6),
+        "longitude": round(lon + random.uniform(-0.1, 0.1), 6),
+        "region": loc_name.upper().replace(" ", "_"),
+        "plot": f"Plot {i+10}",
+    })
+
+# 4. Bơm thêm 30 Batch (Tự động đẻ ra ~150 Trace Logs)
+scenarios = ["VERIFIED_SHIPPING", "PENDING_INSPECTION", "VERIFIED_PACKAGED", "EARLY_GROWTH", "PENDING_INSPECTION_HARVEST"]
+for i in range(30):
+    BATCH_BLUEPRINTS.append({
+        "farmIndex": i % len(FARM_BLUEPRINTS),
+        "productName": PRODUCT_CATALOG[i % len(PRODUCT_CATALOG)]["name"],
+        "quantity": random.randint(500, 5000),
+        "harvestDate": (datetime.utcnow() - timedelta(days=random.randint(1, 30))).strftime("%Y-%m-%d"),
+        "scenario": random.choice(scenarios),
+        "uiState": "GENERATED",
+        "label": f"generated-batch-v2-{i}",
+        "inspectionState": "NONE",
+    })
+# --- KẾT THÚC: DYNAMIC GENERATION (V2) ---
+
+
 def parse_json(response):
     try:
         return response.json()
@@ -431,6 +489,7 @@ def create_batch(session, farmer_headers, farm, product, quantity, harvest_date)
         "harvestDate": harvest_date,
         "farmLatitude": farm.get("latitude"),
         "farmLongitude": farm.get("longitude"),
+        "unit": "kg",
     }
     res = session.post(
         f"{BASE_URL}/batches",
@@ -836,18 +895,25 @@ def run_seed(manifest_path):
         return
 
     admin_headers = auth["ADMIN"]["headers"]
-    farmer_headers = auth["FARMER"]["headers"]
-    inspector_headers = auth["INSPECTOR"]["headers"]
+    farmer_accounts = [acc for key, acc in auth.items() if acc["role"] == "FARMER"]
+    inspector_accounts = [acc for key, acc in auth.items() if acc["role"] == "INSPECTOR"]
+
+    if not farmer_accounts:
+        print("No farmer accounts available. Aborting.")
+        return
 
     products = ensure_products(session, admin_headers)
     product_by_name = {p["baseName"]: p for p in products if p.get("id")}
 
     print("\n=== Creating Farms ===")
     farms = []
-    for blueprint in FARM_BLUEPRINTS:
-        farm = create_farm(session, farmer_headers, blueprint)
+    farm_farmer_headers = {}
+    for i, blueprint in enumerate(FARM_BLUEPRINTS):
+        current_farmer = farmer_accounts[i % len(farmer_accounts)]
+        farm = create_farm(session, current_farmer["headers"], blueprint)
         if farm and farm.get("id"):
             farms.append(farm)
+            farm_farmer_headers[farm["id"]] = current_farmer["headers"]
 
     if not farms:
         print("No farm created. Aborting.")
@@ -857,6 +923,8 @@ def run_seed(manifest_path):
     manifest_batches = []
     for blueprint in BATCH_BLUEPRINTS:
         farm = farms[blueprint["farmIndex"] % len(farms)]
+        current_farmer_headers = farm_farmer_headers[farm["id"]]
+        
         product = product_by_name.get(blueprint["productName"])
 
         if not product:
@@ -865,7 +933,7 @@ def run_seed(manifest_path):
 
         batch = create_batch(
             session,
-            farmer_headers,
+            current_farmer_headers,
             farm,
             product,
             quantity=blueprint["quantity"],
@@ -878,7 +946,10 @@ def run_seed(manifest_path):
         trace_items = []
 
         for trace in trace_plan:
-            actor_headers = inspector_headers if trace["actor"] == "INSPECTOR" else farmer_headers
+            if trace["actor"] == "INSPECTOR" and inspector_accounts:
+                actor_headers = random.choice(inspector_accounts)["headers"]
+            else:
+                actor_headers = current_farmer_headers
             result = create_trace_log(
                 session,
                 actor_headers,

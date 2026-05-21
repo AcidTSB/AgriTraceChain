@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/ui/Card";
 import { OffsetPagination } from "../../components/ui/OffsetPagination";
-import { parseProductCatalogMetadata } from "../../helpers/productCatalog";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { productService } from "../../services/productService";
 import { batchService } from "../../services/batchService";
@@ -29,7 +28,7 @@ function ModalShell({ children }) {
 function AddProductModal({ onClose, onCreated }) {
   const { t } = useTranslation();
   const toast = useToast();
-  const [form, setForm] = useState({ name: "", description: "", variety: "", grade: "", sku: "", category: "" });
+  const [form, setForm] = useState({ name: "", description: "", sku: "", category: "" });
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -45,12 +44,9 @@ function AddProductModal({ onClose, onCreated }) {
     if (Object.keys(e).length) { setErrors(e); return; }
     setSubmitting(true);
     try {
-      // Build description string that productCatalog.js can parse
-      const descParts = [form.variety, form.grade].filter(Boolean);
-      const description = descParts.length ? descParts.join(" | ") : form.description;
       const created = await productService.createProduct({
         name: form.name.trim(),
-        description,
+        description: form.description.trim(),
         sku: form.sku.trim() || null,
         category: form.category.trim() || null,
       });
@@ -150,11 +146,8 @@ function AddProductModal({ onClose, onCreated }) {
 function EditProductModal({ product, onClose, onUpdated }) {
   const { t } = useTranslation();
   const toast = useToast();
-  const meta = parseProductCatalogMetadata(product, "");
   const [form, setForm] = useState({
     name: displayProductName(product.name),
-    variety: meta.variety === "N/A" ? "" : meta.variety,
-    grade: meta.grade === "N/A" ? "" : meta.grade,
     description: product.description ?? "",
     sku: product.sku ?? "",
     category: product.category ?? "",
@@ -167,16 +160,14 @@ function EditProductModal({ product, onClose, onUpdated }) {
     if (!form.name.trim()) { setErrors({ name: t("admin.nameRequired") }); return; }
     setSubmitting(true);
     try {
-      const descParts = [form.variety, form.grade].filter(Boolean);
-      const description = descParts.length ? descParts.join(" | ") : form.description;
       const updated = await productService.updateProduct(product.id, {
         name: form.name.trim(),
-        description,
+        description: form.description.trim(),
         sku: form.sku.trim() || null,
         category: form.category.trim() || null,
       });
       toast.success(t("admin.productUpdated"));
-      onUpdated(updated ?? { ...product, name: form.name.trim(), description });
+      onUpdated(updated ?? { ...product, name: form.name.trim(), description: form.description.trim() });
     } catch (err) {
       toast.error(err?.userMessage ?? t("admin.failedUpdateProduct"));
     } finally {
@@ -416,6 +407,7 @@ export function AdminProductManagementPage() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(0);
@@ -445,6 +437,7 @@ export function AdminProductManagementPage() {
       setError(err?.userMessage ?? t("admin.cannotLoadProducts"));
     } finally {
       setLoading(false);
+      setInitialLoad(false);
     }
   };
 
@@ -477,7 +470,7 @@ export function AdminProductManagementPage() {
   }
 
   async function handleSuspend(product) {
-      const isActive = product.isActive !== false;
+    const isActive = product.isActive !== false;
     try {
       if (isActive) {
         await productService.deactivateProduct(product.id);
@@ -493,7 +486,7 @@ export function AdminProductManagementPage() {
     }
   }
 
-  if (loading) {
+  if (loading && initialLoad) {
     return (
       <div className="space-y-3">
         <Skeleton className="h-10 w-56" />
@@ -561,31 +554,91 @@ export function AdminProductManagementPage() {
             <p className="mt-2 text-sm text-slate-600">{t("admin.noProductsDesc")}</p>
           </Card>
         ) : (
-          <section className="min-h-[460px] rounded-xl bg-surface-container-low p-2 ambient-shadow">
-            <div className="hidden md:grid grid-cols-5 gap-4 border-b border-outline-variant/30 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
-              <div className="col-span-2">{t("admin.productIdentity")}</div>
-              <div>{t("admin.varietyGrade")}</div>
-              <div className="col-span-2">{t("admin.status")} / {t("admin.actions")}</div>
+          <section className="min-h-[460px] rounded-xl bg-surface-container-low p-3 ambient-shadow sm:p-4 md:p-2">
+            <div className="hidden md:grid grid-cols-[minmax(240px,1.15fr)_minmax(360px,2fr)_minmax(150px,auto)_72px] gap-5 border-b border-outline-variant/30 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
+              <div>{t("admin.productIdentity")}</div>
+              <div>{t("admin.description")}</div>
+              <div>{t("admin.status")}</div>
+              <div className="text-right">{t("admin.actions")}</div>
             </div>
 
-            <div className="flex flex-col gap-2 p-2 md:gap-3">
+            <div className="flex flex-col gap-3 p-0 md:gap-3 md:p-2">
               {products.map((product, index) => {
-                const metadata = parseProductCatalogMetadata(product, t("common.nA"));
-                const subtitle = metadata.summary || `${t("admin.productId")}: ${String(product.id).slice(0, 8)}`;
+                const subtitle = product.sku ? `SKU: ${product.sku}` : `${t("admin.productId")}: ${String(product.id).slice(0, 8)}`;
                 const glyph = productGlyphs[index % productGlyphs.length];
                 const isActive = product.isActive !== false;
                 const displayName = displayProductName(product.name);
-                const varietyGradeText = `${metadata.variety} | ${metadata.grade}`;
+                const descriptionText = product.description || "–";
 
                 return (
                   <article
                     key={product.id}
-                    className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-3.5 shadow-sm transition-colors hover:bg-surface-bright sm:p-4"
+                    className={`relative rounded-xl bg-surface-container-lowest p-4 shadow-sm transition-colors hover:bg-surface-bright sm:p-4 ${dropdownOpenId?.includes(product.id) ? 'z-20' : 'z-0'}`}
                   >
                     <div className={`absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full ${isActive ? "bg-primary" : "bg-slate-300"}`} />
-                    
+
                     {/* Mobile Layout */}
-                    <div className="md:hidden space-y-3">
+                    <div className="space-y-3 md:hidden">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
+                          <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
+                        </div>
+                        <div className="min-w-0 flex-1 pt-0.5">
+                          <h2 className="line-clamp-1 font-headline text-sm font-semibold text-on-surface" title={displayName}>
+                            {displayName}
+                          </h2>
+                          <p className="line-clamp-1 text-xs text-on-surface-variant" title={subtitle}>{subtitle}</p>
+                        </div>
+                      </div>
+
+                      <div className="min-w-0 space-y-3 pl-1.5">
+                        <div className="min-w-0">
+                          <p className="mb-1 text-xs text-on-surface-variant">{t("admin.description")}</p>
+                          <p className="line-clamp-1 max-w-full text-sm leading-6 text-on-surface" title={descriptionText}>
+                            {descriptionText}
+                          </p>
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="mb-1 text-xs text-on-surface-variant">Mã</p>
+                          <p className="truncate font-mono text-xs text-on-surface" title={product.sku ?? "–"}>{product.sku ?? "–"}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex min-w-0 items-center justify-between gap-2 pl-1.5">
+                        {isActive ? (
+                          <span className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-secondary-container">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary-fixed-dim" />
+                            <span className="truncate">{t("admin.traceabilityActive")}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                            <span className="truncate">{t("admin.traceabilitySuspended")}</span>
+                          </span>
+                        )}
+                        <div className="flex shrink-0 items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setEditTarget(product)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+                            aria-label={t("admin.editProduct")}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                          </button>
+                          <RowDropdown
+                            product={product}
+                            open={dropdownOpenId === `mobile-${product.id}`}
+                            onToggle={() => setDropdownOpenId((prev) => prev === `mobile-${product.id}` ? null : `mobile-${product.id}`)}
+                            onSuspend={handleSuspend}
+                            onDelete={setDeleteTarget}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden md:grid grid-cols-[minmax(240px,1.15fr)_minmax(360px,2fr)_minmax(150px,auto)_72px] gap-5 items-center px-1">
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
                           <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
@@ -597,99 +650,43 @@ export function AdminProductManagementPage() {
                           <p className="line-clamp-1 text-xs text-on-surface-variant break-words" title={subtitle}>{subtitle}</p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap items-center justify-between gap-3 pl-1.5">
-                        <div>
-                          <p className="text-xs text-on-surface-variant mb-1">Loại / Cấp</p>
-                          <p className="text-sm text-on-surface line-clamp-1 break-words" title={varietyGradeText}>{varietyGradeText}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-on-surface-variant mb-1">Mã</p>
-                          <p className="text-xs font-mono text-on-surface">{product.sku ?? "–"}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between gap-2 pl-1.5">
-                        {isActive ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-secondary-container">
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
-                            {t("admin.traceabilityActive")}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                            {t("admin.traceabilitySuspended")}
-                          </span>
-                        )}
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => setEditTarget(product)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
-                            aria-label={t("admin.editProduct")}
-                          >
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                          </button>
-                          <RowDropdown
-                            product={product}
-                            open={dropdownOpenId === product.id}
-                            onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
-                            onSuspend={handleSuspend}
-                            onDelete={setDeleteTarget}
-                          />
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Desktop Layout */}
-                    <div className="hidden md:grid grid-cols-5 gap-4 items-center">
-                      <div className="col-span-2 flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant/30 bg-surface-container text-primary">
-                          <span aria-hidden className="material-symbols-outlined text-[20px]">{glyph}</span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h2 className="line-clamp-2 font-headline text-sm font-semibold text-on-surface break-words" title={displayName}>
-                            {displayName}
-                          </h2>
-                          <p className="line-clamp-1 text-xs text-on-surface-variant break-words" title={subtitle}>{subtitle}</p>
-                        </div>
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="line-clamp-2 text-sm text-on-surface break-words" title={varietyGradeText}>
-                          <span className="font-medium">{metadata.variety}</span>
-                          <span className="mx-1 text-outline">|</span>
-                          <span>{metadata.grade}</span>
+                      <div className="min-w-0 pr-2">
+                        <p className="line-clamp-2 text-sm leading-6 text-on-surface" title={descriptionText}>
+                          {descriptionText}
                         </p>
                       </div>
 
-                      <div className="col-span-2 flex items-center justify-between gap-2">
+                      <div className="flex justify-start">
                         {isActive ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-secondary-container/60 bg-secondary-container/50 px-2.5 py-1 text-xs font-semibold text-on-secondary-container">
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-secondary-container/60 bg-secondary-container/50 px-3 py-1 text-xs font-semibold text-on-secondary-container">
                             <span className="h-1.5 w-1.5 rounded-full bg-primary-fixed-dim" />
                             {t("admin.traceabilityActive")}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
                             <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
                             {t("admin.traceabilitySuspended")}
                           </span>
                         )}
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => setEditTarget(product)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
-                            aria-label={t("admin.editProduct")}
-                          >
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                          </button>
-                          <RowDropdown
-                            product={product}
-                            open={dropdownOpenId === product.id}
-                            onToggle={() => setDropdownOpenId((prev) => prev === product.id ? null : product.id)}
-                            onSuspend={handleSuspend}
-                            onDelete={setDeleteTarget}
-                          />
-                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setEditTarget(product)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+                          aria-label={t("admin.editProduct")}
+                        >
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <RowDropdown
+                          product={product}
+                          open={dropdownOpenId === `desktop-${product.id}`}
+                          onToggle={() => setDropdownOpenId((prev) => prev === `desktop-${product.id}` ? null : `desktop-${product.id}`)}
+                          onSuspend={handleSuspend}
+                          onDelete={setDeleteTarget}
+                        />
                       </div>
                     </div>
                   </article>

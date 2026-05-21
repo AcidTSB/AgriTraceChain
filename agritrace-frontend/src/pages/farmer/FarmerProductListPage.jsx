@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/ui/Card";
 import { Skeleton } from "../../components/ui/Skeleton";
-import { parseProductCatalogMetadata } from "../../helpers/productCatalog";
 import { productService } from "../../services/productService";
 
 const productGlyphs = ["nutrition", "local_florist", "grain", "eco", "spa", "agriculture"];
@@ -55,17 +54,15 @@ export function FarmerProductListPage() {
     }
 
     return products.filter((product) => {
-      const metadata = parseProductCatalogMetadata(product, t("common.nA"));
       const fields = [
         product?.name,
         product?.description,
-        metadata.variety,
-        metadata.grade,
-        metadata.summary,
+        product?.category,
+        product?.sku,
       ];
       return fields.some((field) => String(field ?? "").toLowerCase().includes(keyword));
     });
-  }, [products, search, t]);
+  }, [products, search]);
 
   if (loading) {
     return (
@@ -117,14 +114,13 @@ export function FarmerProductListPage() {
         <section className="rounded-xl bg-surface-container-low p-2 ambient-shadow min-h-[460px]">
           <div className="hidden grid-cols-[minmax(260px,3fr)_minmax(220px,2fr)_minmax(120px,1.2fr)_minmax(190px,1.7fr)] gap-4 border-b border-outline-variant/30 px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant lg:grid">
             <div>{t("admin.productIdentity")}</div>
-            <div>{t("admin.varietyGrade")}</div>
+            <div>Danh mục / {t("admin.description")}</div>
             <div>{t("admin.skuCode")}</div>
             <div>{t("admin.status")}</div>
           </div>
 
           <div className="flex flex-col gap-2 p-2">
             {filteredProducts.map((product, index) => {
-              const metadata = parseProductCatalogMetadata(product, t("common.nA"));
               const displayName = displayProductName(product?.name);
               const glyph = productGlyphs[index % productGlyphs.length];
 
@@ -141,14 +137,12 @@ export function FarmerProductListPage() {
                       </div>
                       <div>
                         <h2 className="font-headline text-base font-semibold text-on-surface">{displayName}</h2>
-                        <p className="mt-0.5 text-xs text-on-surface-variant">{metadata.summary}</p>
+                        <p className="mt-0.5 text-xs text-on-surface-variant">{product.category || "Chưa phân loại"}</p>
                       </div>
                     </div>
 
-                    <p className="text-sm text-on-surface">
-                      <span className="font-medium">{metadata.variety}</span>
-                      <span className="mx-1 text-outline">|</span>
-                      {metadata.grade}
+                    <p className="text-sm text-on-surface line-clamp-2">
+                      {product.description || "–"}
                     </p>
 
                     <p className="text-xs font-mono text-on-surface-variant">{product.sku ?? "Chưa cập nhật"}</p>
