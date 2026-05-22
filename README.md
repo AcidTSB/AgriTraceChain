@@ -7,6 +7,7 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Microservices-blue.svg)
 ![Communication](https://img.shields.io/badge/Communication-gRPC%20%7C%20Kafka-red.svg)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Redis-blueviolet.svg)
+![Quan sát](https://img.shields.io/badge/Quan%20s%C3%A1t-Zipkin%20%7C%20Prometheus-ff69b4.svg)
 ![Status](https://img.shields.io/badge/Status-Graduation%20Project-success.svg)
 
 ## Tổng quan
@@ -123,7 +124,7 @@ Việc lựa chọn Microservices mang lại:
 | Dịch vụ Sản Phẩm (Product Service) | Quản lý sản phẩm và lô hàng |
 | Dịch vụ Truy Vết (Trace Service) | Ghi nhật ký truy vết, Hash Chain, Geofencing |
 | Dịch vụ Media (Media Service) | Tạo mã QR và xử lý media |
-| Audit Service | Tiêu thụ Kafka và ghi sổ cái WORM (immutable audit ledger) |
+| Ghi nhật ký kiểm toán | Đẩy sự kiện Kafka và lưu lịch sử thay đổi dạng bất biến |
 
 ---
 
@@ -168,7 +169,7 @@ Sau khi tạo hash:
 
 Mọi thay đổi trạng thái hệ thống đều được đẩy dưới dạng sự kiện vào Kafka.
 
-Audit Service tiêu thụ các sự kiện và ghi vào sổ cái theo cơ chế:
+Khối ghi kiểm toán tiêu thụ các sự kiện và ghi vào sổ cái theo cơ chế:
 
 > Ghi một lần, đọc nhiều lần (Write Once Read Many - WORM)
 
@@ -231,6 +232,8 @@ sequenceDiagram
 - PostgreSQL
 - Redis
 - Apache Kafka
+- Zipkin
+- Prometheus
 - Docker
 - Docker Compose
 
@@ -239,6 +242,11 @@ sequenceDiagram
 - REST API
 - gRPC
 - Kafka (Event Streaming)
+
+## Lưu trữ dữ liệu
+
+- PostgreSQL 15
+- Cơ chế Database-per-Service với 3 cơ sở dữ liệu riêng: `user_db`, `product_db`, `trace_db`
 
 ---
 

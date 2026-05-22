@@ -83,3 +83,7 @@ project_context.md
 ### Tooling Artifacts ###
 .github/
 # .vscode/ is already ignored above
+
+### Root-level microservices scripts ###
+/agritrace-microservices/*.py
+/agritrace-microservices/*.ps1
