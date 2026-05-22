@@ -87,3 +87,5 @@ project_context.md
 ### Root-level microservices scripts ###
 /agritrace-microservices/*.py
 /agritrace-microservices/*.ps1
+/agritrace-microservices/*.sh
+/agritrace-microservices/*.txt
