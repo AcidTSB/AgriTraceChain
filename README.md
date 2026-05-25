@@ -77,6 +77,7 @@ graph TD
     Gateway --> ProductSvc[Dịch vụ Sản Phẩm]
     Gateway --> TraceSvc[Dịch vụ Truy Vết]
     Gateway --> MediaSvc[Dịch vụ Media]
+    Gateway --> NotiSvc[Dịch vụ Thông Báo]
 
     subgraph Infrastructure
         Eureka[Eureka Server]
@@ -87,12 +88,14 @@ graph TD
     UserSvc --> UserDB[(Cơ sở dữ liệu Người Dùng)]
     ProductSvc --> ProductDB[(Cơ sở dữ liệu Sản Phẩm)]
     TraceSvc --> TraceDB[(Cơ sở dữ liệu Truy Vết)]
+    NotiSvc --> NotiDB[(Cơ sở dữ liệu Thông Báo)]
 
     TraceSvc -->|gRPC| UserSvc
     TraceSvc -->|gRPC| ProductSvc
 
     TraceSvc -. Xuất sự kiện .-> Kafka
     ProductSvc -. Xuất sự kiện .-> Kafka
+    Kafka -. Lắng nghe sự kiện .-> NotiSvc
 ```
 
 ## Kiến trúc tổng thể
@@ -124,6 +127,7 @@ Việc lựa chọn Microservices mang lại:
 | Dịch vụ Sản Phẩm (Product Service) | Quản lý sản phẩm và lô hàng |
 | Dịch vụ Truy Vết (Trace Service) | Ghi nhật ký truy vết, Hash Chain, Geofencing |
 | Dịch vụ Media (Media Service) | Tạo mã QR và xử lý media |
+| Dịch vụ Thông Báo (Notification Service) | Gửi cảnh báo In-App, Email, SMS qua Kafka |
 | Ghi nhật ký kiểm toán | Đẩy sự kiện Kafka và lưu lịch sử thay đổi dạng bất biến |
 
 ---
@@ -246,7 +250,7 @@ sequenceDiagram
 ## Lưu trữ dữ liệu
 
 - PostgreSQL 15
-- Cơ chế Database-per-Service với 3 cơ sở dữ liệu riêng: `user_db`, `product_db`, `trace_db`
+- Cơ chế Database-per-Service với 4 cơ sở dữ liệu riêng: `user_db`, `product_db`, `trace_db`, `notification_db`
 
 ---
 
@@ -308,7 +312,6 @@ docker-compose up -d
 - Triển khai lên Kubernetes
 - Thiết lập CI/CD với GitHub Actions
 - ElasticSearch/OpenSearch cho phân tích audit
-- Hệ thống thông báo thời gian thực
 - Dashboard phân tích Distributed Tracing
 
 ---

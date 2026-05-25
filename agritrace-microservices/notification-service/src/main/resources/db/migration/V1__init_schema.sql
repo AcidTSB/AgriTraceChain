@@ -1,0 +1,19 @@
+CREATE TABLE notification_settings (
+    user_id UUID PRIMARY KEY,
+    push_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    sms_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE alerts (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_alerts_user_id ON alerts(user_id);

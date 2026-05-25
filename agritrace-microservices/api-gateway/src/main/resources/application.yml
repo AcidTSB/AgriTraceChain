@@ -66,6 +66,20 @@ spring:
           filters:
             - RewritePath=/api/media/(?<segment>.*), /api/v1/media/${segment}
             - RewritePath=/api/qrcode/(?<segment>.*), /api/v1/qrcode/${segment}
+
+        - id: notification-service-v1
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - StripPrefix=0
+
+        - id: notification-service-legacy
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/notifications/(?<segment>.*), /api/v1/notifications/${segment}
       
       globalcors:
         corsConfigurations:

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { authService } from "../../services/authService";
+import { NotificationSettings } from "../../components/app/NotificationSettings";
 
 /* ─── Profile Tab ─────────────────────────────────────────────────────────── */
 function ProfileTab({ user }) {
@@ -316,12 +317,24 @@ export function SettingsPage() {
         >
           {t("settings.securityTab")}
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("notifications")}
+          className={`pb-4 font-headline text-lg font-bold tracking-tight transition-all px-2 ${
+            activeTab === "notifications"
+              ? "border-b-2 border-emerald-600 text-emerald-700"
+              : "text-slate-500 hover:text-emerald-600"
+          }`}
+        >
+          Thông báo
+        </button>
       </div>
 
       {/* Tab Content */}
       <div>
         {activeTab === "profile" && <ProfileTab user={user} />}
         {activeTab === "security" && <SecurityTab />}
+        {activeTab === "notifications" && <NotificationSettings />}
       </div>
     </div>
   );

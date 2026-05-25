@@ -64,6 +64,27 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+  postgres-notification:
+    image: postgres:15-alpine
+    container_name: agritrace-notification-db
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: agritrace
+      POSTGRES_PASSWORD: agritrace2026
+    ports:
+      - "5436:5432"
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+    networks:
+      - agritrace-network
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U agritrace" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # ===== CACHE & MESSAGING =====
 
@@ -288,6 +309,43 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+  notification-service:
+    build:
+      context: ..
+      dockerfile: agritrace-microservices/notification-service/Dockerfile
+    container_name: agritrace-notification-service
+    depends_on:
+      postgres-notification:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-notification:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: agritrace
+      SPRING_DATASOURCE_PASSWORD: agritrace2026
+      MANAGEMENT_SERVER_PORT: 9085
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JAVA_OPTS: -Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC
+    ports:
+      - "8085:8085"
+      - "9085:9085"
+    networks:
+      - agritrace-network
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9085/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   api-gateway:
     build:
       context: .
@@ -416,6 +474,7 @@ volumes:
   user-db-data:
   product-db-data:
   trace-db-data:
+  notification-db-data:
   prometheus-data:
   grafana-data:
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { realtimeNotificationService } from "../../services/realtimeNotificationService";
+import { notificationService } from "../../services/notificationService";
 
 const SEARCH_HISTORY_KEY = "agritrace-topbar-search-history";
 const MAX_SEARCH_HISTORY = 8;
@@ -51,17 +52,36 @@ export function Topbar({ onMenuToggle }) {
   const [openNotifications, setOpenNotifications] = useState(false);
   const [searchHistory, setSearchHistory] = useState(() => readSearchHistory());
   const [notifications, setNotifications] = useState(() => realtimeNotificationService.getAll());
+  const [apiAlerts, setApiAlerts] = useState([]);
   const inputRef = useRef(null);
 
   const initials = useMemo(() => getInitials(user?.username ?? ""), [user?.username]);
   const displayName = user?.username ?? "Người dùng";
   const role = user?.role ?? "";
   const normalizedRole = normalizeRole(role);
-  const unreadCount = notifications.filter((item) => !item.readAt).length;
+  
+  const realtimeUnreadCount = notifications.filter((item) => !item.readAt).length;
+  const unreadCount = realtimeUnreadCount + apiAlerts.length;
 
   useEffect(() => {
+    // Fetch API alerts
+    const fetchAlerts = async () => {
+      try {
+        if (user) {
+          const res = await notificationService.getUnreadAlerts();
+          if (res && res.data) {
+            setApiAlerts(res.data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching alerts:", error);
+      }
+    };
+    fetchAlerts();
+
+    // Subscribe to local realtime notifications
     return realtimeNotificationService.subscribe(setNotifications);
-  }, []);
+  }, [user]);
 
   const filteredSuggestions = useMemo(() => {
     const q = searchValue.trim().toLowerCase();
@@ -105,12 +125,21 @@ export function Topbar({ onMenuToggle }) {
   const handleToggleNotifications = () => {
     setOpenNotifications((current) => {
       const nextValue = !current;
-      if (nextValue && unreadCount > 0) {
+      if (nextValue && realtimeUnreadCount > 0) {
         realtimeNotificationService.markAllRead();
       }
       return nextValue;
     });
     setOpenSuggest(false);
+  };
+
+  const handleApiAlertRead = async (alertId) => {
+    try {
+      await notificationService.markAsRead(alertId);
+      setApiAlerts(prev => prev.filter(a => a.id !== alertId));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSearch = (e) => {
@@ -203,59 +232,85 @@ export function Topbar({ onMenuToggle }) {
               </div>
 
               <div className="max-h-80 overflow-y-auto">
-                {notifications.length === 0 ? (
+                {notifications.length === 0 && apiAlerts.length === 0 ? (
                   <div className="px-4 py-6 text-sm text-slate-500">
                     Chưa có thông báo nào. Khi Inspector submit kết quả, bạn sẽ thấy ở đây.
                   </div>
                 ) : (
-                  notifications.slice(0, 5).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        realtimeNotificationService.markRead(item.id);
-                        if (item.route) {
-                          navigate(item.route);
-                        }
-                        setOpenNotifications(false);
-                      }}
-                      className="border-b border-slate-100 px-4 py-3 transition-colors hover:bg-slate-50"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                            item.kind === "INSPECTION_RESULT"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : item.kind === "WARNING"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-slate-100 text-slate-600"
-                          }`}
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            {item.kind === "INSPECTION_RESULT" ? "verified" : item.kind === "WARNING" ? "warning" : "notifications"}
-                          </span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="truncate text-sm font-semibold text-slate-900">{item.title}</p>
-                            <span className="text-[11px] text-slate-400">{formatNotificationTime(item.createdAt)}</span>
+                  <>
+                    {/* API ALERTS (Fraud/Compromised) */}
+                    {apiAlerts.map((alert) => (
+                      <button
+                        key={alert.id}
+                        type="button"
+                        onClick={() => handleApiAlertRead(alert.id)}
+                        className="w-full text-left border-b border-red-100 px-4 py-3 transition-colors bg-red-50 hover:bg-red-100"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-700">
+                            <span className="material-symbols-outlined text-[18px]">warning</span>
                           </div>
-                          <p className="mt-1 text-sm text-slate-600">{item.message}</p>
-                          <div className="mt-2 flex flex-wrap gap-2 text-[10px] uppercase tracking-wide">
-                            {item.batchCode && (
-                              <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-600">{item.batchCode}</span>
-                            )}
-                            {item.actorRole && (
-                              <span className="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{item.actorRole}</span>
-                            )}
-                            {item.route && (
-                              <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">Open</span>
-                            )}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="truncate text-sm font-semibold text-red-900">Cảnh báo hệ thống</p>
+                              <span className="text-[11px] text-red-500">{formatNotificationTime(alert.createdAt)}</span>
+                            </div>
+                            <p className="mt-1 text-sm text-red-800 font-medium">{alert.message}</p>
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  ))
+                      </button>
+                    ))}
+
+                    {/* Local Realtime Notifications */}
+                    {notifications.slice(0, 5).map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          realtimeNotificationService.markRead(item.id);
+                          if (item.route) {
+                            navigate(item.route);
+                          }
+                          setOpenNotifications(false);
+                        }}
+                        className="w-full text-left border-b border-slate-100 px-4 py-3 transition-colors hover:bg-slate-50"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                              item.kind === "INSPECTION_RESULT"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : item.kind === "WARNING"
+                                  ? "bg-amber-100 text-amber-700"
+                                  : "bg-slate-100 text-slate-600"
+                            }`}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">
+                              {item.kind === "INSPECTION_RESULT" ? "verified" : item.kind === "WARNING" ? "warning" : "notifications"}
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="truncate text-sm font-semibold text-slate-900">{item.title}</p>
+                              <span className="text-[11px] text-slate-400">{formatNotificationTime(item.createdAt)}</span>
+                            </div>
+                            <p className="mt-1 text-sm text-slate-600">{item.message}</p>
+                            <div className="mt-2 flex flex-wrap gap-2 text-[10px] uppercase tracking-wide">
+                              {item.batchCode && (
+                                <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-600">{item.batchCode}</span>
+                              )}
+                              {item.actorRole && (
+                                <span className="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{item.actorRole}</span>
+                              )}
+                              {item.route && (
+                                <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">Open</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </>
                 )}
               </div>
 

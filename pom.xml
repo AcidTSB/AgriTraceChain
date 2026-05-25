@@ -175,4 +175,14 @@
             </plugin>
         </plugins>
     </build>
+    
+    <modules>
+        <module>agritrace-microservices/eureka-server</module>
+        <module>agritrace-microservices/api-gateway</module>
+        <module>agritrace-microservices/user-service</module>
+        <module>agritrace-microservices/product-service</module>
+        <module>agritrace-microservices/trace-service</module>
+        <module>agritrace-microservices/media-service</module>
+        <module>agritrace-microservices/notification-service</module>
+    </modules>
 </project>
