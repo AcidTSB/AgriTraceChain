@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const SCAN_DELAY_MS = 420;
 
@@ -22,8 +23,13 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
   const [phase, setPhase] = useState("idle"); // idle | scanning | result
   const [scanned, setScanned] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const terminalRef = useRef(null);
   const progressPercent = logs.length > 0 ? Math.round((scanned.length / logs.length) * 100) : 0;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset when closed
   useEffect(() => {
@@ -80,9 +86,11 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
 
   if (!open) return null;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
     >
       <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-slate-950 shadow-2xl ring-1 ring-slate-700">
@@ -251,6 +259,7 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

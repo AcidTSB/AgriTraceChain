@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
 export function ConfirmDialog({
   open,
   title,
@@ -11,8 +14,18 @@ export function ConfirmDialog({
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 px-4">
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 px-4 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
         <h2 className="text-xl font-semibold tracking-tight text-slate-900">{title}</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">{message}</p>
@@ -34,6 +47,7 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -231,7 +231,7 @@ public class TraceLogService {
     public List<TraceLogResponse> getTraceLogsByBatchCode(String batchCode) {
         List<TraceLog> logs = traceLogRepository.findByBatchCodeOrderByCreatedAtAsc(batchCode);
         if (logs.isEmpty()) {
-            traceAuditService.recordPublicRead(batchCode, "DENIED_NOT_FOUND", "Public trace not found");
+            traceAuditService.recordPublicRead(batchCode, "DENIED_NOT_FOUND", "Public trace not found", null);
             throw new ResourceNotFoundException("TraceLog", "batchCode", batchCode);
         }
 
@@ -242,16 +242,17 @@ public class TraceLogService {
                 && Boolean.TRUE.equals(r.getSignatureVerified()) && Boolean.TRUE.equals(r.getChainVerified()));
 
         if (hasCompromised) {
-            traceAuditService.recordPublicRead(batchCode, "READ_COMPROMISED", "Public trace returned with compromised integrity status");
+            String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
+            traceAuditService.recordPublicRead(batchCode, "READ_COMPROMISED", "Public trace returned with compromised integrity status", batchOwnerId);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Public trace is blocked due to compromised integrity");
         }
 
         if (!approved) {
-            traceAuditService.recordPublicRead(batchCode, "READ_PENDING_INSPECTION", "Public trace returned without approved INSPECTION action");
+            traceAuditService.recordPublicRead(batchCode, "READ_PENDING_INSPECTION", "Public trace returned without approved INSPECTION action", null);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Public trace is unavailable until inspection approval");
         }
 
-        traceAuditService.recordPublicRead(batchCode, "READ_OK", "Public trace returned");
+        traceAuditService.recordPublicRead(batchCode, "READ_OK", "Public trace returned", null);
         return responses;
     }
 

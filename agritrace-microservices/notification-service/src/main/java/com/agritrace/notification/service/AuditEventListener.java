@@ -31,6 +31,9 @@ public class AuditEventListener {
     public void listen(String message) {
         log.info("Received message from audit-ledger-topic: {}", message);
         try {
+            if (message != null && message.startsWith("\"") && message.endsWith("\"")) {
+                message = objectMapper.readValue(message, String.class);
+            }
             Map<String, Object> payload = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
             
             String operation = (String) payload.get("operation");
@@ -55,18 +58,19 @@ public class AuditEventListener {
             if (isCompromisedEvent) {
                 log.warn("🚨 Fraud/Compromised batch detected: {}", batchCode);
                 
-                // Need to extract actorId or ownerId. 
-                // Let's assume the actorId from payload might be the one we notify if it's the farmer, 
-                // but actually, we should notify the owner.
-                // For simplicity as requested, we get actorId from payload.
-                String actorIdStr = (String) payload.get("actorId");
-                if (actorIdStr == null) {
-                    log.warn("No actorId found in payload, cannot notify specific user.");
-                    // In a real app we might query product-service for the batch owner, but here we'll just skip if null.
+                // Try to get receiverUserId first (explicitly set for notifications like COMPROMISED)
+                String targetUserIdStr = (String) payload.get("receiverUserId");
+                if (targetUserIdStr == null) {
+                    // Fallback to actorId if receiverUserId is not available
+                    targetUserIdStr = (String) payload.get("actorId");
+                }
+                
+                if (targetUserIdStr == null) {
+                    log.warn("No receiverUserId or actorId found in payload, cannot notify specific user.");
                     return;
                 }
                 
-                UUID userId = UUID.fromString(actorIdStr);
+                UUID userId = UUID.fromString(targetUserIdStr);
                 String alertMessage = "Lô hàng " + batchCode + " bị cảnh báo gian lận dữ liệu!";
 
                 // Fetch settings

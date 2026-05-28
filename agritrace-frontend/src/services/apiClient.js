@@ -58,6 +58,10 @@ function handleResponseError(error) {
 
   const status = error?.response?.status;
 
+  if (status === 400) {
+    error.userMessage = error?.response?.data?.message ?? "Dữ liệu không hợp lệ.";
+  }
+
   if (status === 401) {
     clearAuthStorage();
     emitApiEvent("api:unauthorized", { status });

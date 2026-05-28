@@ -21,6 +21,36 @@ export function useToast() {
     [addToast],
   );
 
+  const security = useCallback(
+    (message, title = "Security alert", options = {}) =>
+      addToast({
+        type: "security",
+        title,
+        message,
+        durationMs: options.durationMs,
+        action: options.action,
+        detail: options.detail,
+        persist: options.persist,
+      }),
+    [addToast],
+  );
+
+  const compromised = useCallback(
+    (message, title = "Blockchain compromised", options = {}) =>
+      addToast({
+        type: "compromised",
+        title,
+        message,
+        durationMs: options.durationMs,
+        action: options.action,
+        detail: options.detail,
+        persist: options.persist ?? true,
+      }),
+    [addToast],
+  );
+
+  const notify = useCallback((toast) => addToast(toast), [addToast]);
+
   return useMemo(
     () => ({
       toasts,
@@ -29,7 +59,10 @@ export function useToast() {
       success,
       error,
       info,
+      security,
+      compromised,
+      notify,
     }),
-    [toasts, addToast, removeToast, success, error, info],
+    [toasts, addToast, removeToast, success, error, info, security, compromised, notify],
   );
 }

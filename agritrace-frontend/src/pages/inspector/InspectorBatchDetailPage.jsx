@@ -14,6 +14,7 @@ import { batchService } from "../../services/batchService";
 import { inspectorQueueService } from "../../services/inspectorQueueService";
 import { realtimeNotificationService } from "../../services/realtimeNotificationService";
 import { traceService } from "../../services/traceService";
+import { LocationPicker } from "../../components/ui/LocationPicker";
 
 /** Export logs to CSV format */
 function exportToCSV(batch, logs) {
@@ -150,9 +151,12 @@ export function InspectorBatchDetailPage() {
   const [auditOpen, setAuditOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ location: "" });
   const [form, setForm] = useState({
-    location: "Inspection Center",
+    location: "",
     notes: "Đã hoàn tất kiểm tra chất lượng.",
+    latitude: null,
+    longitude: null,
   });
+  const [resolvingLocation, setResolvingLocation] = useState(false);
 
   useEffect(() => {
     if (location.state?.toast) {
@@ -211,12 +215,58 @@ export function InspectorBatchDetailPage() {
 
   const inspected = useMemo(() => hasInspection(logs), [logs]);
 
+  const hasGpsCoords = useMemo(
+    () => typeof form.latitude === "number" && typeof form.longitude === "number",
+    [form.latitude, form.longitude],
+  );
+
+  const reverseGeocode = async (latitude, longitude) => {
+    const query = new URLSearchParams({
+      lat: String(latitude),
+      lon: String(longitude),
+      format: "jsonv2",
+      "accept-language": "vi",
+      zoom: "16",
+    });
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${query.toString()}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) throw new Error("Không thể dịch tọa độ sang địa chỉ.");
+    const payload = await response.json();
+    if (typeof payload?.display_name === "string" && payload.display_name.trim()) {
+      return payload.display_name.trim();
+    }
+    throw new Error("Không tìm thấy địa chỉ phù hợp cho tọa độ này.");
+  };
+
+  const onLocationSelected = async ({ latitude, longitude }) => {
+    setFieldErrors((prev) => ({ ...prev, gps: "" }));
+    setResolvingLocation(true);
+    try {
+      const resolvedLocation = await reverseGeocode(latitude, longitude);
+      setForm((prev) => ({ ...prev, latitude, longitude, location: resolvedLocation }));
+      setFieldErrors((prev) => ({ ...prev, location: "" }));
+    } catch {
+      const fallbackLocation = `GPS: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+      setForm((prev) => ({ ...prev, latitude, longitude, location: fallbackLocation }));
+      showError("Không thể dịch địa chỉ tự động. Hệ thống sẽ dùng tọa độ GPS làm bằng chứng vị trí.");
+    } finally {
+      setResolvingLocation(false);
+    }
+  };
+
   const requestSubmit = (event) => {
     event.preventDefault();
 
-    const nextErrors = { location: "" };
+    const nextErrors = { location: "", gps: "" };
+    if (!hasGpsCoords) {
+      nextErrors.gps = "Bạn cần lấy vị trí GPS để kiểm định.";
+    }
     if (!form.location.trim()) {
       nextErrors.location = "Địa điểm kiểm định là bắt buộc.";
+    }
+
+    if (nextErrors.location || nextErrors.gps) {
       setFieldErrors(nextErrors);
       return;
     }
@@ -233,12 +283,16 @@ export function InspectorBatchDetailPage() {
     inspectorQueueService.removeCode(batchCode);
 
     try {
-      await traceService.createTraceLog({
+      const payload = {
         batchId,
         action: "INSPECTION",
         location: form.location.trim(),
         notes: form.notes.trim(),
-      });
+      };
+      if (typeof form.latitude === "number" && !Number.isNaN(form.latitude)) payload.latitude = form.latitude;
+      if (typeof form.longitude === "number" && !Number.isNaN(form.longitude)) payload.longitude = form.longitude;
+
+      await traceService.createTraceLog(payload);
 
       realtimeNotificationService.push({
         kind: "INSPECTION_RESULT",
@@ -280,7 +334,7 @@ export function InspectorBatchDetailPage() {
     );
   }
 
-  if (error) {
+  if (error && !batchId) {
     return (
       <StateCard title="Không thể mở chi tiết kiểm định" message={error} tone="error" className="max-w-3xl" />
     );
@@ -381,19 +435,35 @@ export function InspectorBatchDetailPage() {
         <Card>
           <h2 className="text-lg font-semibold text-slate-900">Gửi kiểm định</h2>
           <form className="mt-4 space-y-4" onSubmit={requestSubmit}>
-            <Input
-              id="inspection-location"
-              label="Địa điểm kiểm định"
-              value={form.location}
-              error={fieldErrors.location}
-              onChange={(event) => {
-                setForm((prev) => ({ ...prev, location: event.target.value }));
-                if (fieldErrors.location) {
-                  setFieldErrors((prev) => ({ ...prev, location: "" }));
-                }
-              }}
-              required
-            />
+            <div className="space-y-1">
+              <Input
+                id="inspection-location"
+                label="Địa điểm kiểm định"
+                placeholder="Bấm 'Lấy vị trí' để tự động điền địa chỉ GPS"
+                value={form.location}
+                error={fieldErrors.location}
+                onChange={(event) => {
+                  if (hasGpsCoords) return;
+                  setForm((prev) => ({ ...prev, location: event.target.value }));
+                  if (fieldErrors.location) {
+                    setFieldErrors((prev) => ({ ...prev, location: "" }));
+                  }
+                }}
+                readOnly={hasGpsCoords}
+                required
+              />
+              {hasGpsCoords && (
+                <p className="text-xs text-emerald-700">
+                  Địa điểm đã khóa theo tọa độ GPS để đảm bảo tính toàn vẹn.
+                </p>
+              )}
+            </div>
+
+            <LocationPicker onLocationSelected={onLocationSelected} />
+            {resolvingLocation && (
+              <p className="text-xs text-slate-500">Đang xác thực tọa độ và dịch sang địa chỉ...</p>
+            )}
+            {fieldErrors.gps && <p className="text-xs text-rose-600">{fieldErrors.gps}</p>}
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700" htmlFor="inspection-notes">

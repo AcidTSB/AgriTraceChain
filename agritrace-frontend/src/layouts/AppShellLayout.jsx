@@ -28,7 +28,7 @@ export function AppShellLayout() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col min-h-screen bg-surface-container-low min-w-0">
         <Topbar onMenuToggle={() => setIsMobileMenuOpen((prev) => !prev)} />
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 px-4 pb-4 pt-6 md:px-6 md:pb-6 md:pt-8 lg:px-8 lg:pb-8 lg:pt-10 max-w-7xl mx-auto w-full">
           <Outlet />
         </main>
       </div>

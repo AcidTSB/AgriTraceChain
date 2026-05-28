@@ -47,11 +47,12 @@ public class TraceAuditService {
                 actorFacilityId,
                 null,
                 toJson(after),
-                "Trace log created"
+                "Trace log created",
+                null
         );
     }
 
-    public void recordPublicRead(String batchCode, String operation, String note) {
+    public void recordPublicRead(String batchCode, String operation, String note, String receiverUserId) {
         writeAudit(
                 null,
                 batchCode,
@@ -62,7 +63,8 @@ public class TraceAuditService {
                 null,
                 null,
                 null,
-                note
+                note,
+                receiverUserId
         );
     }
 
@@ -75,7 +77,8 @@ public class TraceAuditService {
                             UUID actorFacilityId,
                             String beforeSnapshot,
                             String afterSnapshot,
-                            String notes) {
+                            String notes,
+                            String receiverUserId) {
         try {
             Map<String, Object> kafkaMessage = new LinkedHashMap<>();
             kafkaMessage.put("traceLogId", traceLogId);
@@ -88,6 +91,9 @@ public class TraceAuditService {
             kafkaMessage.put("beforeSnapshot", beforeSnapshot);
             kafkaMessage.put("afterSnapshot", afterSnapshot);
             kafkaMessage.put("notes", notes);
+            if (receiverUserId != null) {
+                kafkaMessage.put("receiverUserId", receiverUserId);
+            }
             kafkaMessage.put("timestamp", LocalDateTime.now().toString());
 
             kafkaTemplate.send("audit-ledger-topic", batchCode, toJson(kafkaMessage));
