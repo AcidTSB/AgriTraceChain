@@ -139,6 +139,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
         return path.contains("/auth/login") || 
                path.contains("/auth/register") ||
+               path.contains("/auth/refresh") ||
                path.contains("/actuator/");
     }
 
@@ -202,6 +203,21 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         if ((path.startsWith("/api/v1/trace-logs") || path.startsWith("/api/trace-logs"))
                 && HttpMethod.POST.equals(method)) {
             return "FARMER".equals(role) || "INSPECTOR".equals(role);
+        }
+
+        // Audit logs: ADMIN only — contains security-sensitive event history.
+        if (path.startsWith("/api/v1/audit-logs") || path.startsWith("/api/audit-logs")) {
+            return "ADMIN".equals(role);
+        }
+
+        // Internal search: ADMIN only — aggregates data across services.
+        if (path.startsWith("/api/v1/internal/search") || path.startsWith("/api/internal/search")) {
+            return "ADMIN".equals(role);
+        }
+
+        // Notification endpoints: any authenticated user (self-access enforced by X-User-Id downstream).
+        if (path.startsWith("/api/v1/notifications") || path.startsWith("/api/notifications")) {
+            return role != null && !role.isBlank();
         }
 
         return true;

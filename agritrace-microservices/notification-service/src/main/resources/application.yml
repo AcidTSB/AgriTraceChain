@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: notification-service
+  cloud:
+    compatibility-verifier:
+      enabled: false
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5436/notification_db}
     username: ${SPRING_DATASOURCE_USERNAME:agritrace}

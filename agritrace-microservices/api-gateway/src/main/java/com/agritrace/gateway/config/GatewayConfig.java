@@ -60,6 +60,16 @@ public class GatewayConfig {
                                 .rewritePath("/api/media/(?<segment>.*)", "/api/v1/media/${segment}")
                                 .rewritePath("/api/qrcode/(?<segment>.*)", "/api/v1/qrcode/${segment}"))
                         .uri("lb://media-service"))
+                .route("notification-service-v1", r -> r
+                        .path("/api/v1/notifications/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter))
+                        .uri("lb://notification-service"))
+                .route("notification-service-legacy", r -> r
+                        .path("/api/notifications/**")
+                        .filters(f -> f
+                                .filter(jwtAuthenticationFilter)
+                                .rewritePath("/api/notifications/(?<segment>.*)", "/api/v1/notifications/${segment}"))
+                        .uri("lb://notification-service"))
                 .build();
     }
 }
