@@ -83,6 +83,20 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*), /api/v1/${segment}
         
+        - id: trace-service-public
+          uri: lb://trace-service
+          predicates:
+            - Path=/api/public/trace/**
+            - Method=GET
+          filters:
+            - RewritePath=/api/public/trace/(?<segment>.*), /api/v1/trace-logs/public/${segment}
+            # Relaxed rate limiting for public browsing
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter: "#{@publicRateLimiter}"
+                key-resolver: "#{@ipKeyResolver}"
+                deny-empty-key: false
+
         - id: trace-service-v1
           uri: lb://trace-service
           predicates:

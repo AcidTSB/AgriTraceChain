@@ -110,6 +110,7 @@ export function InternalTraceExplorerPage() {
                   <div className="mt-2">
                     <Link
                       to={`/internal/trace/${encodeURIComponent(item.traceLogId)}`}
+                      state={{ record: item, batchCode: item.batchCode }}
                       className="text-sm font-medium text-emerald-700 hover:text-emerald-800"
                     >
                       {t("internalTrace.openDetail")}

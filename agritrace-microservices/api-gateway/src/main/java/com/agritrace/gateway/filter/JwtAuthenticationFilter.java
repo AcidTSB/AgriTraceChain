@@ -210,9 +210,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             return "ADMIN".equals(role);
         }
 
-        // Internal search: ADMIN only — aggregates data across services.
+        // Internal search: all authenticated roles — cross-role explorer feature.
         if (path.startsWith("/api/v1/internal/search") || path.startsWith("/api/internal/search")) {
-            return "ADMIN".equals(role);
+            return role != null && !role.isBlank();
         }
 
         // Notification endpoints: any authenticated user (self-access enforced by X-User-Id downstream).
