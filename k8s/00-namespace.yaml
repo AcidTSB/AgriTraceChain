@@ -1,0 +1,21 @@
+---
+# ============================================================
+# AgriTrace Kubernetes Manifests – Demo-Ready
+# ============================================================
+# Deploy order:
+#   kubectl apply -f k8s/
+# 
+# Or individually:
+#   kubectl apply -f k8s/namespace.yaml
+#   kubectl apply -f k8s/configmap.yaml
+#   kubectl apply -f k8s/secret.yaml
+#   kubectl apply -f k8s/
+# ============================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agritrace
+  labels:
+    app.kubernetes.io/managed-by: kubectl
+    environment: demo

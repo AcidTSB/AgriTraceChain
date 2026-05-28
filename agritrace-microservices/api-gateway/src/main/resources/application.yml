@@ -2,13 +2,45 @@ spring:
   application:
     name: api-gateway
   
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
   cloud:
     discovery:
       locator:
         enabled: true
         lower-case-service-id: true
     gateway:
+      # Global default-filters apply RequestRateLimiter to ALL routes unless overridden
+      # HTTP 429 with header X-RateLimit-Remaining is returned automatically
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter: "#{@defaultRateLimiter}"
+            key-resolver: "#{@userKeyResolver}"
+            deny-empty-key: false
       routes:
+        - id: user-service-auth
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/auth/login, /api/v1/auth/register, /api/auth/login, /api/auth/register
+          filters:
+            - StripPrefix=0
+            # Strict rate limiting for authentication endpoints to prevent brute-force
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter: "#{@authRateLimiter}"
+                key-resolver: "#{@ipKeyResolver}"
+                deny-empty-key: false
+
         - id: user-service-v1
           uri: lb://user-service
           predicates:
@@ -22,6 +54,20 @@ spring:
             - Path=/api/users/**, /api/auth/**, /api/farms/**
           filters:
             - RewritePath=/api/(?<segment>.*), /api/v1/${segment}
+
+        - id: product-service-public
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/**, /api/v1/batches/**
+            - Method=GET
+          filters:
+            - StripPrefix=0
+            # Relaxed rate limiting for public catalog browsing / QR scan
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter: "#{@publicRateLimiter}"
+                key-resolver: "#{@ipKeyResolver}"
+                deny-empty-key: false
 
         - id: product-service-v1
           uri: lb://product-service
@@ -118,7 +164,8 @@ management:
       show-details: always
   tracing:
     sampling:
-      probability: 0.1
+      # 1.0 = 100% tracing for demo/dev. Lower to 0.1 in high-traffic production.
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
   zipkin:
     tracing:
       endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://zipkin:9411/api/v2/spans}
@@ -126,5 +173,7 @@ management:
 logging:
   level:
     root: WARN
-    org.springframework.cloud.gateway: WARN
-    com.agritrace: WARN
+    org.springframework.cloud.gateway: INFO
+    com.agritrace: INFO
+    # Rate limiter debug (disable in production)
+    org.springframework.cloud.gateway.filter.ratelimit: INFO

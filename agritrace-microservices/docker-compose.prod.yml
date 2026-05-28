@@ -1,0 +1,642 @@
+# ============================================================
+# AgriTrace – Docker Compose PRODUCTION Configuration
+# ============================================================
+# Usage:
+#   1. Copy .env.example to .env and fill in secrets
+#   2. Generate SSL cert: cd nginx/ssl && bash generate-ssl-cert.sh
+#   3. Build images: docker compose -f docker-compose.prod.fixed.yml --env-file .env build
+#   4. Start: docker compose -f docker-compose.prod.fixed.yml --env-file .env up -d
+#   5. Verify: docker compose -f docker-compose.prod.fixed.yml --env-file .env ps
+#
+# Differences from docker-compose.yml (dev):
+#   - All secrets from .env file (not hardcoded)
+#   - restart: unless-stopped for all services
+#   - Network segmentation: frontend, backend, database, monitoring tiers
+#   - Nginx HTTPS reverse proxy included
+#   - Grafana admin password from env
+#   - LOG_LEVEL=WARN (not INFO like dev)
+#   - Tighter healthcheck intervals
+# ============================================================
+
+services:
+
+  # ===== DATABASES (database-tier) =====
+  # Local port mapping is added (127.0.0.1 only) to allow host scripts (e.g. seeder.py) to reach them.
+
+  postgres-user:
+    image: postgres:15-alpine
+    container_name: agritrace-user-db-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: ${POSTGRES_USER:-agritrace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?DB password required - set POSTGRES_PASSWORD in .env}
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agritrace}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres-product:
+    image: postgres:15-alpine
+    container_name: agritrace-product-db-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: ${POSTGRES_USER:-agritrace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+    networks:
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agritrace}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres-trace:
+    image: postgres:15-alpine
+    container_name: agritrace-trace-db-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      POSTGRES_DB: trace_db
+      POSTGRES_USER: ${POSTGRES_USER:-agritrace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+    volumes:
+      - trace-db-data:/var/lib/postgresql/data
+    networks:
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agritrace}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres-notification:
+    image: postgres:15-alpine
+    container_name: agritrace-notification-db-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5436:5432"
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: ${POSTGRES_USER:-agritrace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+    networks:
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agritrace}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===== CACHE & MESSAGING (backend-tier) =====
+
+  redis:
+    image: redis:7-alpine
+    container_name: agritrace-redis-prod
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    command: >
+      sh -c 'if [ -n "$$REDIS_PASSWORD" ]; then
+        exec redis-server --save 20 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass "$$REDIS_PASSWORD";
+      else
+        exec redis-server --save 20 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru;
+      fi'
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'if [ -n "$$REDIS_PASSWORD" ]; then redis-cli -a "$$REDIS_PASSWORD" ping; else redis-cli ping; fi' 
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: agritrace-zookeeper-prod
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx256m
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    networks:
+      - backend-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "cub", "zk-ready", "localhost:2181", "10"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: agritrace-kafka-prod
+    restart: unless-stopped
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx256m
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - backend-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "cub", "kafka-ready", "-b", "localhost:29092", "1", "20"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ===== INFRASTRUCTURE (backend-tier) =====
+
+  eureka-server:
+    build:
+      context: .
+      dockerfile: eureka-server/Dockerfile
+    container_name: agritrace-eureka-prod
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8761
+      MANAGEMENT_SERVER_PORT: 9761
+      ZIPKIN_URL: http://zipkin:9411
+      JAVA_OPTS: -Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC
+      LOG_LEVEL_ROOT: WARN
+      LOG_LEVEL_APP: WARN
+    networks:
+      - backend-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9761/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    container_name: agritrace-zipkin-prod
+    restart: unless-stopped
+    environment:
+      JAVA_OPTS: -Xms64m -Xmx128m
+    networks:
+      - backend-tier
+      - monitoring-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ===== MICROSERVICES (backend-tier) =====
+
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: agritrace-user-service-prod
+    restart: unless-stopped
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_INETUTILS_PREFERRED_NETWORKS: 172.21.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/user_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-agritrace}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+      SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: 300000
+      SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 120000
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      GRPC_SERVER_PORT: 9090
+      MANAGEMENT_SERVER_PORT: 9081
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      JWT_SECRET: ${JWT_SECRET:?JWT secret required - set JWT_SECRET in .env}
+      JWT_ACCESS_TOKEN_EXPIRATION: ${JWT_ACCESS_TOKEN_EXPIRATION:-900000}
+      JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION:-604800000}
+      JAVA_OPTS: -Xms96m -Xmx192m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      LOG_LEVEL_ROOT: ${LOG_LEVEL_ROOT:-WARN}
+      LOG_LEVEL_APP: ${LOG_LEVEL_APP:-WARN}
+      TRACING_SAMPLING_PROBABILITY: ${TRACING_SAMPLING_PROBABILITY:-0.1}
+    networks:
+      - backend-tier
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9081/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  product-service:
+    build:
+      context: .
+      dockerfile: product-service/Dockerfile
+    container_name: agritrace-product-service-prod
+    restart: unless-stopped
+    depends_on:
+      postgres-product:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_INETUTILS_PREFERRED_NETWORKS: 172.21.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-product:5432/product_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-agritrace}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+      SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: 300000
+      SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 120000
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      GRPC_SERVER_PORT: 9090
+      MANAGEMENT_SERVER_PORT: 9082
+      GRPC_USER_SERVICE: static://user-service:9090
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JAVA_OPTS: -Xms96m -Xmx192m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      LOG_LEVEL_ROOT: ${LOG_LEVEL_ROOT:-WARN}
+      LOG_LEVEL_APP: ${LOG_LEVEL_APP:-WARN}
+    networks:
+      - backend-tier
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9082/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  trace-service:
+    build:
+      context: .
+      dockerfile: trace-service/Dockerfile
+    container_name: agritrace-trace-service-prod
+    restart: unless-stopped
+    depends_on:
+      postgres-trace:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_INETUTILS_PREFERRED_NETWORKS: 172.21.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-trace:5432/trace_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-agritrace}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?DB password required}
+      SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: 300000
+      SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 120000
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      GRPC_SERVER_PORT: 9090
+      MANAGEMENT_SERVER_PORT: 9083
+      GRPC_PRODUCT_SERVICE: static://product-service:9090
+      GRPC_USER_SERVICE: static://user-service:9090
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JAVA_OPTS: -Xms96m -Xmx192m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      LOG_LEVEL_ROOT: ${LOG_LEVEL_ROOT:-WARN}
+      LOG_LEVEL_APP: ${LOG_LEVEL_APP:-WARN}
+      ANOMALY_DETECTION_ENABLED: ${ANOMALY_DETECTION_ENABLED:-true}
+    networks:
+      - backend-tier
+      - database-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9083/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  media-service:
+    build:
+      context: .
+      dockerfile: media-service/Dockerfile
+    container_name: agritrace-media-service-prod
+    restart: unless-stopped
+    depends_on:
+      product-service:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_INETUTILS_PREFERRED_NETWORKS: 172.21.
+      MANAGEMENT_SERVER_PORT: 9084
+      GRPC_PRODUCT_SERVICE: static://product-service:9090
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      JAVA_OPTS: -Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC
+      LOG_LEVEL_ROOT: ${LOG_LEVEL_ROOT:-WARN}
+    networks:
+      - backend-tier
+    mem_limit: 256m
+    mem_reservation: 128m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9084/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: agritrace-api-gateway-prod
+    restart: unless-stopped
+    depends_on:
+      user-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      trace-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    ports:
+      # Localhost-only exposure keeps demo/seeder access without opening Gateway to the LAN.
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:9080:9080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_INETUTILS_PREFERRED_NETWORKS: 172.21.
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      MANAGEMENT_SERVER_PORT: 9080
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      ZIPKIN_URL: http://zipkin:9411
+      JWT_SECRET: ${JWT_SECRET:?JWT secret required}
+      JAVA_OPTS: -Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC
+      LOG_LEVEL_ROOT: ${LOG_LEVEL_ROOT:-WARN}
+      TRACING_SAMPLING_PROBABILITY: ${TRACING_SAMPLING_PROBABILITY:-0.1}
+    networks:
+      - backend-tier
+      - frontend-tier
+    mem_limit: 256m
+    mem_reservation: 128m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+
+  # ===== NGINX REVERSE PROXY (frontend-tier) =====
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: agritrace-nginx-prod
+    restart: unless-stopped
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      # Uncomment to serve static SPA build:
+      # - ../agritrace-frontend/dist:/usr/share/nginx/html:ro
+    networks:
+      - frontend-tier
+    mem_limit: 128m
+    mem_reservation: 64m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/nginx-health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ===== MONITORING (monitoring-tier) =====
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: agritrace-prometheus-prod
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-lifecycle
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - monitoring-tier
+      - backend-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:11.1.4
+    container_name: agritrace-grafana-prod
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:?Grafana password required - set GF_SECURITY_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_DOMAIN: ${NGINX_DOMAIN:-localhost}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    ports:
+      # Localhost-only; expose through nginx/VPN if needed outside the host.
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      # Auto-provisioning for demo-ready dashboards
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - monitoring-tier
+    mem_limit: 320m
+    mem_reservation: 160m
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# ===== NETWORK SEGMENTATION =====
+# Principle of Least Privilege applied at network level:
+# - frontend-tier: nginx ↔ api-gateway only
+# - backend-tier: all microservices + infrastructure
+# - database-tier: database-only internal network.
+#   Note: Compose cannot enforce per-service DB ACLs on the same bridge; for stricter isolation, split it into user-db-tier/product-db-tier/trace-db-tier.
+# - monitoring-tier: prometheus ↔ scrape targets, grafana ↔ prometheus
+networks:
+  frontend-tier:
+    driver: bridge
+    name: agritrace-frontend-prod
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+  backend-tier:
+    driver: bridge
+    name: agritrace-backend-prod
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+  database-tier:
+    driver: bridge
+    name: agritrace-database-prod
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
+  monitoring-tier:
+    driver: bridge
+    name: agritrace-monitoring-prod
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16
+
+volumes:
+  user-db-data:
+  product-db-data:
+  trace-db-data:
+  notification-db-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-log:
+  prometheus-data:
+  grafana-data:

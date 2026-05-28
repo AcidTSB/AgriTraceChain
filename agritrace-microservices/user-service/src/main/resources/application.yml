@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    inetutils:
+      preferred-networks:
+        - 172.21.
   autoconfigure:
     exclude:
       - net.devh.boot.grpc.server.autoconfigure.GrpcServerSecurityAutoConfiguration

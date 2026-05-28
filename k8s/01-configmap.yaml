@@ -1,0 +1,41 @@
+---
+# ============================================================
+# AgriTrace – ConfigMap (non-sensitive configuration)
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agritrace-config
+  namespace: agritrace
+  labels:
+    app.kubernetes.io/name: agritrace
+    app.kubernetes.io/component: config
+data:
+  # Spring profiles
+  SPRING_PROFILES_ACTIVE: "docker"
+
+  # Service Discovery
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka/"
+
+  # Tracing
+  ZIPKIN_URL: "http://zipkin:9411"
+  TRACING_SAMPLING_PROBABILITY: "1.0"
+
+  # Kafka
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+
+  # Logging
+  LOG_LEVEL_ROOT: "WARN"
+  LOG_LEVEL_APP: "INFO"
+
+  # Redis
+  SPRING_DATA_REDIS_HOST: "redis"
+  SPRING_DATA_REDIS_PORT: "6379"
+
+  # JVM Options per service
+  GATEWAY_JAVA_OPTS: "-Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC"
+  SERVICE_JAVA_OPTS: "-Xms96m -Xmx192m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+  MEDIA_JAVA_OPTS: "-Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m -XX:+UseG1GC"
+
+  # Feature Flags
+  ANOMALY_DETECTION_ENABLED: "true"

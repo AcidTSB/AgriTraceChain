@@ -8,9 +8,11 @@ import com.agritrace.trace.dto.CreateTraceLogRequest;
 import com.agritrace.trace.dto.TraceLogResponse;
 import com.agritrace.trace.entity.TraceAction;
 import com.agritrace.trace.entity.TraceLog;
+import com.agritrace.trace.entity.TraceOutboxEvent;
 import com.agritrace.trace.grpc.BatchGrpcClient;
 import com.agritrace.trace.grpc.UserGrpcClient;
 import com.agritrace.trace.repository.TraceLogRepository;
+import com.agritrace.trace.repository.TraceOutboxRepository;
 import com.agritrace.trace.util.GeofenceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +47,10 @@ public class TraceLogService {
     private DigitalSignatureService digitalSignatureService;
     @Autowired
     private TraceAuditService traceAuditService;
+    @Autowired
+    private TraceOutboxRepository outboxRepository;
+    @Autowired
+    private AnomalyDetectionService anomalyDetectionService;
 
     @Value("${trace.geofence.default-radius-km:5.0}")
     private double defaultRadiusKm;
@@ -180,7 +186,39 @@ public class TraceLogService {
         log.info("Trace log created with integrity proof: action={}, batchId={}, hashPrefix={}",
             traceLog.getActionType(), request.getBatchId(), currentHash.substring(0, Math.min(12, currentHash.length())));
 
+        // === OUTBOX PATTERN ===
+        // Persist event in the SAME transaction as the trace log.
+        // OutboxPublisherService will pick this up asynchronously and publish to Kafka.
+        // This guarantees no event is lost even if the service crashes after this TX.
+        String outboxPayload = String.format(
+            "{\"traceLogId\":\"%s\",\"batchId\":\"%s\",\"batchCode\":\"%s\",\"action\":\"%s\",\"userId\":\"%s\",\"timestamp\":\"%s\"}",
+            traceLog.getId(), batchId, traceLog.getBatchCode(),
+            action.name(), userId, createdAt
+        );
+        TraceOutboxEvent outboxEvent = TraceOutboxEvent.builder()
+            .traceLogId(traceLog.getId())
+            .topic("trace-events")
+            .partitionKey(batchId.toString())   // same partition = ordered delivery per batch
+            .payload(outboxPayload)
+            .eventType("TRACE_CREATED")
+            .status("PENDING")
+            .build();
+        outboxRepository.save(outboxEvent);
+        log.debug("Outbox event queued: eventId={}, action={}", outboxEvent.getId(), action.name());
+        // === END OUTBOX PATTERN ===
+
         traceAuditService.recordCreate(traceLog, normalizedRole, regionHeader, safeUuid(facilityHeader));
+
+        // === ANOMALY DETECTION ===
+        // Non-blocking: runs checks AFTER commit. Anomalies are logged as structured
+        // WARNING events (ANOMALY:*) for Grafana alerting. Does NOT rollback the trace log.
+        final TraceLog finalTraceLog = traceLog;
+        try {
+            anomalyDetectionService.checkAnomalies(finalTraceLog);
+        } catch (Exception e) {
+            log.warn("Anomaly detection failed for traceLogId={}: {}", finalTraceLog.getId(), e.getMessage());
+        }
+        // === END ANOMALY DETECTION ===
 
         return toResponse(traceLog, true, true, true);
     }

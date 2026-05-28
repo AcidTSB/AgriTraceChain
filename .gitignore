@@ -81,11 +81,23 @@ fe_template/
 project_context.md
 
 ### Tooling Artifacts ###
-.github/
-# .vscode/ is already ignored above
+# Note: .github/ must NOT be ignored - CI/CD workflows must be committed!
+# .github/
 
 ### Root-level microservices scripts ###
 /agritrace-microservices/*.py
 /agritrace-microservices/*.ps1
 /agritrace-microservices/*.sh
 /agritrace-microservices/*.txt
+
+### Secrets – NEVER commit these! ###
+.env
+agritrace-microservices/.env
+# Keep .env.example in version control (it's a template, not real secrets)
+!.env.example
+!agritrace-microservices/.env.example
+
+### SSL Certificates (local dev only) ###
+nginx/ssl/*.crt
+nginx/ssl/*.key
+nginx/ssl/*.pem

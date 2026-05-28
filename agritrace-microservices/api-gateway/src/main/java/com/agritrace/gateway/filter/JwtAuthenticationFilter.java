@@ -129,7 +129,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             return true;
         }
 
-        if (path.startsWith("/api/public/trace/") && HttpMethod.GET.equals(method)) {
+        if ((path.startsWith("/api/public/trace/") || path.startsWith("/api/v1/trace-logs/public/")) && HttpMethod.GET.equals(method)) {
             return true;
         }
 

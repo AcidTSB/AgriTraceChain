@@ -1,0 +1,382 @@
+---
+# ============================================================
+# AgriTrace – API Gateway Deployment & Service
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: agritrace
+  labels:
+    app: api-gateway
+    app.kubernetes.io/name: agritrace
+    app.kubernetes.io/component: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: api-gateway
+          image: ghcr.io/your-org/agritrace-api-gateway:latest
+          # For local demo: use locally-built image
+          # image: agritrace-api-gateway:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: management
+              containerPort: 9080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: agritrace-config
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-secrets
+                  key: JWT_SECRET
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: agritrace-config
+                  key: GATEWAY_JAVA_OPTS
+            - name: MANAGEMENT_SERVER_PORT
+              value: "9080"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 12   # 20 + 12*10 = 140s max startup
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: agritrace
+  labels:
+    app: api-gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: api-gateway
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: management
+      port: 9080
+      targetPort: 9080
+      protocol: TCP
+
+---
+# ============================================================
+# AgriTrace – User Service Deployment & Service
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: agritrace
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9081"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: user-service
+          image: ghcr.io/your-org/agritrace-user-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9090
+              name: grpc
+            - containerPort: 9081
+              name: management
+          envFrom:
+            - configMapRef:
+                name: agritrace-config
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-user
+                  key: url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-user
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-user
+                  key: password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-secrets
+                  key: JWT_SECRET
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: agritrace-config
+                  key: SERVICE_JAVA_OPTS
+            - name: GRPC_SERVER_PORT
+              value: "9090"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "9081"
+          resources:
+            requests:
+              memory: "192Mi"
+              cpu: "150m"
+            limits:
+              memory: "320Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9081
+            initialDelaySeconds: 60
+            periodSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: agritrace
+spec:
+  selector:
+    app: user-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: grpc
+      port: 9090
+      targetPort: 9090
+    - name: management
+      port: 9081
+      targetPort: 9081
+
+---
+# ============================================================
+# AgriTrace – Trace Service Deployment & Service
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trace-service
+  namespace: agritrace
+  labels:
+    app: trace-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trace-service
+  template:
+    metadata:
+      labels:
+        app: trace-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9083"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: trace-service
+          image: ghcr.io/your-org/agritrace-trace-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9090
+              name: grpc
+            - containerPort: 9083
+              name: management
+          envFrom:
+            - configMapRef:
+                name: agritrace-config
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-trace
+                  key: url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-trace
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: agritrace-db-trace
+                  key: password
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: agritrace-config
+                  key: SERVICE_JAVA_OPTS
+            - name: GRPC_SERVER_PORT
+              value: "9090"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "9083"
+            - name: GRPC_PRODUCT_SERVICE
+              value: "static://product-service:9090"
+            - name: GRPC_USER_SERVICE
+              value: "static://user-service:9090"
+          resources:
+            requests:
+              memory: "192Mi"
+              cpu: "150m"
+            limits:
+              memory: "320Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9083
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9083
+            initialDelaySeconds: 80
+            periodSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trace-service
+  namespace: agritrace
+spec:
+  selector:
+    app: trace-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: grpc
+      port: 9090
+      targetPort: 9090
+    - name: management
+      port: 9083
+      targetPort: 9083
+
+---
+# ============================================================
+# AgriTrace – Ingress (Entry Point)
+# ============================================================
+# Requires: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/...
+# Or: helm install ingress-nginx ingress-nginx/ingress-nginx
+# ============================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agritrace-ingress
+  namespace: agritrace
+  labels:
+    app.kubernetes.io/name: agritrace
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # Rate limiting at Ingress level (defense-in-depth)
+    nginx.ingress.kubernetes.io/limit-rps: "30"
+    nginx.ingress.kubernetes.io/limit-connections: "20"
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options "DENY" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    # TLS redirect
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+spec:
+  ingressClassName: nginx
+  # TLS: replace with real certificate (cert-manager + Let's Encrypt)
+  # tls:
+  #   - hosts:
+  #       - agritrace.yourdomain.com
+  #     secretName: agritrace-tls
+  rules:
+    - host: localhost
+      http:
+        paths:
+          # API routes → api-gateway
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          # Actuator management (restrict access in production)
+          # - path: /actuator
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: api-gateway
+          #       port:
+          #         number: 9080

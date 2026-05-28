@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    inetutils:
+      preferred-networks:
+        - 172.21.
   application:
     name: trace-service
   datasource:

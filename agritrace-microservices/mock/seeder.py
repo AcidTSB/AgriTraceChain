@@ -238,7 +238,11 @@ for i in range(12):
     })
 
 # 4. Bơm thêm 30 Batch (Tự động đẻ ra ~150 Trace Logs)
-scenarios = ["VERIFIED_SHIPPING", "PENDING_INSPECTION", "VERIFIED_PACKAGED", "EARLY_GROWTH", "PENDING_INSPECTION_HARVEST"]
+scenarios = [
+    "VERIFIED_SHIPPING", "PENDING_INSPECTION", "VERIFIED_PACKAGED", 
+    "EARLY_GROWTH", "PENDING_INSPECTION_HARVEST",
+    "ANOMALY_TELEPORTATION", "ANOMALY_QUANTITY", "ANOMALY_SEQUENCE"
+]
 for i in range(30):
     BATCH_BLUEPRINTS.append({
         "farmIndex": i % len(FARM_BLUEPRINTS),
@@ -714,6 +718,71 @@ def build_trace_plan(batch, farm, scenario):
             },
         ]
 
+    if scenario == "ANOMALY_TELEPORTATION":
+        # Simulate teleportation: Log 1 at Vietnam, Log 2 at USA
+        return [
+            {"action": "PLANTING", "actor": "FARMER", "location": base_location, "notes": base_notes["PLANTING"], "coords": near_farm()},
+            {"action": "FERTILIZING", "actor": "FARMER", "location": base_location, "notes": base_notes["FERTILIZING"], "coords": near_farm()},
+            {
+                "action": "WATERING", 
+                "actor": "FARMER", 
+                "location": "Suspicious Location (USA)", 
+                "notes": "[ANOMALY] Watered from across the globe", 
+                "coords": (37.7749, -122.4194) # San Francisco, USA
+            },
+        ]
+
+    if scenario == "ANOMALY_QUANTITY":
+        # Simulate output quantity > input quantity
+        return [
+            {"action": "PLANTING", "actor": "FARMER", "location": base_location, "notes": base_notes["PLANTING"], "coords": near_farm()},
+            {
+                "action": "HARVESTING",
+                "actor": "FARMER",
+                "location": base_location,
+                "notes": base_notes["HARVESTING"],
+                "quantity": 100.0,
+                "coords": near_farm(),
+            },
+            {
+                "action": "INSPECTION",
+                "actor": "INSPECTOR",
+                "location": f"{farm['region']} Inspection Center",
+                "notes": base_notes["INSPECTION"],
+                "coords": near_farm(1.5),
+            },
+            {
+                "action": "PACKAGING",
+                "actor": "FARMER",
+                "location": f"{farm['region']} Packaging Station",
+                "notes": "[ANOMALY] Packaged quantity (500) exceeds harvested quantity (100)",
+                "quantity": 500.0,
+                "coords": near_farm(2.0),
+            },
+        ]
+
+    if scenario == "ANOMALY_SEQUENCE":
+        # Simulate sequence violation: Packaging before Harvesting
+        return [
+            {"action": "PLANTING", "actor": "FARMER", "location": base_location, "notes": base_notes["PLANTING"], "coords": near_farm()},
+            {
+                "action": "PACKAGING",
+                "actor": "FARMER",
+                "location": base_location,
+                "notes": "[ANOMALY] Packaging started before harvest!",
+                "quantity": 100.0,
+                "coords": near_farm(),
+            },
+            {
+                "action": "HARVESTING",
+                "actor": "FARMER",
+                "location": base_location,
+                "notes": base_notes["HARVESTING"],
+                "quantity": 100.0,
+                "coords": near_farm(),
+            },
+        ]
+
     return [
         {"action": "PLANTING", "actor": "FARMER", "location": base_location, "notes": base_notes["PLANTING"], "coords": near_farm()},
         {"action": "FERTILIZING", "actor": "FARMER", "location": base_location, "notes": base_notes["FERTILIZING"], "coords": near_farm()},
@@ -974,6 +1043,16 @@ def run_seed(manifest_path):
         should_be_public = any(t["action"] == "INSPECTION" for t in trace_plan)
         public_check = validate_public_views(session, batch["batchCode"], should_be_public)
 
+        # Call media service to generate/cache QR Code
+        qr_status = "Skipped"
+        if should_be_public:
+            qr_res = session.get(f"{BASE_URL}/media/qr/{batch['batchCode']}/base64", timeout=10)
+            if qr_res.status_code == 200:
+                qr_status = "Generated"
+            else:
+                qr_status = f"Failed ({qr_res.status_code})"
+            print(f"    -> QR Code: {qr_status}")
+
         manifest_batches.append(
             {
                 "label": blueprint["label"],
@@ -990,6 +1069,7 @@ def run_seed(manifest_path):
                 },
                 "traceTimeline": trace_items,
                 "publicValidation": public_check,
+                "qrStatus": qr_status,
                 "inspectionState": blueprint.get("inspectionState", "NONE"),
             }
         )

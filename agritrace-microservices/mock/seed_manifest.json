@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T18:20:00.232957Z",
+  "generatedAt": "2026-05-27T18:49:34.854370Z",
   "baseUrl": "http://localhost:8080/api/v1",
   "notes": [
     "Seeder aligned with current backend contracts (products are global, farm relation is via batches).",
@@ -12,82 +12,82 @@
     {
       "role": "ADMIN",
       "username": "admin_mock",
-      "userId": "895344ed-379d-4651-8b47-2c4ad45f9512"
+      "userId": "1b76bfff-a876-4d0d-b157-d92318a42178"
     },
     {
       "role": "FARMER",
       "username": "farmer_mock",
-      "userId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+      "userId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_mock",
-      "userId": "3c3ca3e7-5d67-4ea1-ae78-a1fb3935cf92"
+      "userId": "49dc3709-0e87-462b-8b18-1aa98a23037e"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_1_mock",
-      "userId": "2d096ea5-89bf-4671-bd56-771e36e7ae74"
+      "userId": "f988ffd7-9525-403c-ad24-86d0d9f871b8"
     },
     {
       "role": "FARMER",
       "username": "farmer_2_mock",
-      "userId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+      "userId": "59389c59-4418-47f7-a25d-b4997980b91a"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_3_mock",
-      "userId": "301a366b-062f-4d6a-8d85-fb07ed5f5528"
+      "userId": "a245187c-9191-4628-8fb3-fa5dff5a8965"
     },
     {
       "role": "FARMER",
       "username": "farmer_4_mock",
-      "userId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+      "userId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_5_mock",
-      "userId": "cf39844d-ae5b-45d3-baac-4747deff7e97"
+      "userId": "bf8dca08-5697-4fa9-9502-33da1e28dc6a"
     },
     {
       "role": "FARMER",
       "username": "farmer_6_mock",
-      "userId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
+      "userId": "5b681469-2c14-4105-bc36-34f4892ec336"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_7_mock",
-      "userId": "660c4e49-2185-4236-b669-171c8d8f138b"
+      "userId": "ffb619cf-c4dc-4c14-a2ff-a0e66e59d2a7"
     },
     {
       "role": "FARMER",
       "username": "farmer_8_mock",
-      "userId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
+      "userId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_9_mock",
-      "userId": "8723a9de-38b8-42d2-8cb1-1ad4e9edd2dd"
+      "userId": "64772330-9de7-40cd-827a-25351587a2a5"
     },
     {
       "role": "FARMER",
       "username": "farmer_10_mock",
-      "userId": "57bea64a-f631-4709-8103-87bca0c90b96"
+      "userId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
     },
     {
       "role": "INSPECTOR",
       "username": "inspector_11_mock",
-      "userId": "371cb055-eed0-4a10-bfaa-a058e2b887ff"
+      "userId": "0b4f1d37-bcee-4108-a063-7ac890e210d8"
     },
     {
       "role": "FARMER",
       "username": "farmer_12_mock",
-      "userId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
+      "userId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
     }
   ],
   "products": [
     {
-      "id": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
+      "id": "73e1726d-fb84-4f74-b8bb-e79239397b08",
       "name": "[MOCK] Hass Avocado",
       "baseName": "Hass Avocado",
       "sku": "AT-AVO-001",
@@ -100,7 +100,7 @@
       "source": "created"
     },
     {
-      "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+      "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
       "name": "[MOCK] Organic Tomato",
       "baseName": "Organic Tomato",
       "sku": "AT-TOM-002",
@@ -113,7 +113,7 @@
       "source": "created"
     },
     {
-      "id": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
+      "id": "5293b5cc-8809-46da-b439-886490c85f70",
       "name": "[MOCK] Jasmine Rice",
       "baseName": "Jasmine Rice",
       "sku": "AT-RIC-003",
@@ -126,7 +126,7 @@
       "source": "created"
     },
     {
-      "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+      "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
       "name": "[MOCK] Dragon Fruit",
       "baseName": "Dragon Fruit",
       "sku": "AT-DRA-004",
@@ -139,7 +139,7 @@
       "source": "created"
     },
     {
-      "id": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
+      "id": "9da8d435-7a96-427f-9652-f1445fb15fe1",
       "name": "[MOCK] Arabica Coffee",
       "baseName": "Arabica Coffee",
       "sku": "AT-COF-005",
@@ -152,7 +152,7 @@
       "source": "created"
     },
     {
-      "id": "d1144b79-7696-40ca-8c18-4035c185174d",
+      "id": "31f969b4-f6ad-4e46-8928-1b4076d63646",
       "name": "[MOCK] Sầu Riêng Ri6",
       "baseName": "Sầu Riêng Ri6",
       "sku": "AT-DUR-006",
@@ -165,7 +165,7 @@
       "source": "created"
     },
     {
-      "id": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
+      "id": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
       "name": "[MOCK] Cà Phê Robusta",
       "baseName": "Cà Phê Robusta",
       "sku": "AT-COF-007",
@@ -178,7 +178,7 @@
       "source": "created"
     },
     {
-      "id": "da5335d1-779b-440d-9517-3a40346c5e2e",
+      "id": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
       "name": "[MOCK] Chanh Dây Tím",
       "baseName": "Chanh Dây Tím",
       "sku": "AT-PAS-008",
@@ -191,7 +191,7 @@
       "source": "created"
     },
     {
-      "id": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
+      "id": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
       "name": "[MOCK] Hạt Điều Rang",
       "baseName": "Hạt Điều Rang",
       "sku": "AT-CAS-009",
@@ -204,7 +204,7 @@
       "source": "created"
     },
     {
-      "id": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
+      "id": "3da41d94-4a09-4174-afa9-bdf01d654619",
       "name": "[MOCK] Xoài Cát Hòa Lộc",
       "baseName": "Xoài Cát Hòa Lộc",
       "sku": "AT-MAN-010",
@@ -219,412 +219,412 @@
   ],
   "farms": [
     {
-      "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+      "id": "892c9739-e865-4cdb-8306-9f720357a91d",
       "name": "[MOCK] Dalat Farm",
       "location": "Da Lat, Lam Dong - Plot 4B",
       "region": "DALAT",
       "plot": "Plot 4B",
       "latitude": 11.9404,
       "longitude": 108.4583,
-      "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+      "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
     },
     {
-      "id": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+      "id": "1c685b51-06a1-4318-a0eb-638aec86def0",
       "name": "[MOCK] Mekong Green Farm",
       "location": "Can Tho, Mekong Delta - Sector C2",
       "region": "MEKONG",
       "plot": "Sector C2",
       "latitude": 10.0452,
       "longitude": 105.7469,
-      "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+      "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
     },
     {
-      "id": "495b488f-4d63-4150-a08a-1553ba77e548",
+      "id": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
       "name": "[MOCK] Highland Organic Hub",
       "location": "Buon Ma Thuot, Dak Lak - Block A7",
       "region": "HIGHLAND",
       "plot": "Block A7",
       "latitude": 12.6666,
       "longitude": 108.0372,
-      "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+      "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
     },
     {
-      "id": "f2beefa9-90f8-4847-a99d-534368156d03",
+      "id": "4b2821d1-6656-43fa-b2c1-030141994528",
       "name": "[MOCK] Farm Extra 1 - Dong Nai",
       "location": "Dong Nai - Plot 10",
       "region": "DONG_NAI",
       "plot": "Plot 10",
-      "latitude": 10.955161,
-      "longitude": 107.090319,
-      "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
+      "latitude": 10.939463,
+      "longitude": 107.03548,
+      "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
     },
     {
-      "id": "f837c276-e8ea-4bd5-b33f-9366bf3e4b7d",
+      "id": "8bccd96e-cb88-4f8c-a03e-05b0b5ec2733",
       "name": "[MOCK] Farm Extra 2 - Tien Giang",
       "location": "Tien Giang - Plot 11",
       "region": "TIEN_GIANG",
       "plot": "Plot 11",
-      "latitude": 10.481099,
-      "longitude": 106.389353,
-      "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
+      "latitude": 10.299221,
+      "longitude": 106.294321,
+      "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
     },
     {
-      "id": "9822cc88-2455-413c-a016-7703e2f7cdd4",
+      "id": "fa01147b-dad2-42c8-8fe5-8a3fa6080350",
       "name": "[MOCK] Farm Extra 3 - Binh Thuan",
       "location": "Binh Thuan - Plot 12",
       "region": "BINH_THUAN",
       "plot": "Plot 12",
-      "latitude": 11.092687,
-      "longitude": 108.087644,
-      "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
+      "latitude": 11.075868,
+      "longitude": 108.08232,
+      "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
     },
     {
-      "id": "38c1a8c6-9b03-4c17-ac17-d0b7a78e9610",
+      "id": "edee057a-ac67-4e58-919b-8dda762153e6",
       "name": "[MOCK] Farm Extra 4 - Son La",
       "location": "Son La - Plot 13",
       "region": "SON_LA",
       "plot": "Plot 13",
-      "latitude": 21.242119,
-      "longitude": 103.825956,
-      "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
+      "latitude": 21.320179,
+      "longitude": 103.916592,
+      "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
     },
     {
-      "id": "5b913504-d61d-430f-9c32-0d3f4f2521ce",
+      "id": "74529a61-c644-45f1-938c-a37734d9ae21",
       "name": "[MOCK] Farm Extra 5 - Dak Nong",
       "location": "Dak Nong - Plot 14",
       "region": "DAK_NONG",
       "plot": "Plot 14",
-      "latitude": 11.981598,
-      "longitude": 107.880851,
-      "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+      "latitude": 11.943833,
+      "longitude": 107.790132,
+      "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
     },
     {
-      "id": "42dd11d3-d295-4a51-941e-5b293efecc81",
+      "id": "bfdd85ad-dd95-4958-9903-31205b716c67",
       "name": "[MOCK] Farm Extra 6 - Dong Nai",
       "location": "Dong Nai - Plot 15",
       "region": "DONG_NAI",
       "plot": "Plot 15",
-      "latitude": 10.873288,
-      "longitude": 107.057841,
-      "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+      "latitude": 11.039366,
+      "longitude": 107.120643,
+      "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
     },
     {
-      "id": "2aaab9c8-07fd-4291-b99e-eb687bfe90a9",
+      "id": "7f10be34-046f-4e57-82ea-5ce51c2452b6",
       "name": "[MOCK] Farm Extra 7 - Tien Giang",
       "location": "Tien Giang - Plot 16",
       "region": "TIEN_GIANG",
       "plot": "Plot 16",
-      "latitude": 10.405839,
-      "longitude": 106.382118,
-      "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+      "latitude": 10.330101,
+      "longitude": 106.408461,
+      "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
     },
     {
-      "id": "73812e1a-3f7f-493a-b21e-951896966664",
+      "id": "20232948-b594-435a-8596-50adee7d274c",
       "name": "[MOCK] Farm Extra 8 - Binh Thuan",
       "location": "Binh Thuan - Plot 17",
       "region": "BINH_THUAN",
       "plot": "Plot 17",
-      "latitude": 11.14807,
-      "longitude": 108.081292,
-      "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
+      "latitude": 11.098989,
+      "longitude": 108.159554,
+      "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
     },
     {
-      "id": "bf33a8f8-8b23-450a-86ae-ba2e62c17a3b",
+      "id": "e87408ae-d280-42fa-85b3-e6611a80bda1",
       "name": "[MOCK] Farm Extra 9 - Son La",
       "location": "Son La - Plot 18",
       "region": "SON_LA",
       "plot": "Plot 18",
-      "latitude": 21.254125,
-      "longitude": 103.897167,
-      "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
+      "latitude": 21.310007,
+      "longitude": 103.935477,
+      "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
     },
     {
-      "id": "5dc5242c-cced-445c-b85f-9f124787ad85",
+      "id": "91592afc-9cd8-4c79-bb1a-778dcb874c4a",
       "name": "[MOCK] Farm Extra 10 - Dak Nong",
       "location": "Dak Nong - Plot 19",
       "region": "DAK_NONG",
       "plot": "Plot 19",
-      "latitude": 12.038187,
-      "longitude": 107.88052,
-      "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
+      "latitude": 12.066556,
+      "longitude": 107.915179,
+      "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
     },
     {
-      "id": "a6f3e9d0-645f-4705-bb00-2a790bce4f2b",
+      "id": "25053ea6-c4e1-4821-90cd-8a97112afff5",
       "name": "[MOCK] Farm Extra 11 - Dong Nai",
       "location": "Dong Nai - Plot 20",
       "region": "DONG_NAI",
       "plot": "Plot 20",
-      "latitude": 11.027787,
-      "longitude": 107.033501,
-      "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
+      "latitude": 10.849813,
+      "longitude": 107.076608,
+      "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
     },
     {
-      "id": "9a38cf1e-dd25-47ea-87c5-bc406065a969",
+      "id": "01cbc660-5259-4d65-9766-90ccedefb6e9",
       "name": "[MOCK] Farm Extra 12 - Tien Giang",
       "location": "Tien Giang - Plot 21",
       "region": "TIEN_GIANG",
       "plot": "Plot 21",
-      "latitude": 10.346184,
-      "longitude": 106.354589,
-      "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+      "latitude": 10.392746,
+      "longitude": 106.338002,
+      "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
     }
   ],
   "farmProductMap": {
     "[MOCK] Dalat Farm": [
       {
-        "batchCode": "BATCH-20260521-AA8AA9B7",
+        "batchCode": "BATCH-20260527-531DA42E",
         "productName": "[MOCK] Hass Avocado",
         "scenario": "VERIFIED_SHIPPING"
       },
       {
-        "batchCode": "BATCH-20260521-6BE2601E",
+        "batchCode": "BATCH-20260527-C2FBF37C",
         "productName": "[MOCK] Jasmine Rice",
         "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-DBF14777",
+        "batchCode": "BATCH-20260527-598B201E",
         "productName": "[MOCK] Dragon Fruit",
         "scenario": "PENDING_INSPECTION_PARTIAL"
       },
       {
-        "batchCode": "BATCH-20260521-F7B08E8B",
+        "batchCode": "BATCH-20260527-5E9F8F7F",
         "productName": "[MOCK] Hass Avocado",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_QUANTITY"
       },
       {
-        "batchCode": "BATCH-20260521-442CB26B",
+        "batchCode": "BATCH-20260527-9BD1D08D",
         "productName": "[MOCK] Sầu Riêng Ri6",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_SEQUENCE"
       }
     ],
     "[MOCK] Mekong Green Farm": [
       {
-        "batchCode": "BATCH-20260521-2699A5C2",
+        "batchCode": "BATCH-20260527-98FCB507",
         "productName": "[MOCK] Organic Tomato",
         "scenario": "PENDING_INSPECTION"
       },
       {
-        "batchCode": "BATCH-20260521-C053A747",
+        "batchCode": "BATCH-20260527-8C33A40F",
         "productName": "[MOCK] Arabica Coffee",
         "scenario": "PENDING_INSPECTION_HARVEST"
       },
       {
-        "batchCode": "BATCH-20260521-0ECCA9FC",
+        "batchCode": "BATCH-20260527-23B78A0F",
         "productName": "[MOCK] Organic Tomato",
         "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-626B7547",
+        "batchCode": "BATCH-20260527-74CB1DDF",
         "productName": "[MOCK] Cà Phê Robusta",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "PENDING_INSPECTION"
       }
     ],
     "[MOCK] Highland Organic Hub": [
       {
-        "batchCode": "BATCH-20260521-4EF7C729",
+        "batchCode": "BATCH-20260527-16C2728A",
         "productName": "[MOCK] Dragon Fruit",
         "scenario": "EARLY_GROWTH"
       },
       {
-        "batchCode": "BATCH-20260521-6BFA8748",
+        "batchCode": "BATCH-20260527-ACDEC76C",
         "productName": "[MOCK] Organic Tomato",
         "scenario": "PENDING_INSPECTION_INCOMPLETE"
       },
       {
-        "batchCode": "BATCH-20260521-23DF5D98",
+        "batchCode": "BATCH-20260527-6E7A080A",
         "productName": "[MOCK] Jasmine Rice",
-        "scenario": "VERIFIED_SHIPPING"
+        "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-ECE76C1F",
+        "batchCode": "BATCH-20260527-6690B293",
         "productName": "[MOCK] Chanh Dây Tím",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "VERIFIED_PACKAGED"
       }
     ],
     "[MOCK] Farm Extra 1 - Dong Nai": [
       {
-        "batchCode": "BATCH-20260521-FBF3CC5D",
+        "batchCode": "BATCH-20260527-8B3514E3",
         "productName": "[MOCK] Dragon Fruit",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_SEQUENCE"
       },
       {
-        "batchCode": "BATCH-20260521-1473E98C",
+        "batchCode": "BATCH-20260527-40A5298E",
         "productName": "[MOCK] Hạt Điều Rang",
         "scenario": "PENDING_INSPECTION"
       }
     ],
     "[MOCK] Farm Extra 2 - Tien Giang": [
       {
-        "batchCode": "BATCH-20260521-374F153F",
+        "batchCode": "BATCH-20260527-30A87E69",
         "productName": "[MOCK] Arabica Coffee",
-        "scenario": "PENDING_INSPECTION"
+        "scenario": "VERIFIED_SHIPPING"
       },
       {
-        "batchCode": "BATCH-20260521-CE499585",
+        "batchCode": "BATCH-20260527-9F347981",
         "productName": "[MOCK] Xoài Cát Hòa Lộc",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "PENDING_INSPECTION"
       }
     ],
     "[MOCK] Farm Extra 3 - Binh Thuan": [
       {
-        "batchCode": "BATCH-20260521-82263437",
+        "batchCode": "BATCH-20260527-2BDC83C3",
         "productName": "[MOCK] Sầu Riêng Ri6",
-        "scenario": "EARLY_GROWTH"
+        "scenario": "PENDING_INSPECTION"
       },
       {
-        "batchCode": "BATCH-20260521-BBF3B908",
+        "batchCode": "BATCH-20260527-AC780760",
         "productName": "[MOCK] Hass Avocado",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "EARLY_GROWTH"
       }
     ],
     "[MOCK] Farm Extra 4 - Son La": [
       {
-        "batchCode": "BATCH-20260521-F8977DC9",
+        "batchCode": "BATCH-20260527-76C62215",
         "productName": "[MOCK] Cà Phê Robusta",
-        "scenario": "PENDING_INSPECTION"
+        "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-BFDD5987",
+        "batchCode": "BATCH-20260527-F7D6EAE8",
         "productName": "[MOCK] Organic Tomato",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_TELEPORTATION"
       }
     ],
     "[MOCK] Farm Extra 5 - Dak Nong": [
       {
-        "batchCode": "BATCH-20260521-86E9B439",
+        "batchCode": "BATCH-20260527-EB725147",
         "productName": "[MOCK] Chanh Dây Tím",
-        "scenario": "PENDING_INSPECTION"
+        "scenario": "VERIFIED_SHIPPING"
       },
       {
-        "batchCode": "BATCH-20260521-06A8DE4F",
+        "batchCode": "BATCH-20260527-3AFF91C4",
         "productName": "[MOCK] Jasmine Rice",
-        "scenario": "EARLY_GROWTH"
+        "scenario": "PENDING_INSPECTION"
       }
     ],
     "[MOCK] Farm Extra 6 - Dong Nai": [
       {
-        "batchCode": "BATCH-20260521-D7B1D135",
+        "batchCode": "BATCH-20260527-FA8952B3",
         "productName": "[MOCK] Hạt Điều Rang",
-        "scenario": "VERIFIED_SHIPPING"
+        "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-18E18660",
+        "batchCode": "BATCH-20260527-3335DFB7",
         "productName": "[MOCK] Dragon Fruit",
-        "scenario": "EARLY_GROWTH"
+        "scenario": "VERIFIED_PACKAGED"
       }
     ],
     "[MOCK] Farm Extra 7 - Tien Giang": [
       {
-        "batchCode": "BATCH-20260521-979D68D5",
+        "batchCode": "BATCH-20260527-3BBC7108",
         "productName": "[MOCK] Xoài Cát Hòa Lộc",
-        "scenario": "PENDING_INSPECTION"
+        "scenario": "VERIFIED_PACKAGED"
       },
       {
-        "batchCode": "BATCH-20260521-69795512",
+        "batchCode": "BATCH-20260527-175DFE2F",
         "productName": "[MOCK] Arabica Coffee",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_QUANTITY"
       }
     ],
     "[MOCK] Farm Extra 8 - Binh Thuan": [
       {
-        "batchCode": "BATCH-20260521-7B382DCC",
+        "batchCode": "BATCH-20260527-B6F19F8A",
         "productName": "[MOCK] Hass Avocado",
         "scenario": "EARLY_GROWTH"
       },
       {
-        "batchCode": "BATCH-20260521-A3B61371",
+        "batchCode": "BATCH-20260527-539361E1",
         "productName": "[MOCK] Sầu Riêng Ri6",
-        "scenario": "VERIFIED_SHIPPING"
+        "scenario": "PENDING_INSPECTION"
       }
     ],
     "[MOCK] Farm Extra 9 - Son La": [
       {
-        "batchCode": "BATCH-20260521-919B2078",
+        "batchCode": "BATCH-20260527-B4D60635",
         "productName": "[MOCK] Organic Tomato",
-        "scenario": "EARLY_GROWTH"
+        "scenario": "PENDING_INSPECTION"
       },
       {
-        "batchCode": "BATCH-20260521-22421D23",
+        "batchCode": "BATCH-20260527-E6821007",
         "productName": "[MOCK] Cà Phê Robusta",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "ANOMALY_TELEPORTATION"
       }
     ],
     "[MOCK] Farm Extra 10 - Dak Nong": [
       {
-        "batchCode": "BATCH-20260521-CF2405C8",
+        "batchCode": "BATCH-20260527-9F8B27A9",
         "productName": "[MOCK] Jasmine Rice",
-        "scenario": "PENDING_INSPECTION"
+        "scenario": "ANOMALY_SEQUENCE"
       },
       {
-        "batchCode": "BATCH-20260521-247C5CBB",
+        "batchCode": "BATCH-20260527-2BB8DBE5",
         "productName": "[MOCK] Chanh Dây Tím",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "EARLY_GROWTH"
       }
     ],
     "[MOCK] Farm Extra 11 - Dong Nai": [
       {
-        "batchCode": "BATCH-20260521-0E761B82",
+        "batchCode": "BATCH-20260527-DB9794FF",
         "productName": "[MOCK] Dragon Fruit",
-        "scenario": "VERIFIED_PACKAGED"
+        "scenario": "PENDING_INSPECTION"
       },
       {
-        "batchCode": "BATCH-20260521-97B35460",
+        "batchCode": "BATCH-20260527-1FB6B506",
         "productName": "[MOCK] Hạt Điều Rang",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "ANOMALY_QUANTITY"
       }
     ],
     "[MOCK] Farm Extra 12 - Tien Giang": [
       {
-        "batchCode": "BATCH-20260521-1D774038",
+        "batchCode": "BATCH-20260527-5755F674",
         "productName": "[MOCK] Arabica Coffee",
-        "scenario": "PENDING_INSPECTION_HARVEST"
+        "scenario": "PENDING_INSPECTION"
       },
       {
-        "batchCode": "BATCH-20260521-0F80EB92",
+        "batchCode": "BATCH-20260527-46F4806A",
         "productName": "[MOCK] Xoài Cát Hòa Lộc",
-        "scenario": "EARLY_GROWTH"
+        "scenario": "PENDING_INSPECTION_HARVEST"
       }
     ]
   },
   "searchSuggestions": {
     "batchCodes": [
-      "BATCH-20260521-06A8DE4F",
-      "BATCH-20260521-0E761B82",
-      "BATCH-20260521-0ECCA9FC",
-      "BATCH-20260521-0F80EB92",
-      "BATCH-20260521-1473E98C",
-      "BATCH-20260521-18E18660",
-      "BATCH-20260521-1D774038",
-      "BATCH-20260521-22421D23",
-      "BATCH-20260521-23DF5D98",
-      "BATCH-20260521-247C5CBB",
-      "BATCH-20260521-2699A5C2",
-      "BATCH-20260521-374F153F",
-      "BATCH-20260521-442CB26B",
-      "BATCH-20260521-4EF7C729",
-      "BATCH-20260521-626B7547",
-      "BATCH-20260521-69795512",
-      "BATCH-20260521-6BE2601E",
-      "BATCH-20260521-6BFA8748",
-      "BATCH-20260521-7B382DCC",
-      "BATCH-20260521-82263437",
-      "BATCH-20260521-86E9B439",
-      "BATCH-20260521-919B2078",
-      "BATCH-20260521-979D68D5",
-      "BATCH-20260521-97B35460",
-      "BATCH-20260521-A3B61371",
-      "BATCH-20260521-AA8AA9B7",
-      "BATCH-20260521-BBF3B908",
-      "BATCH-20260521-BFDD5987",
-      "BATCH-20260521-C053A747",
-      "BATCH-20260521-CE499585",
-      "BATCH-20260521-CF2405C8",
-      "BATCH-20260521-D7B1D135",
-      "BATCH-20260521-DBF14777",
-      "BATCH-20260521-ECE76C1F",
-      "BATCH-20260521-F7B08E8B",
-      "BATCH-20260521-F8977DC9",
-      "BATCH-20260521-FBF3CC5D"
+      "BATCH-20260527-16C2728A",
+      "BATCH-20260527-175DFE2F",
+      "BATCH-20260527-1FB6B506",
+      "BATCH-20260527-23B78A0F",
+      "BATCH-20260527-2BB8DBE5",
+      "BATCH-20260527-2BDC83C3",
+      "BATCH-20260527-30A87E69",
+      "BATCH-20260527-3335DFB7",
+      "BATCH-20260527-3AFF91C4",
+      "BATCH-20260527-3BBC7108",
+      "BATCH-20260527-40A5298E",
+      "BATCH-20260527-46F4806A",
+      "BATCH-20260527-531DA42E",
+      "BATCH-20260527-539361E1",
+      "BATCH-20260527-5755F674",
+      "BATCH-20260527-598B201E",
+      "BATCH-20260527-5E9F8F7F",
+      "BATCH-20260527-6690B293",
+      "BATCH-20260527-6E7A080A",
+      "BATCH-20260527-74CB1DDF",
+      "BATCH-20260527-76C62215",
+      "BATCH-20260527-8B3514E3",
+      "BATCH-20260527-8C33A40F",
+      "BATCH-20260527-98FCB507",
+      "BATCH-20260527-9BD1D08D",
+      "BATCH-20260527-9F347981",
+      "BATCH-20260527-9F8B27A9",
+      "BATCH-20260527-AC780760",
+      "BATCH-20260527-ACDEC76C",
+      "BATCH-20260527-B4D60635",
+      "BATCH-20260527-B6F19F8A",
+      "BATCH-20260527-C2FBF37C",
+      "BATCH-20260527-DB9794FF",
+      "BATCH-20260527-E6821007",
+      "BATCH-20260527-EB725147",
+      "BATCH-20260527-F7D6EAE8",
+      "BATCH-20260527-FA8952B3"
     ],
     "productNames": [
       "[MOCK] Arabica Coffee",
@@ -656,6 +656,9 @@
       "[MOCK] Mekong Green Farm"
     ],
     "scenarioTags": [
+      "ANOMALY_QUANTITY",
+      "ANOMALY_SEQUENCE",
+      "ANOMALY_TELEPORTATION",
       "AWAITING_INSPECTION",
       "EARLY_GROWTH",
       "NONE",
@@ -683,11 +686,11 @@
       "scenario": "VERIFIED_SHIPPING",
       "uiState": "VERIFIED",
       "batch": {
-        "id": "1c28608a-4b66-47ad-acf9-70cc115c3c54",
-        "batchCode": "BATCH-20260521-AA8AA9B7",
-        "farmId": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "b25fd18e-b23c-4707-b0c8-4538cc494cb7",
+        "batchCode": "BATCH-20260527-531DA42E",
+        "farmId": "892c9739-e865-4cdb-8306-9f720357a91d",
         "farmName": "[MOCK] Dalat Farm",
-        "productId": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
+        "productId": "73e1726d-fb84-4f74-b8bb-e79239397b08",
         "productName": "[MOCK] Hass Avocado",
         "productType": "Trái cây",
         "quantity": 500.0,
@@ -696,17 +699,17 @@
         "harvestDate": "2026-04-25T00:00:00"
       },
       "farm": {
-        "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "892c9739-e865-4cdb-8306-9f720357a91d",
         "name": "[MOCK] Dalat Farm",
         "location": "Da Lat, Lam Dong - Plot 4B",
         "region": "DALAT",
         "plot": "Plot 4B",
         "latitude": 11.9404,
         "longitude": 108.4583,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
       },
       "product": {
-        "id": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
+        "id": "73e1726d-fb84-4f74-b8bb-e79239397b08",
         "name": "[MOCK] Hass Avocado",
         "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
         "variety": "Hass",
@@ -765,13 +768,13 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "VERIFIED"
     },
     {
@@ -779,11 +782,11 @@
       "scenario": "PENDING_INSPECTION",
       "uiState": "PENDING_INSPECTION",
       "batch": {
-        "id": "163cff84-c565-42e9-b676-bd57ab4ef3df",
-        "batchCode": "BATCH-20260521-2699A5C2",
-        "farmId": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "e6406011-16c2-4da1-a700-7419667d1f05",
+        "batchCode": "BATCH-20260527-98FCB507",
+        "farmId": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "farmName": "[MOCK] Mekong Green Farm",
-        "productId": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "productId": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "productName": "[MOCK] Organic Tomato",
         "productType": "Rau củ",
         "quantity": 320.0,
@@ -792,17 +795,17 @@
         "harvestDate": "2026-04-24T00:00:00"
       },
       "farm": {
-        "id": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "name": "[MOCK] Mekong Green Farm",
         "location": "Can Tho, Mekong Delta - Sector C2",
         "region": "MEKONG",
         "plot": "Sector C2",
         "latitude": 10.0452,
         "longitude": 105.7469,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
       },
       "product": {
-        "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "name": "[MOCK] Organic Tomato",
         "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
         "variety": "Ruby Cluster",
@@ -840,13 +843,14 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "AWAITING_INSPECTION"
     },
     {
@@ -854,11 +858,11 @@
       "scenario": "VERIFIED_PACKAGED",
       "uiState": "READY_FOR_QR",
       "batch": {
-        "id": "078a24ae-6755-445f-a9ca-c2492109a0cb",
-        "batchCode": "BATCH-20260521-6BE2601E",
-        "farmId": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "e0952772-4dba-40be-8394-c6e34d417d85",
+        "batchCode": "BATCH-20260527-C2FBF37C",
+        "farmId": "892c9739-e865-4cdb-8306-9f720357a91d",
         "farmName": "[MOCK] Dalat Farm",
-        "productId": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
+        "productId": "5293b5cc-8809-46da-b439-886490c85f70",
         "productName": "[MOCK] Jasmine Rice",
         "productType": "Ngũ cốc",
         "quantity": 900.0,
@@ -867,17 +871,17 @@
         "harvestDate": "2026-04-23T00:00:00"
       },
       "farm": {
-        "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "892c9739-e865-4cdb-8306-9f720357a91d",
         "name": "[MOCK] Dalat Farm",
         "location": "Da Lat, Lam Dong - Plot 4B",
         "region": "DALAT",
         "plot": "Plot 4B",
         "latitude": 11.9404,
         "longitude": 108.4583,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
       },
       "product": {
-        "id": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
+        "id": "5293b5cc-8809-46da-b439-886490c85f70",
         "name": "[MOCK] Jasmine Rice",
         "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
         "variety": "ST25",
@@ -922,13 +926,13 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "VERIFIED"
     },
     {
@@ -936,11 +940,11 @@
       "scenario": "EARLY_GROWTH",
       "uiState": "IN_PROGRESS",
       "batch": {
-        "id": "1d51301e-e69a-4b20-9f84-59397d2c6440",
-        "batchCode": "BATCH-20260521-4EF7C729",
-        "farmId": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "ae754cc8-e88e-4faa-be18-b2922f7d22cb",
+        "batchCode": "BATCH-20260527-16C2728A",
+        "farmId": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "farmName": "[MOCK] Highland Organic Hub",
-        "productId": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "productId": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "productName": "[MOCK] Dragon Fruit",
         "productType": "Trái cây",
         "quantity": 450.0,
@@ -949,17 +953,17 @@
         "harvestDate": "2026-04-22T00:00:00"
       },
       "farm": {
-        "id": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "name": "[MOCK] Highland Organic Hub",
         "location": "Buon Ma Thuot, Dak Lak - Block A7",
         "region": "HIGHLAND",
         "plot": "Block A7",
         "latitude": 12.6666,
         "longitude": 108.0372,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
       },
       "product": {
-        "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "name": "[MOCK] Dragon Fruit",
         "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
         "variety": "Red Flesh",
@@ -997,13 +1001,14 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     },
     {
@@ -1011,11 +1016,11 @@
       "scenario": "PENDING_INSPECTION_HARVEST",
       "uiState": "AWAITING_QUALITY_CHECK",
       "batch": {
-        "id": "6ac4ba4a-0712-47f3-850c-64d6872fb2ca",
-        "batchCode": "BATCH-20260521-C053A747",
-        "farmId": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "26743b1d-5805-4fe3-9514-951fefe72ea8",
+        "batchCode": "BATCH-20260527-8C33A40F",
+        "farmId": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "farmName": "[MOCK] Mekong Green Farm",
-        "productId": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
+        "productId": "9da8d435-7a96-427f-9652-f1445fb15fe1",
         "productName": "[MOCK] Arabica Coffee",
         "productType": "Cây công nghiệp",
         "quantity": 280.0,
@@ -1024,17 +1029,17 @@
         "harvestDate": "2026-04-26T00:00:00"
       },
       "farm": {
-        "id": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "name": "[MOCK] Mekong Green Farm",
         "location": "Can Tho, Mekong Delta - Sector C2",
         "region": "MEKONG",
         "plot": "Sector C2",
         "latitude": 10.0452,
         "longitude": 105.7469,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
       },
       "product": {
-        "id": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
+        "id": "9da8d435-7a96-427f-9652-f1445fb15fe1",
         "name": "[MOCK] Arabica Coffee",
         "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
         "variety": "Arabica Catuai",
@@ -1079,13 +1084,14 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "AWAITING_INSPECTION"
     },
     {
@@ -1093,11 +1099,11 @@
       "scenario": "PENDING_INSPECTION_PARTIAL",
       "uiState": "PARTIAL_INSPECTION",
       "batch": {
-        "id": "7a801f75-d7a1-4b53-901f-ec4571786305",
-        "batchCode": "BATCH-20260521-DBF14777",
-        "farmId": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "71915ae1-bbe5-4401-b2fc-d51634454451",
+        "batchCode": "BATCH-20260527-598B201E",
+        "farmId": "892c9739-e865-4cdb-8306-9f720357a91d",
         "farmName": "[MOCK] Dalat Farm",
-        "productId": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "productId": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "productName": "[MOCK] Dragon Fruit",
         "productType": "Trái cây",
         "quantity": 320.0,
@@ -1106,17 +1112,17 @@
         "harvestDate": "2026-04-21T00:00:00"
       },
       "farm": {
-        "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "892c9739-e865-4cdb-8306-9f720357a91d",
         "name": "[MOCK] Dalat Farm",
         "location": "Da Lat, Lam Dong - Plot 4B",
         "region": "DALAT",
         "plot": "Plot 4B",
         "latitude": 11.9404,
         "longitude": 108.4583,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
       },
       "product": {
-        "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "name": "[MOCK] Dragon Fruit",
         "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
         "variety": "Red Flesh",
@@ -1161,13 +1167,13 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "PARTIAL_INSPECTION"
     },
     {
@@ -1175,11 +1181,11 @@
       "scenario": "PENDING_INSPECTION_INCOMPLETE",
       "uiState": "INCOMPLETE_LOGS",
       "batch": {
-        "id": "ae51f1ad-29ea-4ec2-a658-80012945a746",
-        "batchCode": "BATCH-20260521-6BFA8748",
-        "farmId": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "2728d24f-21cb-41ee-98d0-363f700a1971",
+        "batchCode": "BATCH-20260527-ACDEC76C",
+        "farmId": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "farmName": "[MOCK] Highland Organic Hub",
-        "productId": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "productId": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "productName": "[MOCK] Organic Tomato",
         "productType": "Rau củ",
         "quantity": 200.0,
@@ -1188,17 +1194,17 @@
         "harvestDate": "2026-04-20T00:00:00"
       },
       "farm": {
-        "id": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "name": "[MOCK] Highland Organic Hub",
         "location": "Buon Ma Thuot, Dak Lak - Block A7",
         "region": "HIGHLAND",
         "plot": "Block A7",
         "latitude": 12.6666,
         "longitude": 108.0372,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
       },
       "product": {
-        "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "name": "[MOCK] Organic Tomato",
         "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
         "variety": "Ruby Cluster",
@@ -1229,44 +1235,45 @@
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "AWAITING_INSPECTION"
     },
     {
       "label": "generated-batch-v2-0",
-      "scenario": "VERIFIED_PACKAGED",
+      "scenario": "ANOMALY_QUANTITY",
       "uiState": "GENERATED",
       "batch": {
-        "id": "535f681a-4ce6-49c8-98cf-190b39e53ac2",
-        "batchCode": "BATCH-20260521-F7B08E8B",
-        "farmId": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "e298b589-1826-496c-9967-215f0160d1aa",
+        "batchCode": "BATCH-20260527-5E9F8F7F",
+        "farmId": "892c9739-e865-4cdb-8306-9f720357a91d",
         "farmName": "[MOCK] Dalat Farm",
-        "productId": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
+        "productId": "73e1726d-fb84-4f74-b8bb-e79239397b08",
         "productName": "[MOCK] Hass Avocado",
         "productType": "Trái cây",
-        "quantity": 3082.0,
+        "quantity": 1732.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-13T00:00:00"
+        "harvestDate": "2026-05-21T00:00:00"
       },
       "farm": {
-        "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
+        "id": "892c9739-e865-4cdb-8306-9f720357a91d",
         "name": "[MOCK] Dalat Farm",
         "location": "Da Lat, Lam Dong - Plot 4B",
         "region": "DALAT",
         "plot": "Plot 4B",
         "latitude": 11.9404,
         "longitude": 108.4583,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
       },
       "product": {
-        "id": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
+        "id": "73e1726d-fb84-4f74-b8bb-e79239397b08",
         "name": "[MOCK] Hass Avocado",
         "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
         "variety": "Hass",
@@ -1281,17 +1288,10 @@
           "created": true
         },
         {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
-          "quantity": null,
-          "created": true
-        },
-        {
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
-          "quantity": 3082.0,
+          "quantity": 100.0,
           "created": true
         },
         {
@@ -1305,19 +1305,19 @@
           "action": "PACKAGING",
           "actorRole": "FARMER",
           "location": "DALAT Packaging Station",
-          "quantity": 2897.08,
-          "created": true
+          "quantity": 500.0,
+          "created": false
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "NONE"
     },
     {
@@ -1325,30 +1325,30 @@
       "scenario": "VERIFIED_PACKAGED",
       "uiState": "GENERATED",
       "batch": {
-        "id": "aa809704-d976-451d-8c32-53bba2d193cb",
-        "batchCode": "BATCH-20260521-0ECCA9FC",
-        "farmId": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "c6969e64-2de5-427d-846b-6cbce2f8e9b9",
+        "batchCode": "BATCH-20260527-23B78A0F",
+        "farmId": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "farmName": "[MOCK] Mekong Green Farm",
-        "productId": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "productId": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "productName": "[MOCK] Organic Tomato",
         "productType": "Rau củ",
-        "quantity": 4971.0,
+        "quantity": 4572.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-17T00:00:00"
+        "harvestDate": "2026-05-01T00:00:00"
       },
       "farm": {
-        "id": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
+        "id": "1c685b51-06a1-4318-a0eb-638aec86def0",
         "name": "[MOCK] Mekong Green Farm",
         "location": "Can Tho, Mekong Delta - Sector C2",
         "region": "MEKONG",
         "plot": "Sector C2",
         "latitude": 10.0452,
         "longitude": 105.7469,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
       },
       "product": {
-        "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
+        "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
         "name": "[MOCK] Organic Tomato",
         "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
         "variety": "Ruby Cluster",
@@ -1373,7 +1373,7 @@
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": 4971.0,
+          "quantity": 4572.0,
           "created": true
         },
         {
@@ -1387,50 +1387,50 @@
           "action": "PACKAGING",
           "actorRole": "FARMER",
           "location": "MEKONG Packaging Station",
-          "quantity": 4672.74,
+          "quantity": 4297.68,
           "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-2",
-      "scenario": "VERIFIED_SHIPPING",
+      "scenario": "VERIFIED_PACKAGED",
       "uiState": "GENERATED",
       "batch": {
-        "id": "32b6eaef-1f83-448f-a360-087c6c73c4f1",
-        "batchCode": "BATCH-20260521-23DF5D98",
-        "farmId": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "0eaa73a3-f0a7-41ab-a532-15f603856ed4",
+        "batchCode": "BATCH-20260527-6E7A080A",
+        "farmId": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "farmName": "[MOCK] Highland Organic Hub",
-        "productId": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
+        "productId": "5293b5cc-8809-46da-b439-886490c85f70",
         "productName": "[MOCK] Jasmine Rice",
         "productType": "Ngũ cốc",
-        "quantity": 1782.0,
+        "quantity": 2197.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-18T00:00:00"
+        "harvestDate": "2026-05-20T00:00:00"
       },
       "farm": {
-        "id": "495b488f-4d63-4150-a08a-1553ba77e548",
+        "id": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
         "name": "[MOCK] Highland Organic Hub",
         "location": "Buon Ma Thuot, Dak Lak - Block A7",
         "region": "HIGHLAND",
         "plot": "Block A7",
         "latitude": 12.6666,
         "longitude": 108.0372,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
       },
       "product": {
-        "id": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
+        "id": "5293b5cc-8809-46da-b439-886490c85f70",
         "name": "[MOCK] Jasmine Rice",
         "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
         "variety": "ST25",
@@ -1452,17 +1452,10 @@
           "created": true
         },
         {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": null,
-          "created": true
-        },
-        {
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": 1782.0,
+          "quantity": 2197.0,
           "created": true
         },
         {
@@ -1476,57 +1469,50 @@
           "action": "PACKAGING",
           "actorRole": "FARMER",
           "location": "HIGHLAND Packaging Station",
-          "quantity": 1675.08,
-          "created": true
-        },
-        {
-          "action": "SHIPPING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND Distribution Hub",
-          "quantity": 1641.578,
+          "quantity": 2065.18,
           "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-3",
-      "scenario": "VERIFIED_PACKAGED",
+      "scenario": "ANOMALY_SEQUENCE",
       "uiState": "GENERATED",
       "batch": {
-        "id": "5cafa93a-1b2f-4c4f-a7b7-453ede2d22c2",
-        "batchCode": "BATCH-20260521-FBF3CC5D",
-        "farmId": "f2beefa9-90f8-4847-a99d-534368156d03",
+        "id": "74889b11-7c68-4628-a710-fb05a6560a3d",
+        "batchCode": "BATCH-20260527-8B3514E3",
+        "farmId": "4b2821d1-6656-43fa-b2c1-030141994528",
         "farmName": "[MOCK] Farm Extra 1 - Dong Nai",
-        "productId": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "productId": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "productName": "[MOCK] Dragon Fruit",
         "productType": "Trái cây",
-        "quantity": 4150.0,
+        "quantity": 3925.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-19T00:00:00"
+        "harvestDate": "2026-05-16T00:00:00"
       },
       "farm": {
-        "id": "f2beefa9-90f8-4847-a99d-534368156d03",
+        "id": "4b2821d1-6656-43fa-b2c1-030141994528",
         "name": "[MOCK] Farm Extra 1 - Dong Nai",
         "location": "Dong Nai - Plot 10",
         "region": "DONG_NAI",
         "plot": "Plot 10",
-        "latitude": 10.955161,
-        "longitude": 107.090319,
-        "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
+        "latitude": 10.939463,
+        "longitude": 107.03548,
+        "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
       },
       "product": {
-        "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
+        "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
         "name": "[MOCK] Dragon Fruit",
         "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
         "variety": "Red Flesh",
@@ -1541,1651 +1527,61 @@
           "created": true
         },
         {
-          "action": "FERTILIZING",
+          "action": "PACKAGING",
           "actorRole": "FARMER",
           "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": null,
-          "created": true
+          "quantity": 100.0,
+          "created": false
         },
         {
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": 4150.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "DONG_NAI Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI Packaging Station",
-          "quantity": 3901.0,
+          "quantity": 100.0,
           "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-4",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "7471533f-fd30-4ed2-9130-8f3e7ec941c7",
-        "batchCode": "BATCH-20260521-374F153F",
-        "farmId": "f837c276-e8ea-4bd5-b33f-9366bf3e4b7d",
-        "farmName": "[MOCK] Farm Extra 2 - Tien Giang",
-        "productId": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
-        "productName": "[MOCK] Arabica Coffee",
-        "productType": "Cây công nghiệp",
-        "quantity": 759.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-20T00:00:00"
-      },
-      "farm": {
-        "id": "f837c276-e8ea-4bd5-b33f-9366bf3e4b7d",
-        "name": "[MOCK] Farm Extra 2 - Tien Giang",
-        "location": "Tien Giang - Plot 11",
-        "region": "TIEN_GIANG",
-        "plot": "Plot 11",
-        "latitude": 10.481099,
-        "longitude": 106.389353,
-        "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
-      },
-      "product": {
-        "id": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
-        "name": "[MOCK] Arabica Coffee",
-        "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Arabica Catuai",
-        "grade": "Specialty"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": 759.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-5",
-      "scenario": "EARLY_GROWTH",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "1a1bdaba-8aaf-47c6-a96e-46de5315ea7a",
-        "batchCode": "BATCH-20260521-82263437",
-        "farmId": "9822cc88-2455-413c-a016-7703e2f7cdd4",
-        "farmName": "[MOCK] Farm Extra 3 - Binh Thuan",
-        "productId": "d1144b79-7696-40ca-8c18-4035c185174d",
-        "productName": "[MOCK] Sầu Riêng Ri6",
-        "productType": "Trái cây",
-        "quantity": 4109.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-26T00:00:00"
-      },
-      "farm": {
-        "id": "9822cc88-2455-413c-a016-7703e2f7cdd4",
-        "name": "[MOCK] Farm Extra 3 - Binh Thuan",
-        "location": "Binh Thuan - Plot 12",
-        "region": "BINH_THUAN",
-        "plot": "Plot 12",
-        "latitude": 11.092687,
-        "longitude": 108.087644,
-        "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
-      },
-      "product": {
-        "id": "d1144b79-7696-40ca-8c18-4035c185174d",
-        "name": "[MOCK] Sầu Riêng Ri6",
-        "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80",
-        "variety": "Ri6",
-        "grade": "Export"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-6",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "ba714adb-0a6f-49d8-a0e5-db9c388a31be",
-        "batchCode": "BATCH-20260521-F8977DC9",
-        "farmId": "38c1a8c6-9b03-4c17-ac17-d0b7a78e9610",
-        "farmName": "[MOCK] Farm Extra 4 - Son La",
-        "productId": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
-        "productName": "[MOCK] Cà Phê Robusta",
-        "productType": "Cây công nghiệp",
-        "quantity": 3698.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-16T00:00:00"
-      },
-      "farm": {
-        "id": "38c1a8c6-9b03-4c17-ac17-d0b7a78e9610",
-        "name": "[MOCK] Farm Extra 4 - Son La",
-        "location": "Son La - Plot 13",
-        "region": "SON_LA",
-        "plot": "Plot 13",
-        "latitude": 21.242119,
-        "longitude": 103.825956,
-        "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
-      },
-      "product": {
-        "id": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
-        "name": "[MOCK] Cà Phê Robusta",
-        "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
-        "variety": "Robusta",
-        "grade": "Grade 1"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": 3698.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-7",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "4c731c46-6ae1-4736-a2cf-a28f37c2c936",
-        "batchCode": "BATCH-20260521-86E9B439",
-        "farmId": "5b913504-d61d-430f-9c32-0d3f4f2521ce",
-        "farmName": "[MOCK] Farm Extra 5 - Dak Nong",
-        "productId": "da5335d1-779b-440d-9517-3a40346c5e2e",
-        "productName": "[MOCK] Chanh Dây Tím",
-        "productType": "Trái cây",
-        "quantity": 4967.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-14T00:00:00"
-      },
-      "farm": {
-        "id": "5b913504-d61d-430f-9c32-0d3f4f2521ce",
-        "name": "[MOCK] Farm Extra 5 - Dak Nong",
-        "location": "Dak Nong - Plot 14",
-        "region": "DAK_NONG",
-        "plot": "Plot 14",
-        "latitude": 11.981598,
-        "longitude": 107.880851,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
-      },
-      "product": {
-        "id": "da5335d1-779b-440d-9517-3a40346c5e2e",
-        "name": "[MOCK] Chanh Dây Tím",
-        "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80",
-        "variety": "Tai Nong",
-        "grade": "GlobalGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": 4967.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-8",
       "scenario": "VERIFIED_SHIPPING",
       "uiState": "GENERATED",
       "batch": {
-        "id": "c76d143d-2430-4dab-856c-a1f829f8cb59",
-        "batchCode": "BATCH-20260521-D7B1D135",
-        "farmId": "42dd11d3-d295-4a51-941e-5b293efecc81",
-        "farmName": "[MOCK] Farm Extra 6 - Dong Nai",
-        "productId": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
-        "productName": "[MOCK] Hạt Điều Rang",
-        "productType": "Cây công nghiệp",
-        "quantity": 1392.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-22T00:00:00"
-      },
-      "farm": {
-        "id": "42dd11d3-d295-4a51-941e-5b293efecc81",
-        "name": "[MOCK] Farm Extra 6 - Dong Nai",
-        "location": "Dong Nai - Plot 15",
-        "region": "DONG_NAI",
-        "plot": "Plot 15",
-        "latitude": 10.873288,
-        "longitude": 107.057841,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
-      },
-      "product": {
-        "id": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
-        "name": "[MOCK] Hạt Điều Rang",
-        "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80",
-        "variety": "Bình Phước",
-        "grade": "Premium"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": 1392.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "DONG_NAI Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI Packaging Station",
-          "quantity": 1308.48,
-          "created": true
-        },
-        {
-          "action": "SHIPPING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI Distribution Hub",
-          "quantity": 1282.31,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-9",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "7614227a-732c-4a06-bb1e-21088a173d95",
-        "batchCode": "BATCH-20260521-979D68D5",
-        "farmId": "2aaab9c8-07fd-4291-b99e-eb687bfe90a9",
-        "farmName": "[MOCK] Farm Extra 7 - Tien Giang",
-        "productId": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
-        "productName": "[MOCK] Xoài Cát Hòa Lộc",
-        "productType": "Trái cây",
-        "quantity": 925.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-08T00:00:00"
-      },
-      "farm": {
-        "id": "2aaab9c8-07fd-4291-b99e-eb687bfe90a9",
-        "name": "[MOCK] Farm Extra 7 - Tien Giang",
-        "location": "Tien Giang - Plot 16",
-        "region": "TIEN_GIANG",
-        "plot": "Plot 16",
-        "latitude": 10.405839,
-        "longitude": 106.382118,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
-      },
-      "product": {
-        "id": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
-        "name": "[MOCK] Xoài Cát Hòa Lộc",
-        "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
-        "variety": "Hòa Lộc",
-        "grade": "VietGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
-          "quantity": 925.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-10",
-      "scenario": "EARLY_GROWTH",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "91c203ba-6047-4542-8097-bf5719a1499c",
-        "batchCode": "BATCH-20260521-7B382DCC",
-        "farmId": "73812e1a-3f7f-493a-b21e-951896966664",
-        "farmName": "[MOCK] Farm Extra 8 - Binh Thuan",
-        "productId": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
-        "productName": "[MOCK] Hass Avocado",
-        "productType": "Trái cây",
-        "quantity": 624.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-11T00:00:00"
-      },
-      "farm": {
-        "id": "73812e1a-3f7f-493a-b21e-951896966664",
-        "name": "[MOCK] Farm Extra 8 - Binh Thuan",
-        "location": "Binh Thuan - Plot 17",
-        "region": "BINH_THUAN",
-        "plot": "Plot 17",
-        "latitude": 11.14807,
-        "longitude": 108.081292,
-        "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
-      },
-      "product": {
-        "id": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
-        "name": "[MOCK] Hass Avocado",
-        "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Hass",
-        "grade": "Premium Grade A"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
-          "quantity": null,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-11",
-      "scenario": "EARLY_GROWTH",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "c987c519-a17f-4728-862f-85868004dfe5",
-        "batchCode": "BATCH-20260521-919B2078",
-        "farmId": "bf33a8f8-8b23-450a-86ae-ba2e62c17a3b",
-        "farmName": "[MOCK] Farm Extra 9 - Son La",
-        "productId": "371b63c7-0420-410f-8f84-f5a7d9c94859",
-        "productName": "[MOCK] Organic Tomato",
-        "productType": "Rau củ",
-        "quantity": 2141.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-15T00:00:00"
-      },
-      "farm": {
-        "id": "bf33a8f8-8b23-450a-86ae-ba2e62c17a3b",
-        "name": "[MOCK] Farm Extra 9 - Son La",
-        "location": "Son La - Plot 18",
-        "region": "SON_LA",
-        "plot": "Plot 18",
-        "latitude": 21.254125,
-        "longitude": 103.897167,
-        "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
-      },
-      "product": {
-        "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
-        "name": "[MOCK] Organic Tomato",
-        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Ruby Cluster",
-        "grade": "Grade A"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 18 - Plot 18",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 18 - Plot 18",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 18 - Plot 18",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 18 - Plot 18",
-          "quantity": null,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-12",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "a75e0953-63f1-4e5d-8322-61e0b0caff23",
-        "batchCode": "BATCH-20260521-CF2405C8",
-        "farmId": "5dc5242c-cced-445c-b85f-9f124787ad85",
-        "farmName": "[MOCK] Farm Extra 10 - Dak Nong",
-        "productId": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
-        "productName": "[MOCK] Jasmine Rice",
-        "productType": "Ngũ cốc",
-        "quantity": 1467.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-28T00:00:00"
-      },
-      "farm": {
-        "id": "5dc5242c-cced-445c-b85f-9f124787ad85",
-        "name": "[MOCK] Farm Extra 10 - Dak Nong",
-        "location": "Dak Nong - Plot 19",
-        "region": "DAK_NONG",
-        "plot": "Plot 19",
-        "latitude": 12.038187,
-        "longitude": 107.88052,
-        "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
-      },
-      "product": {
-        "id": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
-        "name": "[MOCK] Jasmine Rice",
-        "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
-        "variety": "ST25",
-        "grade": "Export Premium"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
-          "quantity": 1467.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-13",
-      "scenario": "VERIFIED_PACKAGED",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "cf0d9205-a3df-4941-8eae-6c011f97395e",
-        "batchCode": "BATCH-20260521-0E761B82",
-        "farmId": "a6f3e9d0-645f-4705-bb00-2a790bce4f2b",
-        "farmName": "[MOCK] Farm Extra 11 - Dong Nai",
-        "productId": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
-        "productName": "[MOCK] Dragon Fruit",
-        "productType": "Trái cây",
-        "quantity": 1564.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-21T00:00:00"
-      },
-      "farm": {
-        "id": "a6f3e9d0-645f-4705-bb00-2a790bce4f2b",
-        "name": "[MOCK] Farm Extra 11 - Dong Nai",
-        "location": "Dong Nai - Plot 20",
-        "region": "DONG_NAI",
-        "plot": "Plot 20",
-        "latitude": 11.027787,
-        "longitude": 107.033501,
-        "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
-      },
-      "product": {
-        "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
-        "name": "[MOCK] Dragon Fruit",
-        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Red Flesh",
-        "grade": "VietGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": 1564.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "DONG_NAI Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI Packaging Station",
-          "quantity": 1470.16,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-14",
-      "scenario": "PENDING_INSPECTION_HARVEST",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "39433621-3c2d-4b0c-b24b-ab9ff1918907",
-        "batchCode": "BATCH-20260521-1D774038",
-        "farmId": "9a38cf1e-dd25-47ea-87c5-bc406065a969",
-        "farmName": "[MOCK] Farm Extra 12 - Tien Giang",
-        "productId": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
+        "id": "99afb38f-4fae-4ad6-91a0-e790676a6a83",
+        "batchCode": "BATCH-20260527-30A87E69",
+        "farmId": "8bccd96e-cb88-4f8c-a03e-05b0b5ec2733",
+        "farmName": "[MOCK] Farm Extra 2 - Tien Giang",
+        "productId": "9da8d435-7a96-427f-9652-f1445fb15fe1",
         "productName": "[MOCK] Arabica Coffee",
         "productType": "Cây công nghiệp",
-        "quantity": 3826.0,
+        "quantity": 2476.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-13T00:00:00"
+        "harvestDate": "2026-05-04T00:00:00"
       },
       "farm": {
-        "id": "9a38cf1e-dd25-47ea-87c5-bc406065a969",
-        "name": "[MOCK] Farm Extra 12 - Tien Giang",
-        "location": "Tien Giang - Plot 21",
-        "region": "TIEN_GIANG",
-        "plot": "Plot 21",
-        "latitude": 10.346184,
-        "longitude": 106.354589,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
-      },
-      "product": {
-        "id": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
-        "name": "[MOCK] Arabica Coffee",
-        "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Arabica Catuai",
-        "grade": "Specialty"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
-          "quantity": 3826.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-15",
-      "scenario": "VERIFIED_PACKAGED",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "f07cae79-6304-4366-af51-87fe9a5b3db0",
-        "batchCode": "BATCH-20260521-442CB26B",
-        "farmId": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
-        "farmName": "[MOCK] Dalat Farm",
-        "productId": "d1144b79-7696-40ca-8c18-4035c185174d",
-        "productName": "[MOCK] Sầu Riêng Ri6",
-        "productType": "Trái cây",
-        "quantity": 2928.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-09T00:00:00"
-      },
-      "farm": {
-        "id": "58e50f57-aa65-4bb4-a018-68cd5bcdcc39",
-        "name": "[MOCK] Dalat Farm",
-        "location": "Da Lat, Lam Dong - Plot 4B",
-        "region": "DALAT",
-        "plot": "Plot 4B",
-        "latitude": 11.9404,
-        "longitude": 108.4583,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
-      },
-      "product": {
-        "id": "d1144b79-7696-40ca-8c18-4035c185174d",
-        "name": "[MOCK] Sầu Riêng Ri6",
-        "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80",
-        "variety": "Ri6",
-        "grade": "Export"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
-          "quantity": 2928.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "DALAT Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "DALAT Packaging Station",
-          "quantity": 2752.32,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-16",
-      "scenario": "PENDING_INSPECTION_HARVEST",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "47c9f8ca-8fc5-4409-86b5-48491d79156c",
-        "batchCode": "BATCH-20260521-626B7547",
-        "farmId": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
-        "farmName": "[MOCK] Mekong Green Farm",
-        "productId": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
-        "productName": "[MOCK] Cà Phê Robusta",
-        "productType": "Cây công nghiệp",
-        "quantity": 2880.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-07T00:00:00"
-      },
-      "farm": {
-        "id": "cea61e0e-d7a9-4dce-bec0-37d54746473e",
-        "name": "[MOCK] Mekong Green Farm",
-        "location": "Can Tho, Mekong Delta - Sector C2",
-        "region": "MEKONG",
-        "plot": "Sector C2",
-        "latitude": 10.0452,
-        "longitude": 105.7469,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
-      },
-      "product": {
-        "id": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
-        "name": "[MOCK] Cà Phê Robusta",
-        "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
-        "variety": "Robusta",
-        "grade": "Grade 1"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
-          "quantity": 2880.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-17",
-      "scenario": "PENDING_INSPECTION_HARVEST",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "8c36ad52-0a0e-4d00-b082-d83d2232439a",
-        "batchCode": "BATCH-20260521-ECE76C1F",
-        "farmId": "495b488f-4d63-4150-a08a-1553ba77e548",
-        "farmName": "[MOCK] Highland Organic Hub",
-        "productId": "da5335d1-779b-440d-9517-3a40346c5e2e",
-        "productName": "[MOCK] Chanh Dây Tím",
-        "productType": "Trái cây",
-        "quantity": 2440.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-13T00:00:00"
-      },
-      "farm": {
-        "id": "495b488f-4d63-4150-a08a-1553ba77e548",
-        "name": "[MOCK] Highland Organic Hub",
-        "location": "Buon Ma Thuot, Dak Lak - Block A7",
-        "region": "HIGHLAND",
-        "plot": "Block A7",
-        "latitude": 12.6666,
-        "longitude": 108.0372,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
-      },
-      "product": {
-        "id": "da5335d1-779b-440d-9517-3a40346c5e2e",
-        "name": "[MOCK] Chanh Dây Tím",
-        "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80",
-        "variety": "Tai Nong",
-        "grade": "GlobalGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
-          "quantity": 2440.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-18",
-      "scenario": "PENDING_INSPECTION",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "c64e2ceb-77a4-450e-9c3b-3c463da04c09",
-        "batchCode": "BATCH-20260521-1473E98C",
-        "farmId": "f2beefa9-90f8-4847-a99d-534368156d03",
-        "farmName": "[MOCK] Farm Extra 1 - Dong Nai",
-        "productId": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
-        "productName": "[MOCK] Hạt Điều Rang",
-        "productType": "Cây công nghiệp",
-        "quantity": 4047.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-10T00:00:00"
-      },
-      "farm": {
-        "id": "f2beefa9-90f8-4847-a99d-534368156d03",
-        "name": "[MOCK] Farm Extra 1 - Dong Nai",
-        "location": "Dong Nai - Plot 10",
-        "region": "DONG_NAI",
-        "plot": "Plot 10",
-        "latitude": 10.955161,
-        "longitude": 107.090319,
-        "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
-      },
-      "product": {
-        "id": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
-        "name": "[MOCK] Hạt Điều Rang",
-        "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80",
-        "variety": "Bình Phước",
-        "grade": "Premium"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
-          "quantity": 4047.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-19",
-      "scenario": "PENDING_INSPECTION_HARVEST",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "908a5758-fe8e-4871-b87f-68d4dea38673",
-        "batchCode": "BATCH-20260521-CE499585",
-        "farmId": "f837c276-e8ea-4bd5-b33f-9366bf3e4b7d",
-        "farmName": "[MOCK] Farm Extra 2 - Tien Giang",
-        "productId": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
-        "productName": "[MOCK] Xoài Cát Hòa Lộc",
-        "productType": "Trái cây",
-        "quantity": 879.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-16T00:00:00"
-      },
-      "farm": {
-        "id": "f837c276-e8ea-4bd5-b33f-9366bf3e4b7d",
+        "id": "8bccd96e-cb88-4f8c-a03e-05b0b5ec2733",
         "name": "[MOCK] Farm Extra 2 - Tien Giang",
         "location": "Tien Giang - Plot 11",
         "region": "TIEN_GIANG",
         "plot": "Plot 11",
-        "latitude": 10.481099,
-        "longitude": 106.389353,
-        "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
+        "latitude": 10.299221,
+        "longitude": 106.294321,
+        "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
       },
       "product": {
-        "id": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
-        "name": "[MOCK] Xoài Cát Hòa Lộc",
-        "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
-        "variety": "Hòa Lộc",
-        "grade": "VietGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
-          "quantity": 879.0,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-20",
-      "scenario": "VERIFIED_PACKAGED",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "141664fd-5770-42b9-aace-eb9d0eaa0b42",
-        "batchCode": "BATCH-20260521-BBF3B908",
-        "farmId": "9822cc88-2455-413c-a016-7703e2f7cdd4",
-        "farmName": "[MOCK] Farm Extra 3 - Binh Thuan",
-        "productId": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
-        "productName": "[MOCK] Hass Avocado",
-        "productType": "Trái cây",
-        "quantity": 2294.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-20T00:00:00"
-      },
-      "farm": {
-        "id": "9822cc88-2455-413c-a016-7703e2f7cdd4",
-        "name": "[MOCK] Farm Extra 3 - Binh Thuan",
-        "location": "Binh Thuan - Plot 12",
-        "region": "BINH_THUAN",
-        "plot": "Plot 12",
-        "latitude": 11.092687,
-        "longitude": 108.087644,
-        "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
-      },
-      "product": {
-        "id": "cabcfbe4-c80d-4be9-9ff3-2fed00129372",
-        "name": "[MOCK] Hass Avocado",
-        "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Hass",
-        "grade": "Premium Grade A"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
-          "quantity": 2294.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "BINH_THUAN Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN Packaging Station",
-          "quantity": 2156.36,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-21",
-      "scenario": "VERIFIED_PACKAGED",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "3356d784-50fc-4ecf-a25e-b5315aee02a5",
-        "batchCode": "BATCH-20260521-BFDD5987",
-        "farmId": "38c1a8c6-9b03-4c17-ac17-d0b7a78e9610",
-        "farmName": "[MOCK] Farm Extra 4 - Son La",
-        "productId": "371b63c7-0420-410f-8f84-f5a7d9c94859",
-        "productName": "[MOCK] Organic Tomato",
-        "productType": "Rau củ",
-        "quantity": 2603.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-10T00:00:00"
-      },
-      "farm": {
-        "id": "38c1a8c6-9b03-4c17-ac17-d0b7a78e9610",
-        "name": "[MOCK] Farm Extra 4 - Son La",
-        "location": "Son La - Plot 13",
-        "region": "SON_LA",
-        "plot": "Plot 13",
-        "latitude": 21.242119,
-        "longitude": 103.825956,
-        "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
-      },
-      "product": {
-        "id": "371b63c7-0420-410f-8f84-f5a7d9c94859",
-        "name": "[MOCK] Organic Tomato",
-        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Ruby Cluster",
-        "grade": "Grade A"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 13 - Plot 13",
-          "quantity": 2603.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "SON_LA Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "SON_LA Packaging Station",
-          "quantity": 2446.82,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-22",
-      "scenario": "EARLY_GROWTH",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "0b1b57d6-f221-4b5a-87c8-52efc6196b4b",
-        "batchCode": "BATCH-20260521-06A8DE4F",
-        "farmId": "5b913504-d61d-430f-9c32-0d3f4f2521ce",
-        "farmName": "[MOCK] Farm Extra 5 - Dak Nong",
-        "productId": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
-        "productName": "[MOCK] Jasmine Rice",
-        "productType": "Ngũ cốc",
-        "quantity": 550.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-12T00:00:00"
-      },
-      "farm": {
-        "id": "5b913504-d61d-430f-9c32-0d3f4f2521ce",
-        "name": "[MOCK] Farm Extra 5 - Dak Nong",
-        "location": "Dak Nong - Plot 14",
-        "region": "DAK_NONG",
-        "plot": "Plot 14",
-        "latitude": 11.981598,
-        "longitude": 107.880851,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
-      },
-      "product": {
-        "id": "5675fe2f-7ada-4e8b-b9c5-7f5f544eecd6",
-        "name": "[MOCK] Jasmine Rice",
-        "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
-        "variety": "ST25",
-        "grade": "Export Premium"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
-          "quantity": null,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-23",
-      "scenario": "EARLY_GROWTH",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "01b4ffea-c190-4755-9591-b702e7e7a7e0",
-        "batchCode": "BATCH-20260521-18E18660",
-        "farmId": "42dd11d3-d295-4a51-941e-5b293efecc81",
-        "farmName": "[MOCK] Farm Extra 6 - Dong Nai",
-        "productId": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
-        "productName": "[MOCK] Dragon Fruit",
-        "productType": "Trái cây",
-        "quantity": 3883.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-14T00:00:00"
-      },
-      "farm": {
-        "id": "42dd11d3-d295-4a51-941e-5b293efecc81",
-        "name": "[MOCK] Farm Extra 6 - Dong Nai",
-        "location": "Dong Nai - Plot 15",
-        "region": "DONG_NAI",
-        "plot": "Plot 15",
-        "latitude": 10.873288,
-        "longitude": 107.057841,
-        "ownerId": "c3d9a149-076e-4b86-aa9b-dd25cbee0e1d"
-      },
-      "product": {
-        "id": "53fa1615-4dd8-4841-a8b5-bdc3eccc18ad",
-        "name": "[MOCK] Dragon Fruit",
-        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
-        "variety": "Red Flesh",
-        "grade": "VietGAP"
-      },
-      "traceTimeline": [
-        {
-          "action": "PLANTING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
-          "quantity": null,
-          "created": true
-        }
-      ],
-      "publicValidation": {
-        "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
-        "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
-      },
-      "inspectionState": "NONE"
-    },
-    {
-      "label": "generated-batch-v2-24",
-      "scenario": "VERIFIED_PACKAGED",
-      "uiState": "GENERATED",
-      "batch": {
-        "id": "84c9e69f-29a7-46c5-ab0b-65aeabe5c08d",
-        "batchCode": "BATCH-20260521-69795512",
-        "farmId": "2aaab9c8-07fd-4291-b99e-eb687bfe90a9",
-        "farmName": "[MOCK] Farm Extra 7 - Tien Giang",
-        "productId": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
-        "productName": "[MOCK] Arabica Coffee",
-        "productType": "Cây công nghiệp",
-        "quantity": 4878.0,
-        "unit": "kg",
-        "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-28T00:00:00"
-      },
-      "farm": {
-        "id": "2aaab9c8-07fd-4291-b99e-eb687bfe90a9",
-        "name": "[MOCK] Farm Extra 7 - Tien Giang",
-        "location": "Tien Giang - Plot 16",
-        "region": "TIEN_GIANG",
-        "plot": "Plot 16",
-        "latitude": 10.405839,
-        "longitude": 106.382118,
-        "ownerId": "0690844b-5f79-4571-9d24-12854b3c3c29"
-      },
-      "product": {
-        "id": "e59446e4-4af5-4233-b1ba-ad01cd4cc3f7",
+        "id": "9da8d435-7a96-427f-9652-f1445fb15fe1",
         "name": "[MOCK] Arabica Coffee",
         "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
         "variety": "Arabica Catuai",
@@ -3195,22 +1591,29 @@
         {
           "action": "PLANTING",
           "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
           "quantity": null,
           "created": true
         },
         {
           "action": "FERTILIZING",
           "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
           "quantity": null,
           "created": true
         },
         {
           "action": "HARVESTING",
           "actorRole": "FARMER",
-          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
-          "quantity": 4878.0,
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": 2476.0,
           "created": true
         },
         {
@@ -3224,50 +1627,1605 @@
           "action": "PACKAGING",
           "actorRole": "FARMER",
           "location": "TIEN_GIANG Packaging Station",
-          "quantity": 4585.32,
+          "quantity": 2327.44,
+          "created": true
+        },
+        {
+          "action": "SHIPPING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG Distribution Hub",
+          "quantity": 2280.891,
           "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 200,
         "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "NONE"
     },
     {
-      "label": "generated-batch-v2-25",
+      "label": "generated-batch-v2-5",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "e5c9b6c8-e861-4128-acf0-c6834f6f3330",
+        "batchCode": "BATCH-20260527-2BDC83C3",
+        "farmId": "fa01147b-dad2-42c8-8fe5-8a3fa6080350",
+        "farmName": "[MOCK] Farm Extra 3 - Binh Thuan",
+        "productId": "31f969b4-f6ad-4e46-8928-1b4076d63646",
+        "productName": "[MOCK] Sầu Riêng Ri6",
+        "productType": "Trái cây",
+        "quantity": 2477.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-22T00:00:00"
+      },
+      "farm": {
+        "id": "fa01147b-dad2-42c8-8fe5-8a3fa6080350",
+        "name": "[MOCK] Farm Extra 3 - Binh Thuan",
+        "location": "Binh Thuan - Plot 12",
+        "region": "BINH_THUAN",
+        "plot": "Plot 12",
+        "latitude": 11.075868,
+        "longitude": 108.08232,
+        "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
+      },
+      "product": {
+        "id": "31f969b4-f6ad-4e46-8928-1b4076d63646",
+        "name": "[MOCK] Sầu Riêng Ri6",
+        "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80",
+        "variety": "Ri6",
+        "grade": "Export"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": 2477.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-6",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "24cd6cc5-ca23-47f7-9a27-8192c9698ad2",
+        "batchCode": "BATCH-20260527-76C62215",
+        "farmId": "edee057a-ac67-4e58-919b-8dda762153e6",
+        "farmName": "[MOCK] Farm Extra 4 - Son La",
+        "productId": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
+        "productName": "[MOCK] Cà Phê Robusta",
+        "productType": "Cây công nghiệp",
+        "quantity": 2209.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-13T00:00:00"
+      },
+      "farm": {
+        "id": "edee057a-ac67-4e58-919b-8dda762153e6",
+        "name": "[MOCK] Farm Extra 4 - Son La",
+        "location": "Son La - Plot 13",
+        "region": "SON_LA",
+        "plot": "Plot 13",
+        "latitude": 21.320179,
+        "longitude": 103.916592,
+        "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
+      },
+      "product": {
+        "id": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
+        "name": "[MOCK] Cà Phê Robusta",
+        "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
+        "variety": "Robusta",
+        "grade": "Grade 1"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 13 - Plot 13",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 13 - Plot 13",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 13 - Plot 13",
+          "quantity": 2209.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "SON_LA Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "SON_LA Packaging Station",
+          "quantity": 2076.46,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-7",
       "scenario": "VERIFIED_SHIPPING",
       "uiState": "GENERATED",
       "batch": {
-        "id": "7a4e7971-e5a2-47cc-a938-294d56d6e147",
-        "batchCode": "BATCH-20260521-A3B61371",
-        "farmId": "73812e1a-3f7f-493a-b21e-951896966664",
+        "id": "eafd607b-3798-4813-9b57-74c4201a74e2",
+        "batchCode": "BATCH-20260527-EB725147",
+        "farmId": "74529a61-c644-45f1-938c-a37734d9ae21",
+        "farmName": "[MOCK] Farm Extra 5 - Dak Nong",
+        "productId": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
+        "productName": "[MOCK] Chanh Dây Tím",
+        "productType": "Trái cây",
+        "quantity": 3855.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-25T00:00:00"
+      },
+      "farm": {
+        "id": "74529a61-c644-45f1-938c-a37734d9ae21",
+        "name": "[MOCK] Farm Extra 5 - Dak Nong",
+        "location": "Dak Nong - Plot 14",
+        "region": "DAK_NONG",
+        "plot": "Plot 14",
+        "latitude": 11.943833,
+        "longitude": 107.790132,
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
+      },
+      "product": {
+        "id": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
+        "name": "[MOCK] Chanh Dây Tím",
+        "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80",
+        "variety": "Tai Nong",
+        "grade": "GlobalGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": 3855.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DAK_NONG Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG Packaging Station",
+          "quantity": 3623.7,
+          "created": true
+        },
+        {
+          "action": "SHIPPING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG Distribution Hub",
+          "quantity": 3551.226,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-8",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "d8267f0b-35b8-44fa-8a06-e661545f4604",
+        "batchCode": "BATCH-20260527-FA8952B3",
+        "farmId": "bfdd85ad-dd95-4958-9903-31205b716c67",
+        "farmName": "[MOCK] Farm Extra 6 - Dong Nai",
+        "productId": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
+        "productName": "[MOCK] Hạt Điều Rang",
+        "productType": "Cây công nghiệp",
+        "quantity": 2801.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-04T00:00:00"
+      },
+      "farm": {
+        "id": "bfdd85ad-dd95-4958-9903-31205b716c67",
+        "name": "[MOCK] Farm Extra 6 - Dong Nai",
+        "location": "Dong Nai - Plot 15",
+        "region": "DONG_NAI",
+        "plot": "Plot 15",
+        "latitude": 11.039366,
+        "longitude": 107.120643,
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
+      },
+      "product": {
+        "id": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
+        "name": "[MOCK] Hạt Điều Rang",
+        "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80",
+        "variety": "Bình Phước",
+        "grade": "Premium"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": 2801.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DONG_NAI Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI Packaging Station",
+          "quantity": 2632.94,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-9",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "1635455f-4eb7-4c66-a4ab-32c961609a18",
+        "batchCode": "BATCH-20260527-3BBC7108",
+        "farmId": "7f10be34-046f-4e57-82ea-5ce51c2452b6",
+        "farmName": "[MOCK] Farm Extra 7 - Tien Giang",
+        "productId": "3da41d94-4a09-4174-afa9-bdf01d654619",
+        "productName": "[MOCK] Xoài Cát Hòa Lộc",
+        "productType": "Trái cây",
+        "quantity": 4083.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-07T00:00:00"
+      },
+      "farm": {
+        "id": "7f10be34-046f-4e57-82ea-5ce51c2452b6",
+        "name": "[MOCK] Farm Extra 7 - Tien Giang",
+        "location": "Tien Giang - Plot 16",
+        "region": "TIEN_GIANG",
+        "plot": "Plot 16",
+        "latitude": 10.330101,
+        "longitude": 106.408461,
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
+      },
+      "product": {
+        "id": "3da41d94-4a09-4174-afa9-bdf01d654619",
+        "name": "[MOCK] Xoài Cát Hòa Lộc",
+        "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
+        "variety": "Hòa Lộc",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "quantity": 4083.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "TIEN_GIANG Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG Packaging Station",
+          "quantity": 3838.02,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-10",
+      "scenario": "EARLY_GROWTH",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "4a598481-339a-4fa1-8710-6b80b7d91eb0",
+        "batchCode": "BATCH-20260527-B6F19F8A",
+        "farmId": "20232948-b594-435a-8596-50adee7d274c",
         "farmName": "[MOCK] Farm Extra 8 - Binh Thuan",
-        "productId": "d1144b79-7696-40ca-8c18-4035c185174d",
+        "productId": "73e1726d-fb84-4f74-b8bb-e79239397b08",
+        "productName": "[MOCK] Hass Avocado",
+        "productType": "Trái cây",
+        "quantity": 3252.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-28T00:00:00"
+      },
+      "farm": {
+        "id": "20232948-b594-435a-8596-50adee7d274c",
+        "name": "[MOCK] Farm Extra 8 - Binh Thuan",
+        "location": "Binh Thuan - Plot 17",
+        "region": "BINH_THUAN",
+        "plot": "Plot 17",
+        "latitude": 11.098989,
+        "longitude": 108.159554,
+        "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
+      },
+      "product": {
+        "id": "73e1726d-fb84-4f74-b8bb-e79239397b08",
+        "name": "[MOCK] Hass Avocado",
+        "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Hass",
+        "grade": "Premium Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "SPRAYING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
+          "quantity": null,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-11",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "8c120dba-f2bb-4d03-8716-6bd030a747e9",
+        "batchCode": "BATCH-20260527-B4D60635",
+        "farmId": "e87408ae-d280-42fa-85b3-e6611a80bda1",
+        "farmName": "[MOCK] Farm Extra 9 - Son La",
+        "productId": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
+        "productName": "[MOCK] Organic Tomato",
+        "productType": "Rau củ",
+        "quantity": 1281.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-08T00:00:00"
+      },
+      "farm": {
+        "id": "e87408ae-d280-42fa-85b3-e6611a80bda1",
+        "name": "[MOCK] Farm Extra 9 - Son La",
+        "location": "Son La - Plot 18",
+        "region": "SON_LA",
+        "plot": "Plot 18",
+        "latitude": 21.310007,
+        "longitude": 103.935477,
+        "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
+      },
+      "product": {
+        "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
+        "name": "[MOCK] Organic Tomato",
+        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Ruby Cluster",
+        "grade": "Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 18 - Plot 18",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 18 - Plot 18",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 18 - Plot 18",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 18 - Plot 18",
+          "quantity": 1281.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-12",
+      "scenario": "ANOMALY_SEQUENCE",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "76010ce9-8fa7-4548-91a5-218163aabd19",
+        "batchCode": "BATCH-20260527-9F8B27A9",
+        "farmId": "91592afc-9cd8-4c79-bb1a-778dcb874c4a",
+        "farmName": "[MOCK] Farm Extra 10 - Dak Nong",
+        "productId": "5293b5cc-8809-46da-b439-886490c85f70",
+        "productName": "[MOCK] Jasmine Rice",
+        "productType": "Ngũ cốc",
+        "quantity": 3754.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-28T00:00:00"
+      },
+      "farm": {
+        "id": "91592afc-9cd8-4c79-bb1a-778dcb874c4a",
+        "name": "[MOCK] Farm Extra 10 - Dak Nong",
+        "location": "Dak Nong - Plot 19",
+        "region": "DAK_NONG",
+        "plot": "Plot 19",
+        "latitude": 12.066556,
+        "longitude": 107.915179,
+        "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
+      },
+      "product": {
+        "id": "5293b5cc-8809-46da-b439-886490c85f70",
+        "name": "[MOCK] Jasmine Rice",
+        "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
+        "variety": "ST25",
+        "grade": "Export Premium"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
+          "quantity": 100.0,
+          "created": false
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
+          "quantity": 100.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-13",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "06497c13-77e6-4919-a90f-2766aa029912",
+        "batchCode": "BATCH-20260527-DB9794FF",
+        "farmId": "25053ea6-c4e1-4821-90cd-8a97112afff5",
+        "farmName": "[MOCK] Farm Extra 11 - Dong Nai",
+        "productId": "9821e1ca-20a4-4475-b2a1-658c572576c6",
+        "productName": "[MOCK] Dragon Fruit",
+        "productType": "Trái cây",
+        "quantity": 671.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-26T00:00:00"
+      },
+      "farm": {
+        "id": "25053ea6-c4e1-4821-90cd-8a97112afff5",
+        "name": "[MOCK] Farm Extra 11 - Dong Nai",
+        "location": "Dong Nai - Plot 20",
+        "region": "DONG_NAI",
+        "plot": "Plot 20",
+        "latitude": 10.849813,
+        "longitude": 107.076608,
+        "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
+      },
+      "product": {
+        "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
+        "name": "[MOCK] Dragon Fruit",
+        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Red Flesh",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
+          "quantity": 671.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-14",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "bf75fa60-1d16-43df-a627-aed77bb73762",
+        "batchCode": "BATCH-20260527-5755F674",
+        "farmId": "01cbc660-5259-4d65-9766-90ccedefb6e9",
+        "farmName": "[MOCK] Farm Extra 12 - Tien Giang",
+        "productId": "9da8d435-7a96-427f-9652-f1445fb15fe1",
+        "productName": "[MOCK] Arabica Coffee",
+        "productType": "Cây công nghiệp",
+        "quantity": 3756.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-11T00:00:00"
+      },
+      "farm": {
+        "id": "01cbc660-5259-4d65-9766-90ccedefb6e9",
+        "name": "[MOCK] Farm Extra 12 - Tien Giang",
+        "location": "Tien Giang - Plot 21",
+        "region": "TIEN_GIANG",
+        "plot": "Plot 21",
+        "latitude": 10.392746,
+        "longitude": 106.338002,
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
+      },
+      "product": {
+        "id": "9da8d435-7a96-427f-9652-f1445fb15fe1",
+        "name": "[MOCK] Arabica Coffee",
+        "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Arabica Catuai",
+        "grade": "Specialty"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
+          "quantity": 3756.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-15",
+      "scenario": "ANOMALY_SEQUENCE",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "a074804b-66df-4542-8c7c-0d7abeca43d4",
+        "batchCode": "BATCH-20260527-9BD1D08D",
+        "farmId": "892c9739-e865-4cdb-8306-9f720357a91d",
+        "farmName": "[MOCK] Dalat Farm",
+        "productId": "31f969b4-f6ad-4e46-8928-1b4076d63646",
         "productName": "[MOCK] Sầu Riêng Ri6",
         "productType": "Trái cây",
-        "quantity": 1999.0,
+        "quantity": 4602.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-14T00:00:00"
+      },
+      "farm": {
+        "id": "892c9739-e865-4cdb-8306-9f720357a91d",
+        "name": "[MOCK] Dalat Farm",
+        "location": "Da Lat, Lam Dong - Plot 4B",
+        "region": "DALAT",
+        "plot": "Plot 4B",
+        "latitude": 11.9404,
+        "longitude": 108.4583,
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
+      },
+      "product": {
+        "id": "31f969b4-f6ad-4e46-8928-1b4076d63646",
+        "name": "[MOCK] Sầu Riêng Ri6",
+        "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80",
+        "variety": "Ri6",
+        "grade": "Export"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": 100.0,
+          "created": false
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DALAT - Da Lat, Lam Dong - Plot 4B - Plot 4B",
+          "quantity": 100.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-16",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "591e5c2b-3664-4bd1-bbe2-640870c91ac7",
+        "batchCode": "BATCH-20260527-74CB1DDF",
+        "farmId": "1c685b51-06a1-4318-a0eb-638aec86def0",
+        "farmName": "[MOCK] Mekong Green Farm",
+        "productId": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
+        "productName": "[MOCK] Cà Phê Robusta",
+        "productType": "Cây công nghiệp",
+        "quantity": 2768.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-20T00:00:00"
+      },
+      "farm": {
+        "id": "1c685b51-06a1-4318-a0eb-638aec86def0",
+        "name": "[MOCK] Mekong Green Farm",
+        "location": "Can Tho, Mekong Delta - Sector C2",
+        "region": "MEKONG",
+        "plot": "Sector C2",
+        "latitude": 10.0452,
+        "longitude": 105.7469,
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
+      },
+      "product": {
+        "id": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
+        "name": "[MOCK] Cà Phê Robusta",
+        "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
+        "variety": "Robusta",
+        "grade": "Grade 1"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "MEKONG - Can Tho, Mekong Delta - Sector C2 - Sector C2",
+          "quantity": 2768.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-17",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "01746d6a-fc80-4655-bb55-20cb470335a8",
+        "batchCode": "BATCH-20260527-6690B293",
+        "farmId": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
+        "farmName": "[MOCK] Highland Organic Hub",
+        "productId": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
+        "productName": "[MOCK] Chanh Dây Tím",
+        "productType": "Trái cây",
+        "quantity": 4544.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-29T00:00:00"
+      },
+      "farm": {
+        "id": "3b13f54b-a57b-4ad8-9985-15b4584a4014",
+        "name": "[MOCK] Highland Organic Hub",
+        "location": "Buon Ma Thuot, Dak Lak - Block A7",
+        "region": "HIGHLAND",
+        "plot": "Block A7",
+        "latitude": 12.6666,
+        "longitude": 108.0372,
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
+      },
+      "product": {
+        "id": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
+        "name": "[MOCK] Chanh Dây Tím",
+        "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80",
+        "variety": "Tai Nong",
+        "grade": "GlobalGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND - Buon Ma Thuot, Dak Lak - Block A7 - Block A7",
+          "quantity": 4544.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "HIGHLAND Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "HIGHLAND Packaging Station",
+          "quantity": 4271.36,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-18",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "b82515ca-7671-44d9-928c-c8469f740ba5",
+        "batchCode": "BATCH-20260527-40A5298E",
+        "farmId": "4b2821d1-6656-43fa-b2c1-030141994528",
+        "farmName": "[MOCK] Farm Extra 1 - Dong Nai",
+        "productId": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
+        "productName": "[MOCK] Hạt Điều Rang",
+        "productType": "Cây công nghiệp",
+        "quantity": 2025.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
         "harvestDate": "2026-05-01T00:00:00"
       },
       "farm": {
-        "id": "73812e1a-3f7f-493a-b21e-951896966664",
+        "id": "4b2821d1-6656-43fa-b2c1-030141994528",
+        "name": "[MOCK] Farm Extra 1 - Dong Nai",
+        "location": "Dong Nai - Plot 10",
+        "region": "DONG_NAI",
+        "plot": "Plot 10",
+        "latitude": 10.939463,
+        "longitude": 107.03548,
+        "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
+      },
+      "product": {
+        "id": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
+        "name": "[MOCK] Hạt Điều Rang",
+        "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80",
+        "variety": "Bình Phước",
+        "grade": "Premium"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 10 - Plot 10",
+          "quantity": 2025.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-19",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "47134509-93ab-4564-82a2-53a82077a277",
+        "batchCode": "BATCH-20260527-9F347981",
+        "farmId": "8bccd96e-cb88-4f8c-a03e-05b0b5ec2733",
+        "farmName": "[MOCK] Farm Extra 2 - Tien Giang",
+        "productId": "3da41d94-4a09-4174-afa9-bdf01d654619",
+        "productName": "[MOCK] Xoài Cát Hòa Lộc",
+        "productType": "Trái cây",
+        "quantity": 4154.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-17T00:00:00"
+      },
+      "farm": {
+        "id": "8bccd96e-cb88-4f8c-a03e-05b0b5ec2733",
+        "name": "[MOCK] Farm Extra 2 - Tien Giang",
+        "location": "Tien Giang - Plot 11",
+        "region": "TIEN_GIANG",
+        "plot": "Plot 11",
+        "latitude": 10.299221,
+        "longitude": 106.294321,
+        "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
+      },
+      "product": {
+        "id": "3da41d94-4a09-4174-afa9-bdf01d654619",
+        "name": "[MOCK] Xoài Cát Hòa Lộc",
+        "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
+        "variety": "Hòa Lộc",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 11 - Plot 11",
+          "quantity": 4154.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-20",
+      "scenario": "EARLY_GROWTH",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "ef47e363-0de3-4e3b-ba5e-a22586d2e9ce",
+        "batchCode": "BATCH-20260527-AC780760",
+        "farmId": "fa01147b-dad2-42c8-8fe5-8a3fa6080350",
+        "farmName": "[MOCK] Farm Extra 3 - Binh Thuan",
+        "productId": "73e1726d-fb84-4f74-b8bb-e79239397b08",
+        "productName": "[MOCK] Hass Avocado",
+        "productType": "Trái cây",
+        "quantity": 1964.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-30T00:00:00"
+      },
+      "farm": {
+        "id": "fa01147b-dad2-42c8-8fe5-8a3fa6080350",
+        "name": "[MOCK] Farm Extra 3 - Binh Thuan",
+        "location": "Binh Thuan - Plot 12",
+        "region": "BINH_THUAN",
+        "plot": "Plot 12",
+        "latitude": 11.075868,
+        "longitude": 108.08232,
+        "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
+      },
+      "product": {
+        "id": "73e1726d-fb84-4f74-b8bb-e79239397b08",
+        "name": "[MOCK] Hass Avocado",
+        "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Hass",
+        "grade": "Premium Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "SPRAYING",
+          "actorRole": "FARMER",
+          "location": "BINH_THUAN - Binh Thuan - Plot 12 - Plot 12",
+          "quantity": null,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-21",
+      "scenario": "ANOMALY_TELEPORTATION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "82985772-5efe-4684-8a01-b02fedf0e5e1",
+        "batchCode": "BATCH-20260527-F7D6EAE8",
+        "farmId": "edee057a-ac67-4e58-919b-8dda762153e6",
+        "farmName": "[MOCK] Farm Extra 4 - Son La",
+        "productId": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
+        "productName": "[MOCK] Organic Tomato",
+        "productType": "Rau củ",
+        "quantity": 2374.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-04-28T00:00:00"
+      },
+      "farm": {
+        "id": "edee057a-ac67-4e58-919b-8dda762153e6",
+        "name": "[MOCK] Farm Extra 4 - Son La",
+        "location": "Son La - Plot 13",
+        "region": "SON_LA",
+        "plot": "Plot 13",
+        "latitude": 21.320179,
+        "longitude": 103.916592,
+        "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
+      },
+      "product": {
+        "id": "ef6119cf-d1a4-4ff5-8ec2-485a33c9e6f2",
+        "name": "[MOCK] Organic Tomato",
+        "imageUrl": "https://images.unsplash.com/photo-1546470427-e5b0f9f6f22f?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Ruby Cluster",
+        "grade": "Grade A"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 13 - Plot 13",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "SON_LA - Son La - Plot 13 - Plot 13",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "Suspicious Location (USA)",
+          "quantity": null,
+          "created": false
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-22",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "8df097dd-d4da-4061-ad89-d2fabf9a40cc",
+        "batchCode": "BATCH-20260527-3AFF91C4",
+        "farmId": "74529a61-c644-45f1-938c-a37734d9ae21",
+        "farmName": "[MOCK] Farm Extra 5 - Dak Nong",
+        "productId": "5293b5cc-8809-46da-b439-886490c85f70",
+        "productName": "[MOCK] Jasmine Rice",
+        "productType": "Ngũ cốc",
+        "quantity": 869.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-05T00:00:00"
+      },
+      "farm": {
+        "id": "74529a61-c644-45f1-938c-a37734d9ae21",
+        "name": "[MOCK] Farm Extra 5 - Dak Nong",
+        "location": "Dak Nong - Plot 14",
+        "region": "DAK_NONG",
+        "plot": "Plot 14",
+        "latitude": 11.943833,
+        "longitude": 107.790132,
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
+      },
+      "product": {
+        "id": "5293b5cc-8809-46da-b439-886490c85f70",
+        "name": "[MOCK] Jasmine Rice",
+        "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31d?auto=format&fit=crop&w=1280&q=80",
+        "variety": "ST25",
+        "grade": "Export Premium"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "WATERING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DAK_NONG - Dak Nong - Plot 14 - Plot 14",
+          "quantity": 869.0,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
+        "batchReadable": true,
+        "tracePublicReadable": false,
+        "traceExpectationMet": false,
+        "traceError": "Public trace is unavailable until inspection approval"
+      },
+      "qrStatus": "Skipped",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-23",
+      "scenario": "VERIFIED_PACKAGED",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "77f63371-1a34-47d5-80a1-ab32026ca1c7",
+        "batchCode": "BATCH-20260527-3335DFB7",
+        "farmId": "bfdd85ad-dd95-4958-9903-31205b716c67",
+        "farmName": "[MOCK] Farm Extra 6 - Dong Nai",
+        "productId": "9821e1ca-20a4-4475-b2a1-658c572576c6",
+        "productName": "[MOCK] Dragon Fruit",
+        "productType": "Trái cây",
+        "quantity": 3517.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-14T00:00:00"
+      },
+      "farm": {
+        "id": "bfdd85ad-dd95-4958-9903-31205b716c67",
+        "name": "[MOCK] Farm Extra 6 - Dong Nai",
+        "location": "Dong Nai - Plot 15",
+        "region": "DONG_NAI",
+        "plot": "Plot 15",
+        "latitude": 11.039366,
+        "longitude": 107.120643,
+        "ownerId": "59389c59-4418-47f7-a25d-b4997980b91a"
+      },
+      "product": {
+        "id": "9821e1ca-20a4-4475-b2a1-658c572576c6",
+        "name": "[MOCK] Dragon Fruit",
+        "imageUrl": "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Red Flesh",
+        "grade": "VietGAP"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "FERTILIZING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI - Dong Nai - Plot 15 - Plot 15",
+          "quantity": 3517.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DONG_NAI Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI Packaging Station",
+          "quantity": 3305.98,
+          "created": true
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-24",
+      "scenario": "ANOMALY_QUANTITY",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "3afb2389-537c-4a79-b704-f8103bee5eb5",
+        "batchCode": "BATCH-20260527-175DFE2F",
+        "farmId": "7f10be34-046f-4e57-82ea-5ce51c2452b6",
+        "farmName": "[MOCK] Farm Extra 7 - Tien Giang",
+        "productId": "9da8d435-7a96-427f-9652-f1445fb15fe1",
+        "productName": "[MOCK] Arabica Coffee",
+        "productType": "Cây công nghiệp",
+        "quantity": 1477.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-08T00:00:00"
+      },
+      "farm": {
+        "id": "7f10be34-046f-4e57-82ea-5ce51c2452b6",
+        "name": "[MOCK] Farm Extra 7 - Tien Giang",
+        "location": "Tien Giang - Plot 16",
+        "region": "TIEN_GIANG",
+        "plot": "Plot 16",
+        "latitude": 10.330101,
+        "longitude": 106.408461,
+        "ownerId": "fd44039f-c976-4d4a-b64c-7c60050b9fb7"
+      },
+      "product": {
+        "id": "9da8d435-7a96-427f-9652-f1445fb15fe1",
+        "name": "[MOCK] Arabica Coffee",
+        "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1280&q=80",
+        "variety": "Arabica Catuai",
+        "grade": "Specialty"
+      },
+      "traceTimeline": [
+        {
+          "action": "PLANTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 16 - Plot 16",
+          "quantity": 100.0,
+          "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "TIEN_GIANG Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG Packaging Station",
+          "quantity": 500.0,
+          "created": false
+        }
+      ],
+      "publicValidation": {
+        "batchStatusCode": 200,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
+        "batchReadable": true,
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
+      },
+      "qrStatus": "Generated",
+      "inspectionState": "NONE"
+    },
+    {
+      "label": "generated-batch-v2-25",
+      "scenario": "PENDING_INSPECTION",
+      "uiState": "GENERATED",
+      "batch": {
+        "id": "2aec4934-15f0-4c83-a637-3a672b9b5c94",
+        "batchCode": "BATCH-20260527-539361E1",
+        "farmId": "20232948-b594-435a-8596-50adee7d274c",
+        "farmName": "[MOCK] Farm Extra 8 - Binh Thuan",
+        "productId": "31f969b4-f6ad-4e46-8928-1b4076d63646",
+        "productName": "[MOCK] Sầu Riêng Ri6",
+        "productType": "Trái cây",
+        "quantity": 2389.0,
+        "unit": "kg",
+        "status": "PENDING_INSPECTION",
+        "harvestDate": "2026-05-18T00:00:00"
+      },
+      "farm": {
+        "id": "20232948-b594-435a-8596-50adee7d274c",
         "name": "[MOCK] Farm Extra 8 - Binh Thuan",
         "location": "Binh Thuan - Plot 17",
         "region": "BINH_THUAN",
         "plot": "Plot 17",
-        "latitude": 11.14807,
-        "longitude": 108.081292,
-        "ownerId": "34e2d8ad-914f-4664-a2f5-adce7c1b9319"
+        "latitude": 11.098989,
+        "longitude": 108.159554,
+        "ownerId": "5b681469-2c14-4105-bc36-34f4892ec336"
       },
       "product": {
-        "id": "d1144b79-7696-40ca-8c18-4035c185174d",
+        "id": "31f969b4-f6ad-4e46-8928-1b4076d63646",
         "name": "[MOCK] Sầu Riêng Ri6",
         "imageUrl": "https://images.unsplash.com/photo-1633316278783-6987f2e12812?w=800&q=80",
         "variety": "Ri6",
@@ -3299,71 +3257,51 @@
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "BINH_THUAN - Binh Thuan - Plot 17 - Plot 17",
-          "quantity": 1999.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "BINH_THUAN Inspection Center",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN Packaging Station",
-          "quantity": 1879.06,
-          "created": true
-        },
-        {
-          "action": "SHIPPING",
-          "actorRole": "FARMER",
-          "location": "BINH_THUAN Distribution Hub",
-          "quantity": 1841.479,
+          "quantity": 2389.0,
           "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-26",
-      "scenario": "VERIFIED_PACKAGED",
+      "scenario": "ANOMALY_TELEPORTATION",
       "uiState": "GENERATED",
       "batch": {
-        "id": "5efeed15-90e6-4e97-867f-e51948f06cbb",
-        "batchCode": "BATCH-20260521-22421D23",
-        "farmId": "bf33a8f8-8b23-450a-86ae-ba2e62c17a3b",
+        "id": "b325b574-11c5-418f-be9c-e6b6cdeec658",
+        "batchCode": "BATCH-20260527-E6821007",
+        "farmId": "e87408ae-d280-42fa-85b3-e6611a80bda1",
         "farmName": "[MOCK] Farm Extra 9 - Son La",
-        "productId": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
+        "productId": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
         "productName": "[MOCK] Cà Phê Robusta",
         "productType": "Cây công nghiệp",
-        "quantity": 925.0,
+        "quantity": 2742.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-20T00:00:00"
+        "harvestDate": "2026-05-11T00:00:00"
       },
       "farm": {
-        "id": "bf33a8f8-8b23-450a-86ae-ba2e62c17a3b",
+        "id": "e87408ae-d280-42fa-85b3-e6611a80bda1",
         "name": "[MOCK] Farm Extra 9 - Son La",
         "location": "Son La - Plot 18",
         "region": "SON_LA",
         "plot": "Plot 18",
-        "latitude": 21.254125,
-        "longitude": 103.897167,
-        "ownerId": "66406cb9-2ef8-4464-aec4-52a8ea78f37d"
+        "latitude": 21.310007,
+        "longitude": 103.935477,
+        "ownerId": "4ccfbf93-634b-4987-884c-6e2fc6e1e1a4"
       },
       "product": {
-        "id": "6ced3e51-ed1c-474a-b060-76efb96f4d99",
+        "id": "f2b5dbc0-49b6-4772-bf07-1b2221f2177f",
         "name": "[MOCK] Cà Phê Robusta",
         "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
         "variety": "Robusta",
@@ -3385,67 +3323,54 @@
           "created": true
         },
         {
-          "action": "HARVESTING",
+          "action": "WATERING",
           "actorRole": "FARMER",
-          "location": "SON_LA - Son La - Plot 18 - Plot 18",
-          "quantity": 925.0,
-          "created": true
-        },
-        {
-          "action": "INSPECTION",
-          "actorRole": "INSPECTOR",
-          "location": "SON_LA Inspection Center",
+          "location": "Suspicious Location (USA)",
           "quantity": null,
-          "created": true
-        },
-        {
-          "action": "PACKAGING",
-          "actorRole": "FARMER",
-          "location": "SON_LA Packaging Station",
-          "quantity": 869.5,
-          "created": true
+          "created": false
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 200,
+        "traceStatusCode": 403,
+        "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-27",
-      "scenario": "PENDING_INSPECTION_HARVEST",
+      "scenario": "EARLY_GROWTH",
       "uiState": "GENERATED",
       "batch": {
-        "id": "f872d6e7-00c8-49c1-b4bf-63912e0dd387",
-        "batchCode": "BATCH-20260521-247C5CBB",
-        "farmId": "5dc5242c-cced-445c-b85f-9f124787ad85",
+        "id": "504ae55a-6004-459b-a045-6a8683c1d62f",
+        "batchCode": "BATCH-20260527-2BB8DBE5",
+        "farmId": "91592afc-9cd8-4c79-bb1a-778dcb874c4a",
         "farmName": "[MOCK] Farm Extra 10 - Dak Nong",
-        "productId": "da5335d1-779b-440d-9517-3a40346c5e2e",
+        "productId": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
         "productName": "[MOCK] Chanh Dây Tím",
         "productType": "Trái cây",
-        "quantity": 2308.0,
+        "quantity": 2599.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-22T00:00:00"
+        "harvestDate": "2026-05-07T00:00:00"
       },
       "farm": {
-        "id": "5dc5242c-cced-445c-b85f-9f124787ad85",
+        "id": "91592afc-9cd8-4c79-bb1a-778dcb874c4a",
         "name": "[MOCK] Farm Extra 10 - Dak Nong",
         "location": "Dak Nong - Plot 19",
         "region": "DAK_NONG",
         "plot": "Plot 19",
-        "latitude": 12.038187,
-        "longitude": 107.88052,
-        "ownerId": "57bea64a-f631-4709-8103-87bca0c90b96"
+        "latitude": 12.066556,
+        "longitude": 107.915179,
+        "ownerId": "c73f4fd3-bbcb-4b15-856c-60a07bb34f8a"
       },
       "product": {
-        "id": "da5335d1-779b-440d-9517-3a40346c5e2e",
+        "id": "4f12aecc-150b-4e9a-8e1c-3d4e7c23a735",
         "name": "[MOCK] Chanh Dây Tím",
         "imageUrl": "https://images.unsplash.com/photo-1587313838706-037190011464?w=800&q=80",
         "variety": "Tai Nong",
@@ -3479,55 +3404,49 @@
           "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
           "quantity": null,
           "created": true
-        },
-        {
-          "action": "HARVESTING",
-          "actorRole": "FARMER",
-          "location": "DAK_NONG - Dak Nong - Plot 19 - Plot 19",
-          "quantity": 2308.0,
-          "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-28",
-      "scenario": "PENDING_INSPECTION_HARVEST",
+      "scenario": "ANOMALY_QUANTITY",
       "uiState": "GENERATED",
       "batch": {
-        "id": "62a17702-b279-44ee-869a-837562e7463a",
-        "batchCode": "BATCH-20260521-97B35460",
-        "farmId": "a6f3e9d0-645f-4705-bb00-2a790bce4f2b",
+        "id": "27e6c9f7-6957-48e0-a133-c213b8a30753",
+        "batchCode": "BATCH-20260527-1FB6B506",
+        "farmId": "25053ea6-c4e1-4821-90cd-8a97112afff5",
         "farmName": "[MOCK] Farm Extra 11 - Dong Nai",
-        "productId": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
+        "productId": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
         "productName": "[MOCK] Hạt Điều Rang",
         "productType": "Cây công nghiệp",
-        "quantity": 1548.0,
+        "quantity": 2920.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-04-30T00:00:00"
+        "harvestDate": "2026-05-08T00:00:00"
       },
       "farm": {
-        "id": "a6f3e9d0-645f-4705-bb00-2a790bce4f2b",
+        "id": "25053ea6-c4e1-4821-90cd-8a97112afff5",
         "name": "[MOCK] Farm Extra 11 - Dong Nai",
         "location": "Dong Nai - Plot 20",
         "region": "DONG_NAI",
         "plot": "Plot 20",
-        "latitude": 11.027787,
-        "longitude": 107.033501,
-        "ownerId": "bbb03c59-5b28-47ee-9c50-3bee6e778e87"
+        "latitude": 10.849813,
+        "longitude": 107.076608,
+        "ownerId": "554f8bf0-4795-4634-a30d-8a6a95d0274d"
       },
       "product": {
-        "id": "3dccb724-4a2b-4b2c-bdb9-d5890da80f95",
+        "id": "cebdeef8-761a-4ae6-9104-2b17bcd9c73d",
         "name": "[MOCK] Hạt Điều Rang",
         "imageUrl": "https://images.unsplash.com/photo-1579722744354-9452b4742f1b?w=800&q=80",
         "variety": "Bình Phước",
@@ -3542,74 +3461,67 @@
           "created": true
         },
         {
-          "action": "FERTILIZING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "WATERING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": null,
-          "created": true
-        },
-        {
-          "action": "SPRAYING",
-          "actorRole": "FARMER",
-          "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": null,
-          "created": true
-        },
-        {
           "action": "HARVESTING",
           "actorRole": "FARMER",
           "location": "DONG_NAI - Dong Nai - Plot 20 - Plot 20",
-          "quantity": 1548.0,
+          "quantity": 100.0,
           "created": true
+        },
+        {
+          "action": "INSPECTION",
+          "actorRole": "INSPECTOR",
+          "location": "DONG_NAI Inspection Center",
+          "quantity": null,
+          "created": true
+        },
+        {
+          "action": "PACKAGING",
+          "actorRole": "FARMER",
+          "location": "DONG_NAI Packaging Station",
+          "quantity": 500.0,
+          "created": false
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
-        "expectedTraceStatus": 404,
+        "traceStatusCode": 200,
+        "expectedTraceStatus": 200,
         "batchReadable": true,
-        "tracePublicReadable": false,
-        "traceExpectationMet": false,
-        "traceError": "No details"
+        "tracePublicReadable": true,
+        "traceExpectationMet": true
       },
+      "qrStatus": "Generated",
       "inspectionState": "NONE"
     },
     {
       "label": "generated-batch-v2-29",
-      "scenario": "EARLY_GROWTH",
+      "scenario": "PENDING_INSPECTION_HARVEST",
       "uiState": "GENERATED",
       "batch": {
-        "id": "f93eac97-49b0-4068-bed7-8d8104bec366",
-        "batchCode": "BATCH-20260521-0F80EB92",
-        "farmId": "9a38cf1e-dd25-47ea-87c5-bc406065a969",
+        "id": "5cfcc309-842f-49d2-a5d4-5c9493aa43bc",
+        "batchCode": "BATCH-20260527-46F4806A",
+        "farmId": "01cbc660-5259-4d65-9766-90ccedefb6e9",
         "farmName": "[MOCK] Farm Extra 12 - Tien Giang",
-        "productId": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
+        "productId": "3da41d94-4a09-4174-afa9-bdf01d654619",
         "productName": "[MOCK] Xoài Cát Hòa Lộc",
         "productType": "Trái cây",
-        "quantity": 1867.0,
+        "quantity": 689.0,
         "unit": "kg",
         "status": "PENDING_INSPECTION",
-        "harvestDate": "2026-05-02T00:00:00"
+        "harvestDate": "2026-05-20T00:00:00"
       },
       "farm": {
-        "id": "9a38cf1e-dd25-47ea-87c5-bc406065a969",
+        "id": "01cbc660-5259-4d65-9766-90ccedefb6e9",
         "name": "[MOCK] Farm Extra 12 - Tien Giang",
         "location": "Tien Giang - Plot 21",
         "region": "TIEN_GIANG",
         "plot": "Plot 21",
-        "latitude": 10.346184,
-        "longitude": 106.354589,
-        "ownerId": "e33d729d-7d99-4c36-8b64-cf0a01ff4333"
+        "latitude": 10.392746,
+        "longitude": 106.338002,
+        "ownerId": "1296ff51-dd99-452a-8131-3ba6a67a8633"
       },
       "product": {
-        "id": "b63621d6-baf7-470b-aefc-a84ff3c2df5f",
+        "id": "3da41d94-4a09-4174-afa9-bdf01d654619",
         "name": "[MOCK] Xoài Cát Hòa Lộc",
         "imageUrl": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
         "variety": "Hòa Lộc",
@@ -3643,17 +3555,25 @@
           "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
           "quantity": null,
           "created": true
+        },
+        {
+          "action": "HARVESTING",
+          "actorRole": "FARMER",
+          "location": "TIEN_GIANG - Tien Giang - Plot 21 - Plot 21",
+          "quantity": 689.0,
+          "created": true
         }
       ],
       "publicValidation": {
         "batchStatusCode": 200,
-        "traceStatusCode": 401,
+        "traceStatusCode": 403,
         "expectedTraceStatus": 404,
         "batchReadable": true,
         "tracePublicReadable": false,
         "traceExpectationMet": false,
-        "traceError": "No details"
+        "traceError": "Public trace is unavailable until inspection approval"
       },
+      "qrStatus": "Skipped",
       "inspectionState": "NONE"
     }
   ]

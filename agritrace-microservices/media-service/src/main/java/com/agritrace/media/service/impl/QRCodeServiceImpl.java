@@ -99,7 +99,7 @@ public class QRCodeServiceImpl implements QRCodeService {
     }
 
     private boolean isBatchPubliclyAccessible(String batchCode) {
-        String checkUrl = baseUrl + "/api/v1/batches/" + batchCode;
+        String checkUrl = "http://product-service:8082/api/v1/batches/" + batchCode;
         try {
             return restTemplate.getForEntity(checkUrl, String.class).getStatusCode().is2xxSuccessful();
         } catch (RestClientException ex) {

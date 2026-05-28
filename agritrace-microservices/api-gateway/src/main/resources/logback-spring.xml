@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Logback JSON Configuration for AgriTrace API Gateway
+  
+  Architecture: Uses logstash-logback-encoder to produce structured JSON logs
+  compatible with ELK Stack (Elasticsearch + Logstash + Kibana) and Grafana Loki.
+  
+  Fields included in every log entry:
+  - timestamp: ISO-8601 from system clock
+  - service: application name (from Spring property)
+  - level: log level
+  - traceId: Micrometer Tracing trace ID (populated automatically)
+  - spanId: Micrometer span ID
+  - thread: thread name
+  - logger: logger class name
+  - message: log message
+  - userId: extracted from MDC (set by JwtAuthenticationFilter)
+  - requestId: X-Request-ID header value (set by JwtAuthenticationFilter)
+-->
+<configuration>
+    <!-- Spring Boot default console appender for dev convenience -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name" defaultValue="api-gateway"/>
+    <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active" defaultValue="dev"/>
+
+    <!-- JSON Console Appender for structured logging -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Rename default fields for ELK compatibility -->
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+            <!-- Static fields added to every log entry -->
+            <customFields>{"service":"${SERVICE_NAME}","environment":"${ACTIVE_PROFILE}"}</customFields>
+            <!-- Include MDC fields (traceId, userId, requestId) -->
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <includeMdcKeyName>userId</includeMdcKeyName>
+            <includeMdcKeyName>requestId</includeMdcKeyName>
+            <!-- Include caller info for DEBUG level only to reduce overhead -->
+            <includeCallerData>false</includeCallerData>
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>20</maxDepthPerThrowable>
+                <maxLength>2048</maxLength>
+                <shortenedClassNameLength>20</shortenedClassNameLength>
+                <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
+        </encoder>
+    </appender>
+
+    <!-- Async wrapper reduces logging I/O impact on request processing -->
+    <appender name="ASYNC_JSON" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="JSON_CONSOLE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="${LOG_LEVEL_ROOT:-WARN}">
+        <appender-ref ref="ASYNC_JSON"/>
+    </root>
+
+    <!-- Package-level overrides -->
+    <logger name="com.agritrace" level="${LOG_LEVEL_APP:-INFO}" additivity="false">
+        <appender-ref ref="ASYNC_JSON"/>
+    </logger>
+    <logger name="org.springframework.cloud.gateway" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_JSON"/>
+    </logger>
+    <logger name="org.springframework.cloud.gateway.filter.ratelimit" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_JSON"/>
+    </logger>
+</configuration>

@@ -1,6 +1,7 @@
 package com.agritrace.product.service;
 
 import com.agritrace.common.exception.ResourceNotFoundException;
+import com.agritrace.product.config.CacheConfig;
 import com.agritrace.product.dto.CreateProductRequest;
 import com.agritrace.product.dto.ProductResponse;
 import com.agritrace.product.dto.UpdateProductRequest;
@@ -8,6 +9,9 @@ import com.agritrace.product.entity.Product;
 import com.agritrace.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,15 +38,17 @@ public class ProductService {
 
     /**
      * Create a new product
-     * * Authorization: ADMIN only (enforced by @PreAuthorize at controller)
-     * * @param request Product creation request
-     * @return ProductResponse
+     *
+     * Cache: Evicts 'all' list cache on creation so subsequent list calls
+     * reflect the new product. Specific product cache will be populated on first read.
      */
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = CacheConfig.CACHE_BATCH_LIST, allEntries = true)
+    })
     public ProductResponse createProduct(CreateProductRequest request) {
         log.info("Creating new product: {}", request.getName());
 
-        // Build product entity
         Product product = Product.builder()
                 .name(request.getName().trim())
                 .description(normalizeNullableText(request.getDescription()))
@@ -51,7 +57,6 @@ public class ProductService {
                 .isActive(request.getIsActive() == null ? true : request.getIsActive())
                 .build();
 
-        // Save (createdAt and updatedAt auto-populated by JPA Auditing)
         Product savedProduct = productRepository.save(product);
 
         log.info("Product created successfully with ID: {}, SKU: {}, Category: {}",
@@ -61,11 +66,13 @@ public class ProductService {
     }
 
     /**
-     * Update product metadata or activation flag.
-     * - Activation-only patch: payload contains only isActive.
-     * - Catalog update: requires name and overwrites nullable text fields.
+     * Update product – evicts specific product cache and list cache.
      */
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = CacheConfig.CACHE_PRODUCT_DETAIL, key = "#id"),
+        @CacheEvict(value = CacheConfig.CACHE_BATCH_LIST, allEntries = true)
+    })
     public ProductResponse updateProduct(UUID id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
@@ -99,6 +106,10 @@ public class ProductService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = CacheConfig.CACHE_PRODUCT_DETAIL, key = "#id"),
+        @CacheEvict(value = CacheConfig.CACHE_BATCH_LIST, allEntries = true)
+    })
     public void deleteProduct(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
@@ -132,14 +143,15 @@ public class ProductService {
     }
 
     /**
-     * Get product by ID
-     * * Authorization: Public
-     * * @param id Product ID
-     * @return ProductResponse
+     * Get product by ID – cached by product ID.
+     *
+     * <p>Cache key: 'product-detail::&lt;uuid&gt;'</p>
+     * <p>TTL: 1 hour (stable product master data)</p>
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.CACHE_PRODUCT_DETAIL, key = "#id")
     public ProductResponse getProductById(UUID id) {
-        log.debug("Fetching product with ID: {}", id);
+        log.debug("Fetching product from DB (cache miss): {}", id);
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));

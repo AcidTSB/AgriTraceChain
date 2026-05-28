@@ -18,6 +18,8 @@ public interface TraceLogRepository extends JpaRepository<TraceLog, UUID> {
 
     List<TraceLog> findByBatchCodeOrderByCreatedAtAsc(String batchCode);
     
+    List<TraceLog> findByBatchIdOrderByCreatedAtDesc(UUID batchId);
+
     Optional<TraceLog> findFirstByBatchIdOrderByCreatedAtDesc(UUID batchId);
 
     @Query("SELECT COALESCE(SUM(t.quantity), 0) FROM TraceLog t WHERE t.batchId = :batchId AND t.actionType = :actionType")
