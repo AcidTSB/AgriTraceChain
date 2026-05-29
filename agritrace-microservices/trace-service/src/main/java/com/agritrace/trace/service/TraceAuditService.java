@@ -52,7 +52,19 @@ public class TraceAuditService {
         );
     }
 
+    private final java.util.Map<String, Long> lastPublicReadMap = new java.util.concurrent.ConcurrentHashMap<>();
+
     public void recordPublicRead(String batchCode, String operation, String note, String receiverUserId) {
+        String key = batchCode + ":" + operation;
+        long now = System.currentTimeMillis();
+        Long lastTime = lastPublicReadMap.get(key);
+        
+        // Skip if same operation on same batch happened within the last 30 seconds (debounce)
+        if (lastTime != null && (now - lastTime) < 30000) {
+            return;
+        }
+        lastPublicReadMap.put(key, now);
+
         writeAudit(
                 null,
                 batchCode,

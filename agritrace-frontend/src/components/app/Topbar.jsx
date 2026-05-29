@@ -107,6 +107,16 @@ export function Topbar({ onMenuToggle }) {
     return `/internal/trace?q=${encoded}`;
   };
 
+  const resolveNotificationRoute = (item) => {
+    if (item.batchCode) {
+      const code = encodeURIComponent(item.batchCode);
+      if (normalizedRole === "FARMER") return `/farmer/batches/${code}`;
+      if (normalizedRole === "INSPECTOR") return `/inspector/batches/${code}`;
+      return `/internal/trace?q=${code}`;
+    }
+    return item.route;
+  };
+
   const commitSearch = (rawQuery) => {
     const q = rawQuery.trim();
     if (!q) return;
@@ -133,10 +143,20 @@ export function Topbar({ onMenuToggle }) {
     setOpenSuggest(false);
   };
 
-  const handleApiAlertRead = async (alertId) => {
+  const handleApiAlertClick = async (alert) => {
     try {
-      await notificationService.markAsRead(alertId);
-      setApiAlerts(prev => prev.filter(a => a.id !== alertId));
+      await notificationService.markAsRead(alert.id);
+      setApiAlerts((prev) => prev.filter((a) => a.id !== alert.id));
+      
+      const match = alert.message.match(/BATCH-[A-Z0-9-]+/i);
+      if (match) {
+        const batchCode = match[0];
+        const route = resolveNotificationRoute({ batchCode });
+        if (route) {
+          navigate(route);
+          setOpenNotifications(false);
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -243,7 +263,7 @@ export function Topbar({ onMenuToggle }) {
                       <button
                         key={alert.id}
                         type="button"
-                        onClick={() => handleApiAlertRead(alert.id)}
+                        onClick={() => handleApiAlertClick(alert)}
                         className="w-full text-left border-b border-red-100 px-4 py-3 transition-colors bg-red-50 hover:bg-red-100"
                       >
                         <div className="flex items-start gap-3">
@@ -268,8 +288,9 @@ export function Topbar({ onMenuToggle }) {
                         type="button"
                         onClick={() => {
                           realtimeNotificationService.markRead(item.id);
-                          if (item.route) {
-                            navigate(item.route);
+                          const route = resolveNotificationRoute(item);
+                          if (route) {
+                            navigate(route);
                           }
                           setOpenNotifications(false);
                         }}
@@ -315,10 +336,14 @@ export function Topbar({ onMenuToggle }) {
               </div>
 
               <div className="flex items-center justify-between gap-3 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-                <span>{notifications.length} mục gần nhất</span>
+                <span>{notifications.length + apiAlerts.length} mục gần nhất</span>
                 <button
                   type="button"
-                  onClick={() => realtimeNotificationService.clear()}
+                  onClick={() => {
+                    realtimeNotificationService.clear();
+                    apiAlerts.forEach(a => notificationService.markAsRead(a.id).catch(console.error));
+                    setApiAlerts([]);
+                  }}
                   className="font-semibold text-primary hover:text-primary/80"
                 >
                   Xóa hết

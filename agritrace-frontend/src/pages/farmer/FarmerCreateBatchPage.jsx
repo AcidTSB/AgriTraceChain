@@ -25,12 +25,14 @@ export function FarmerCreateBatchPage() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
     quantity: "",
+    unit: "",
   });
 
   const [form, setForm] = useState({
     farmId: "",
     productId: "",
     quantity: "",
+    unit: "kg",
     harvestDate: "",
   });
 
@@ -85,8 +87,8 @@ export function FarmerCreateBatchPage() {
   }, [location.pathname, location.state, navigate, success]);
 
   const canSubmit = useMemo(() => {
-    return Boolean(form.farmId && form.productId && Number(form.quantity) > 0);
-  }, [form.farmId, form.productId, form.quantity]);
+    return Boolean(form.farmId && form.productId && Number(form.quantity) > 0 && form.unit.trim());
+  }, [form.farmId, form.productId, form.quantity, form.unit]);
   const selectedFarm = useMemo(
     () => farms.find((farm) => farm.id === form.farmId) ?? null,
     [farms, form.farmId],
@@ -95,9 +97,20 @@ export function FarmerCreateBatchPage() {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    const nextFieldErrors = { quantity: "" };
+    const nextFieldErrors = { quantity: "", unit: "" };
+    let hasError = false;
+
     if (Number(form.quantity) <= 0) {
       nextFieldErrors.quantity = t("farmer.quantityGt0");
+      hasError = true;
+    }
+    
+    if (!form.unit.trim()) {
+      nextFieldErrors.unit = t("farmer.unitRequired");
+      hasError = true;
+    }
+
+    if (hasError) {
       setFieldErrors(nextFieldErrors);
       return;
     }
@@ -114,6 +127,7 @@ export function FarmerCreateBatchPage() {
         farmId: form.farmId,
         productId: form.productId,
         quantity: Number(form.quantity),
+        unit: form.unit.trim(),
         farmLatitude: selectedFarm?.latitude ?? null,
         farmLongitude: selectedFarm?.longitude ?? null,
       };
@@ -212,23 +226,41 @@ export function FarmerCreateBatchPage() {
               </select>
             </div>
 
-            <Input
-              id="quantity"
-              type="number"
-              min="1"
-              step="0.1"
-              label={t("farmer.initialQuantity")}
-              placeholder="500"
-              value={form.quantity}
-              onChange={(event) => {
-                setForm((prev) => ({ ...prev, quantity: event.target.value }));
-                if (fieldErrors.quantity) {
-                  setFieldErrors((prev) => ({ ...prev, quantity: "" }));
-                }
-              }}
-              error={fieldErrors.quantity}
-              required
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                step="0.1"
+                label={t("farmer.initialQuantity")}
+                placeholder="500"
+                value={form.quantity}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, quantity: event.target.value }));
+                  if (fieldErrors.quantity) {
+                    setFieldErrors((prev) => ({ ...prev, quantity: "" }));
+                  }
+                }}
+                error={fieldErrors.quantity}
+                required
+              />
+
+              <Input
+                id="unit"
+                type="text"
+                label={t("farmer.unit")}
+                placeholder={t("farmer.unitPlaceholder")}
+                value={form.unit}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, unit: event.target.value }));
+                  if (fieldErrors.unit) {
+                    setFieldErrors((prev) => ({ ...prev, unit: "" }));
+                  }
+                }}
+                error={fieldErrors.unit}
+                required
+              />
+            </div>
 
             <Input
               id="harvestDate"

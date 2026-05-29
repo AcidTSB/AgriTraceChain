@@ -238,18 +238,17 @@ public class TraceLogService {
         List<TraceLogResponse> responses = verifyAndMap(logs);
 
         boolean hasCompromised = responses.stream().anyMatch(r -> "COMPROMISED".equals(r.getIntegrityStatus()));
-        boolean approved = responses.stream().anyMatch(r -> "INSPECTION".equals(r.getAction()) && Boolean.TRUE.equals(r.getHashVerified())
-                && Boolean.TRUE.equals(r.getSignatureVerified()) && Boolean.TRUE.equals(r.getChainVerified()));
+        boolean hasInspection = responses.stream().anyMatch(r -> "INSPECTION".equals(r.getAction()));
+
+        if (!hasInspection) {
+            traceAuditService.recordPublicRead(batchCode, "READ_PENDING_INSPECTION", "Public trace returned without INSPECTION action", null);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Public trace is unavailable until inspection approval");
+        }
 
         if (hasCompromised) {
             String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
             traceAuditService.recordPublicRead(batchCode, "READ_COMPROMISED", "Public trace returned with compromised integrity status", batchOwnerId);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Public trace is blocked due to compromised integrity");
-        }
-
-        if (!approved) {
-            traceAuditService.recordPublicRead(batchCode, "READ_PENDING_INSPECTION", "Public trace returned without approved INSPECTION action", null);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Public trace is unavailable until inspection approval");
+            return responses;
         }
 
         traceAuditService.recordPublicRead(batchCode, "READ_OK", "Public trace returned", null);

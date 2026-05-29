@@ -1,4 +1,24 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import L from "leaflet";
+
+// Fix the default Leaflet marker icon broken by bundlers (Vite/Webpack)
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: new URL("leaflet/dist/images/marker-icon-2x.png", import.meta.url).href,
+  iconUrl: new URL("leaflet/dist/images/marker-icon.png", import.meta.url).href,
+  shadowUrl: new URL("leaflet/dist/images/marker-shadow.png", import.meta.url).href,
+});
+
+function MapUpdater({ lat, lng }) {
+  const map = useMap();
+  useEffect(() => {
+    if (typeof lat === "number" && typeof lng === "number") {
+      map.flyTo({ lat, lng }, 15, { animate: true });
+    }
+  }, [lat, lng, map]);
+  return null;
+}
 
 function formatCoord(value, digits = 6) {
   const n = Number(value);
@@ -14,10 +34,9 @@ function getGeolocationErrorMessage(error) {
   return error?.message ? String(error.message) : "Không thể lấy vị trí hiện tại.";
 }
 
-export function LocationPicker({ onLocationSelected, className = "" }) {
+export function LocationPicker({ latitude, longitude, onLocationSelected, className = "" }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [coords, setCoords] = useState(null);
 
   const handlePick = async () => {
     setError(null);
@@ -35,7 +54,6 @@ export function LocationPicker({ onLocationSelected, className = "" }) {
           const longitude = position?.coords?.longitude;
 
           const next = { latitude, longitude };
-          setCoords(next);
           onLocationSelected?.(next);
           setLoading(false);
         },
@@ -86,17 +104,55 @@ export function LocationPicker({ onLocationSelected, className = "" }) {
         </div>
       ) : null}
 
-      {coords ? (
+      {typeof latitude === "number" && typeof longitude === "number" ? (
         <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-600">Tọa độ</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-600">Tọa độ đã chọn</p>
           <p className="mt-1 text-sm text-slate-800">
-            Latitude: <span className="font-bold">{formatCoord(coords.latitude)}</span>
+            Latitude: <span className="font-bold">{formatCoord(latitude)}</span>
           </p>
           <p className="text-sm text-slate-800">
-            Longitude: <span className="font-bold">{formatCoord(coords.longitude)}</span>
+            Longitude: <span className="font-bold">{formatCoord(longitude)}</span>
           </p>
+          <p className="mt-1 text-xs text-slate-500 italic">Bạn có thể kéo thả ghim trên bản đồ để điều chỉnh vị trí.</p>
         </div>
       ) : null}
+
+      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-sm relative z-0">
+        <MapContainer
+          center={
+            typeof latitude === "number" && typeof longitude === "number"
+              ? { lat: latitude, lng: longitude }
+              : { lat: 10.762622, lng: 106.660172 } // Default to somewhere in VN
+          }
+          zoom={typeof latitude === "number" && typeof longitude === "number" ? 15 : 5}
+          style={{ height: "350px", width: "100%" }}
+          scrollWheelZoom={true}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          />
+          <MapUpdater 
+            lat={typeof latitude === "number" ? latitude : null} 
+            lng={typeof longitude === "number" ? longitude : null} 
+          />
+          {typeof latitude === "number" && typeof longitude === "number" && (
+            <Marker
+              draggable={true}
+              position={{ lat: latitude, lng: longitude }}
+              eventHandlers={{
+                dragend: (e) => {
+                  const marker = e.target;
+                  if (marker != null) {
+                    const newPos = marker.getLatLng();
+                    onLocationSelected?.({ latitude: newPos.lat, longitude: newPos.lng });
+                  }
+                }
+              }}
+            />
+          )}
+        </MapContainer>
+      </div>
     </div>
   );
 }

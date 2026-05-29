@@ -66,6 +66,7 @@ export function FarmerAddTraceLogPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [resolvingLocation, setResolvingLocation] = useState(false);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const [error, setError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ location: "", quantity: "", gps: "" });
@@ -139,6 +140,33 @@ export function FarmerAddTraceLogPage() {
       return payload.display_name.trim();
     }
     throw new Error("Không tìm thấy địa chỉ phù hợp cho tọa độ này.");
+  };
+
+  const handleSearchLocation = async () => {
+    if (!form.location.trim()) return;
+    
+    setIsSearchingLocation(true);
+    try {
+      const q = encodeURIComponent(form.location.trim());
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`);
+      const data = await res.json();
+      
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        setForm(prev => ({ ...prev, latitude: lat, longitude: lon }));
+        success("Đã tìm thấy toạ độ từ địa chỉ.");
+        if (fieldErrors.gps) {
+          setFieldErrors(prev => ({ ...prev, gps: "" }));
+        }
+      } else {
+        showError("Không tìm thấy toạ độ cho địa chỉ này.");
+      }
+    } catch (err) {
+      showError("Lỗi khi tìm kiếm địa chỉ.");
+    } finally {
+      setIsSearchingLocation(false);
+    }
   };
 
   const onLocationSelected = async ({ latitude, longitude }) => {
@@ -259,18 +287,25 @@ export function FarmerAddTraceLogPage() {
               <input
                 id="location"
                 type="text"
-                placeholder="Bấm 'Lấy vị trí' để tự động điền địa chỉ GPS"
+                placeholder="Bấm 'Lấy vị trí' hoặc nhập địa chỉ và tìm kiếm"
                 value={form.location}
                 onChange={(e) => {
-                  if (hasGpsCoords) return;
                   setForm((prev) => ({ ...prev, location: e.target.value }));
                   if (fieldErrors.location) setFieldErrors((p) => ({ ...p, location: "" }));
                 }}
-                className="block w-full rounded-lg border-0 bg-transparent py-3 pl-10 pr-4 text-on-surface placeholder:text-outline focus:ring-0 text-sm"
-                readOnly={hasGpsCoords}
-                aria-readonly={hasGpsCoords}
+                className="block w-full rounded-lg border-0 bg-transparent py-3 pl-10 pr-28 text-on-surface placeholder:text-outline focus:ring-0 text-sm"
                 required
               />
+              <div className="absolute inset-y-1 right-1 flex items-center">
+                 <button
+                   type="button"
+                   onClick={handleSearchLocation}
+                   disabled={isSearchingLocation || !form.location.trim()}
+                   className="h-full px-3 rounded bg-primary text-on-primary text-xs font-bold shadow-sm hover:opacity-90 disabled:opacity-60 flex items-center justify-center"
+                 >
+                   {isSearchingLocation ? "Đang tìm..." : "Tìm toạ độ"}
+                 </button>
+              </div>
             </div>
             {hasGpsCoords ? (
               <p className="text-xs text-emerald-700 mt-1">Địa điểm đã khóa theo tọa độ GPS để đảm bảo tính toàn vẹn dữ liệu.</p>
@@ -279,6 +314,8 @@ export function FarmerAddTraceLogPage() {
           </FieldGroup>
 
           <LocationPicker
+            latitude={form.latitude}
+            longitude={form.longitude}
             onLocationSelected={onLocationSelected}
           />
 

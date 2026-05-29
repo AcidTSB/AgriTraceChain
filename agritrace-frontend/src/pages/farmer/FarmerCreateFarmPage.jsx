@@ -26,7 +26,35 @@ export function FarmerCreateFarmPage() {
     gps: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const [error, setError] = useState("");
+
+  const handleSearchLocation = async () => {
+    if (!form.location.trim()) return;
+    
+    setIsSearchingLocation(true);
+    try {
+      const q = encodeURIComponent(form.location.trim());
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`);
+      const data = await res.json();
+      
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        setForm(prev => ({ ...prev, latitude: lat, longitude: lon }));
+        success("Đã tìm thấy toạ độ từ địa chỉ.");
+        if (fieldErrors.gps) {
+          setFieldErrors(prev => ({ ...prev, gps: "" }));
+        }
+      } else {
+        showError("Không tìm thấy toạ độ cho địa chỉ này.");
+      }
+    } catch (err) {
+      showError("Lỗi khi tìm kiếm địa chỉ.");
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
 
   const validate = () => {
     const nextErrors = { name: "", location: "", gps: "" };
@@ -113,21 +141,41 @@ export function FarmerCreateFarmPage() {
             required
           />
 
-          <Input
-            id="farm-location"
-            label={t("farmer.location")}
-            placeholder="Example: Lam Dong"
-            value={form.location}
-            onChange={(event) => {
-              setForm((prev) => ({ ...prev, location: event.target.value }));
-              if (fieldErrors.location) {
-                setFieldErrors((prev) => ({ ...prev, location: "" }));
-              }
-            }}
-            error={fieldErrors.location}
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700" htmlFor="farm-location">
+              {t("farmer.location")}
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="farm-location"
+                type="text"
+                className={`flex-1 rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-200 ${
+                  fieldErrors.location ? "border-rose-300 focus:border-rose-500" : "border-slate-200 focus:border-emerald-600"
+                }`}
+                placeholder="Example: Lam Dong"
+                value={form.location}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, location: event.target.value }));
+                  if (fieldErrors.location) {
+                    setFieldErrors((prev) => ({ ...prev, location: "" }));
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleSearchLocation}
+                disabled={isSearchingLocation || !form.location.trim()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-200 disabled:opacity-60"
+              >
+                {isSearchingLocation ? "Đang tìm..." : "Tìm toạ độ"}
+              </button>
+            </div>
+            {fieldErrors.location && <p className="text-sm text-rose-600">{fieldErrors.location}</p>}
+          </div>
 
           <LocationPicker
+            latitude={form.latitude}
+            longitude={form.longitude}
             onLocationSelected={({ latitude, longitude }) => {
               setForm((prev) => ({ ...prev, latitude, longitude }));
               if (fieldErrors.gps) {
