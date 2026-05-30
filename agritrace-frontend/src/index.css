@@ -86,3 +86,21 @@ body {
   user-select: none;
 }
 
+/* Leaflet map stacking: keep controls below the app chrome */
+.leaflet-container {
+  z-index: 0;
+}
+
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1;
+}
+
+.app-header,
+.public-header,
+.admin-header {
+  position: relative;
+  z-index: 50;
+}
+

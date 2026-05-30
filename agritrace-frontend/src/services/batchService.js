@@ -1,4 +1,4 @@
-import { apiClient, unwrapApiResponse } from "./apiClient";
+import { apiClient, publicClient, unwrapApiResponse } from "./apiClient";
 import { resolveBatchId } from "./batchResolver";
 import { traceService } from "./traceService";
 
@@ -9,7 +9,7 @@ export const batchService = {
   },
 
   async getBatchByCode(batchCode) {
-    const response = await apiClient.get(`/api/v1/batches/${encodeURIComponent(batchCode)}`);
+    const response = await publicClient.get(`/api/v1/batches/${encodeURIComponent(batchCode)}`);
     return unwrapApiResponse(response);
   },
 

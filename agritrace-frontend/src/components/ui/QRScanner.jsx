@@ -12,6 +12,7 @@ export function QRScanner({ onScanSuccess, className = "", initialCameraOn = tru
   const [cameraOn, setCameraOn] = useState(initialCameraOn);
   const [scanStatus, setScanStatus] = useState("Chưa kết nối camera");
   const [flashOn, setFlashOn] = useState(false);
+  const cameraFailureMessage = "Không thể mở camera. Vui lòng kiểm tra quyền truy cập camera của trình duyệt hoặc nhập mã truy xuất thủ công.";
   
   // State mới cho người dùng PC chọn Camera
   const [cameras, setCameras] = useState([]);
@@ -29,6 +30,15 @@ export function QRScanner({ onScanSuccess, className = "", initialCameraOn = tru
 
   // Lấy danh sách Camera (Rất quan trọng cho Laptop/PC)
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasCameraApi = Boolean(navigator.mediaDevices?.getUserMedia);
+      if (!window.isSecureContext || !hasCameraApi) {
+        setCameraOn(false);
+        setScanStatus(cameraFailureMessage);
+        return;
+      }
+    }
+
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices && devices.length > 0) {
@@ -36,10 +46,15 @@ export function QRScanner({ onScanSuccess, className = "", initialCameraOn = tru
           // Ưu tiên chọn camera sau, nếu không có thì lấy camera đầu tiên tìm thấy
           const backCam = devices.find((d) => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("sau"));
           setSelectedCameraId(backCam ? backCam.id : devices[0].id);
+        } else {
+          setCameraOn(false);
+          setScanStatus(cameraFailureMessage);
         }
       })
       .catch((err) => {
         console.warn("Không lấy được danh sách camera:", err);
+        setCameraOn(false);
+        setScanStatus(cameraFailureMessage);
       });
   }, []);
 
@@ -88,7 +103,8 @@ export function QRScanner({ onScanSuccess, className = "", initialCameraOn = tru
       );
     } catch (err) {
       console.error(err);
-      setScanStatus("⚠️ Không thể truy cập camera. Vui lòng cấp quyền!");
+      setCameraOn(false);
+      setScanStatus(cameraFailureMessage);
     }
   };
 
@@ -184,6 +200,12 @@ export function QRScanner({ onScanSuccess, className = "", initialCameraOn = tru
           </select>
         </div>
       )}
+
+      {scanStatus === cameraFailureMessage ? (
+        <p className="mx-auto mb-4 max-w-[360px] rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-center text-xs leading-5 text-amber-100">
+          {cameraFailureMessage}
+        </p>
+      ) : null}
 
       <div className="relative mx-auto aspect-square w-full max-w-[360px] overflow-hidden rounded-2xl bg-black shadow-2xl">
         <div id={readerIdRef.current} className="absolute inset-0" />

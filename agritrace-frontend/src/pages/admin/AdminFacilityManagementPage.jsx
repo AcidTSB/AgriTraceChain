@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/ui/Card";
 import { OffsetPagination } from "../../components/ui/OffsetPagination";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { farmService } from "../../services/farmService";
 import { useToast } from "../../hooks/useToast";
+import { formatFacilityTypeLabel } from "../../helpers/displayLabels";
 
 /* ─── Register Facility Modal ────────────────────────────────────────────── */
 function RegisterFacilityModal({ onClose, onRegistered }) {
@@ -41,9 +43,18 @@ function RegisterFacilityModal({ onClose, onRegistered }) {
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 px-4 py-4 backdrop-blur-sm sm:items-center">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[3000] flex items-end justify-center bg-slate-900/50 px-4 py-4 backdrop-blur-sm sm:items-center"
+      role="presentation"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        onClick={(event) => event.stopPropagation()}
+      >
         <form onSubmit={handleSubmit}>
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4 sm:px-6">
             <h2 className="font-headline text-lg font-bold text-on-surface">{t("admin.registerFacility")}</h2>
@@ -114,7 +125,8 @@ function RegisterFacilityModal({ onClose, onRegistered }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -196,13 +208,14 @@ export function AdminFacilityManagementPage() {
     () =>
       facilities.map((facility, index) => {
         const type = inferFacilityType(facility?.name);
+        const status = String(facility?.status ?? (facility?.active === false ? "INACTIVE" : "ACTIVE")).toUpperCase();
         return {
           id: String(facility?.id ?? `facility-${index}`),
           name: displayFacilityName(facility?.name) || `${t("admin.facilities")} ${index + 1}`,
           location: String(facility?.location ?? "").trim(),
           type,
           code: shortFacilityCode(facility?.id, index),
-          status: "ACTIVE",
+          status,
           icon: facilityIcon(type),
         };
       }),
@@ -307,9 +320,9 @@ export function AdminFacilityManagementPage() {
                         <span className="rounded-full bg-primary-container/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-primary">
                           {facility.code}
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          {facility.status === "ACTIVE" ? t("admin.activeLabel") : t("admin.inactive")}
+                        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${facility.status === "ACTIVE" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${facility.status === "ACTIVE" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                          {facility.status === "ACTIVE" ? "Đang vận hành" : "Tạm ngừng"}
                         </span>
                       </div>
                       <h2 className="truncate font-headline text-lg font-semibold tracking-tight text-on-surface sm:text-2xl">
@@ -323,7 +336,7 @@ export function AdminFacilityManagementPage() {
                   </div>
                   <div className="flex flex-col md:items-end">
                     <span className="text-sm text-on-surface-variant">{t("admin.type")}</span>
-                    <span className="font-headline text-lg font-semibold text-on-surface">{facility.type}</span>
+                    <span className="font-headline text-lg font-semibold text-on-surface">{formatFacilityTypeLabel(facility.type)}</span>
                   </div>
                 </div>
               </article>

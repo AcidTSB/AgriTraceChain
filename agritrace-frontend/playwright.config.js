@@ -7,15 +7,15 @@ export default defineConfig({
   retries: 0,
   workers: 1,
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:5173",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
     headless: true,
   },
   webServer: {
-    command: "npm run dev -- --host 127.0.0.1 --port 4173",
-    port: 4173,
+    command: "node node_modules/vite/bin/vite.js --host=127.0.0.1 --port=5173",
+    port: 5173,
     reuseExistingServer: true,
     timeout: 120_000,
   },

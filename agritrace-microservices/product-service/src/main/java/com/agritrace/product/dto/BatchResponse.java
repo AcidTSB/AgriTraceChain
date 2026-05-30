@@ -54,6 +54,10 @@ public class BatchResponse {
     private BatchStatus status;
     /** Whether this batch has been flagged as compromised (integrity violation). */
     private Boolean isCompromised;
+    private LocalDateTime compromisedAt;
+    private String compromiseReason;
+    private String compromisedByAuditId;
+    private Boolean productActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

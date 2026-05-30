@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
+import { formatTraceActionLabel } from "../../helpers/displayLabels";
 
 // Fix the default Leaflet marker icon broken by bundlers (Vite/Webpack)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -104,7 +105,7 @@ export function TraceJourneyMap({ logs = [] }) {
             <Popup>
               <div className="min-w-[180px]">
                 <p className="mb-1 text-base font-bold" style={{ color: ACTION_COLORS[log.action] ?? "#334155" }}>
-                  {log.action}
+                  {formatTraceActionLabel(log.action)}
                 </p>
                 <p className="text-xs text-slate-600">🕐 {formatDate(log.date)}</p>
               </div>

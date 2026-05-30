@@ -66,4 +66,14 @@ public interface BatchService {
      * Offset pagination for transactional batch data with filter support.
      */
     Page<BatchResponse> getBatchesPage(UUID ownerId, UUID farmId, String status, String keyword, Pageable pageable);
+
+    /**
+     * Mark a batch as compromised (integrity verification failed).
+     *
+     * @param batchCode unique batch code
+     * @param reason compromise reason
+     * @param auditId audit ID of the compromised trace log
+     * @return updated batch response
+     */
+    BatchResponse markCompromised(String batchCode, String reason, String auditId);
 }

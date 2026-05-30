@@ -11,17 +11,19 @@ import { TimelineCard } from "../../components/timeline/TimelineCard";
 import { MapTracking } from "../../components/map/MapTracking";
 import { VerifyIntegrityModal } from "../../components/ui/VerifyIntegrityModal";
 import { batchService } from "../../services/batchService";
+import { productService } from "../../services/productService";
 import { inspectorQueueService } from "../../services/inspectorQueueService";
 import { realtimeNotificationService } from "../../services/realtimeNotificationService";
 import { traceService } from "../../services/traceService";
 import { LocationPicker } from "../../components/ui/LocationPicker";
+import { formatTraceActionLabel, formatUnitLabel } from "../../helpers/displayLabels";
 
 /** Export logs to CSV format */
 function exportToCSV(batch, logs) {
   const headers = ["Thời gian", "Hành động", "Người thao tác", "Địa điểm", "Số lượng", "Ghi chú"];
   const rows = logs.map((log) => [
     new Date(log.createdAt).toLocaleString("vi-VN"),
-    log.action,
+    formatTraceActionLabel(log.action),
     log.createdBy || "Không rõ",
     log.location || "-",
     log.quantity || "-",
@@ -102,7 +104,7 @@ function exportToPDF(batch, logs) {
           ${logs.map((log) => `
             <tr>
               <td>${new Date(log.createdAt).toLocaleString("vi-VN")}</td>
-              <td><strong>${log.action}</strong></td>
+              <td><strong>${formatTraceActionLabel(log.action)}</strong></td>
               <td>${log.createdBy || "-"}</td>
               <td>${log.location || "-"}</td>
               <td>${log.quantity || "-"}</td>
@@ -142,6 +144,7 @@ export function InspectorBatchDetailPage() {
   const { success, error: showError } = useToast();
 
   const [batch, setBatch] = useState(null);
+  const [product, setProduct] = useState(null);
   const [batchId, setBatchId] = useState("");
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -185,6 +188,7 @@ export function InspectorBatchDetailPage() {
           throw new Error("Cannot resolve batchId from batchCode.");
         }
 
+        const productDetail = batchInfo?.productId ? await productService.getProductById(batchInfo.productId) : null;
         const traceLogs = await traceService.getTraceLogsByBatchId(resolvedId);
 
         if (!active) {
@@ -192,6 +196,7 @@ export function InspectorBatchDetailPage() {
         }
 
         setBatch(batchInfo);
+        setProduct(productDetail);
         setBatchId(resolvedId);
         setLogs(traceLogs);
       } catch (err) {
@@ -214,6 +219,7 @@ export function InspectorBatchDetailPage() {
   }, [batchCode]);
 
   const inspected = useMemo(() => hasInspection(logs), [logs]);
+  const tracePaused = product?.isActive === false;
 
   const hasGpsCoords = useMemo(
     () => typeof form.latitude === "number" && typeof form.longitude === "number",
@@ -255,7 +261,7 @@ export function InspectorBatchDetailPage() {
     }
   };
 
-  const requestSubmit = (event) => {
+  const requestSubmit = async (event) => {
     event.preventDefault();
 
     const nextErrors = { location: "", gps: "" };
@@ -271,7 +277,7 @@ export function InspectorBatchDetailPage() {
       return;
     }
 
-    setConfirmOpen(true);
+    await submitInspection();
   };
 
   const submitInspection = async () => {
@@ -355,7 +361,7 @@ export function InspectorBatchDetailPage() {
           <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">scale</span>
-              {batch?.quantity ?? "?"}{batch?.unit ? ` ${batch.unit}` : ""}
+              {batch?.quantity ?? "?"}{batch?.unit ? ` ${formatUnitLabel(batch.unit)}` : ""}
             </span>
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">calendar_month</span>
@@ -383,6 +389,14 @@ export function InspectorBatchDetailPage() {
           <div className="flex flex-wrap gap-2">
             {logs.length > 0 && (
               <>
+
+              {tracePaused ? (
+                <StateCard
+                  tone="warning"
+                  title="Truy xuất tạm ngừng"
+                  message="Lô hàng này đang tạm ngừng truy xuất công khai theo trạng thái sản phẩm."
+                />
+              ) : null}
                 <Button variant="secondary" onClick={() => setAuditOpen(true)}>
                   🔍 Kiểm toán bảo mật
                 </Button>
@@ -423,7 +437,7 @@ export function InspectorBatchDetailPage() {
         <Card>
           <h2 className="text-lg font-semibold text-emerald-800">Đã gửi kiểm định</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Lô này đã có bản ghi INSPECTION. Vui lòng kiểm tra lại trạng thái hàng đợi.
+            Lô này đã có bản ghi kiểm định. Vui lòng kiểm tra lại trạng thái hàng đợi.
           </p>
           <div className="mt-4">
             <Link to={`/trace/${encodeURIComponent(batchCode)}`} target="_blank" rel="noreferrer">
@@ -492,7 +506,7 @@ export function InspectorBatchDetailPage() {
       <ConfirmDialog
         open={confirmOpen}
         title="Xác nhận gửi kiểm định"
-        message="Hành động này sẽ thêm bản ghi INSPECTION vào timeline. Tiếp tục?"
+        message="Hành động này sẽ thêm bản ghi kiểm định vào timeline. Tiếp tục?"
         confirmText="Gửi"
         onCancel={() => setConfirmOpen(false)}
         onConfirm={submitInspection}

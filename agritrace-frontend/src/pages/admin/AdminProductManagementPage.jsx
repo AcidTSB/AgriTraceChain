@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/ui/Card";
 import { OffsetPagination } from "../../components/ui/OffsetPagination";
@@ -15,12 +16,13 @@ function displayProductName(name = "") {
 
 /* ─── Modal backdrop ─────────────────────────────────────────────────────── */
 function ModalShell({ children }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 px-4 py-4 backdrop-blur-sm sm:items-center">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+  return createPortal(
+    <div className="fixed inset-0 z-[3000] flex items-end justify-center bg-slate-900/50 px-4 py-4 backdrop-blur-sm sm:items-center" role="presentation">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true">
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -410,6 +412,8 @@ export function AdminProductManagementPage() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
@@ -486,6 +490,25 @@ export function AdminProductManagementPage() {
     }
   }
 
+  const visibleProducts = useMemo(() => {
+    return products.filter((product) => {
+      if (statusFilter === "ACTIVE") {
+        return product.isActive !== false;
+      }
+      if (statusFilter === "INACTIVE") {
+        return product.isActive === false;
+      }
+      return true;
+    });
+  }, [products, statusFilter]);
+
+  const hasActiveFilters = statusFilter !== "ALL";
+
+  function resetFilters() {
+    setStatusFilter("ALL");
+    setPage(0);
+  }
+
   if (loading && initialLoad) {
     return (
       <div className="space-y-3">
@@ -541,17 +564,60 @@ export function AdminProductManagementPage() {
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant transition-colors hover:bg-surface-dim"
+            onClick={() => setFiltersOpen((prev) => !prev)}
+            className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors ${filtersOpen || hasActiveFilters ? "bg-primary text-white hover:bg-primary/90" : "bg-surface-container-high text-on-surface-variant hover:bg-surface-dim"}`}
             aria-label={t("admin.filter")}
           >
             <span className="material-symbols-outlined text-[18px]">tune</span>
           </button>
         </div>
 
-        {products.length === 0 ? (
+        {filtersOpen ? (
+          <Card className="space-y-4 p-4 md:p-5">
+            <div className="grid gap-4 md:grid-cols-[minmax(0,220px)_auto] md:items-end">
+              <div>
+                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                  Trạng thái
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(event) => {
+                    setStatusFilter(event.target.value);
+                    setPage(0);
+                  }}
+                  className="w-full rounded-lg border border-outline-variant/40 bg-white px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="ALL">Tất cả</option>
+                  <option value="ACTIVE">Đang truy xuất</option>
+                  <option value="INACTIVE">Tạm ngừng</option>
+                </select>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  disabled={!hasActiveFilters}
+                  className="rounded-lg border border-outline-variant/40 bg-white px-4 py-2.5 text-sm font-medium text-on-surface transition-colors hover:bg-surface-container-high disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Đặt lại bộ lọc
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </Card>
+        ) : null}
+
+        {visibleProducts.length === 0 ? (
           <Card>
             <h2 className="text-lg font-semibold text-slate-900">{t("admin.noProducts")}</h2>
-            <p className="mt-2 text-sm text-slate-600">{t("admin.noProductsDesc")}</p>
+            <p className="mt-2 text-sm text-slate-600">{hasActiveFilters ? "Không tìm thấy sản phẩm nào khớp bộ lọc hiện tại." : t("admin.noProductsDesc")}</p>
           </Card>
         ) : (
           <section className="min-h-[460px] rounded-xl bg-surface-container-low p-3 ambient-shadow sm:p-4 md:p-2">
@@ -563,7 +629,7 @@ export function AdminProductManagementPage() {
             </div>
 
             <div className="flex flex-col gap-3 p-0 md:gap-3 md:p-2">
-              {products.map((product, index) => {
+              {visibleProducts.map((product, index) => {
                 const subtitle = product.sku ? `SKU: ${product.sku}` : `${t("admin.productId")}: ${String(product.id).slice(0, 8)}`;
                 const glyph = productGlyphs[index % productGlyphs.length];
                 const isActive = product.isActive !== false;

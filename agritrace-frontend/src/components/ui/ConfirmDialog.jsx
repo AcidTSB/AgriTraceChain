@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export function ConfirmDialog({
@@ -11,16 +10,6 @@ export function ConfirmDialog({
   onCancel,
 }) {
   if (!open) {
-    return null;
-  }
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
     return null;
   }
 

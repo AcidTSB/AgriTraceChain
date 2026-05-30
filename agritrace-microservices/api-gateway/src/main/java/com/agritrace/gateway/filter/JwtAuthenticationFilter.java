@@ -80,7 +80,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             
             // Add headers to downstream services
             ServerHttpRequest.Builder requestBuilder = request.mutate()
-                    .header("X-User-Id", userId);
+                    .header("X-User-Id", userId)
+                    .header("X-Gateway-Token", "agritrace-gateway-trusted-token");
             if (username != null && !username.isBlank()) {
                 requestBuilder.header("X-Username", username);
             }

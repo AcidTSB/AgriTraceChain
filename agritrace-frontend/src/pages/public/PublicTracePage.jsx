@@ -8,7 +8,10 @@ import { StateCard } from "../../components/ui/StateCard";
 import { Badge } from "../../components/ui/Badge";
 import { TimelineCard } from "../../components/timeline/TimelineCard";
 import { MapTracking } from "../../components/map/MapTracking";
+import { batchService } from "../../services/batchService";
+import { productService } from "../../services/productService";
 import { publicClient, unwrapApiResponse } from "../../services/apiClient";
+import { formatTraceStageLabel } from "../../helpers/displayLabels";
 
 const STAGE_ORDER = [
   "Cultivation",
@@ -124,6 +127,7 @@ function groupLogsByStage(logs) {
 
   return STAGE_ORDER.filter((stage) => buckets[stage]?.length).map((stage) => ({
     stage,
+    label: formatTraceStageLabel(stage),
     items: buckets[stage],
   }));
 }
@@ -147,6 +151,7 @@ function TraceTimelineSkeleton() {
 export function PublicTracePage() {
   const { batchCode } = useParams();
   const { t } = useTranslation();
+  const [product, setProduct] = useState(null);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -160,11 +165,17 @@ export function PublicTracePage() {
       setError("");
 
       try {
-        const response = await publicClient.get(`/api/public/trace/${encodeURIComponent(batchCode)}`);
-        const payload = unwrapApiResponse(response);
+        const batchDetail = await batchService.getBatchByCode(batchCode);
+        const [traceResponse, productDetail] = await Promise.all([
+          publicClient.get(`/api/public/trace/${encodeURIComponent(batchCode)}`),
+          batchDetail?.productId ? productService.getProductById(batchDetail.productId) : Promise.resolve(null),
+        ]);
+
+        const payload = unwrapApiResponse(traceResponse);
         const nextLogs = Array.isArray(payload) ? payload : [];
 
         if (active) {
+          setProduct(productDetail);
           setLogs(nextLogs);
         }
       } catch (err) {
@@ -195,10 +206,30 @@ export function PublicTracePage() {
     return deriveTrustStatus(logs);
   }, [logs]);
 
+  const tracePaused = product?.isActive === false;
+
   const groupedLogs = useMemo(() => groupLogsByStage(logs), [logs]);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-6 md:py-14">
+      {overallStatus === "COMPROMISED" ? (
+        <StateCard
+          tone="error"
+          title="CẢNH BÁO AN TOÀN DỮ LIỆU"
+          message="CẢNH BÁO: Dữ liệu truy xuất của lô hàng này có dấu hiệu bị xâm phạm. Vui lòng liên hệ đơn vị quản lý hoặc kiểm định viên để xác minh."
+          className="mb-6"
+        />
+      ) : null}
+
+      {tracePaused ? (
+        <StateCard
+          tone="warning"
+          title={t("public.tracePausedTitle")}
+          message={t("public.tracePausedByAdmin")}
+          className="mb-6"
+        />
+      ) : null}
+
       <Card
         className={`mb-6 border-2 ${getTrustCardClass(overallStatus)}`}
       >
@@ -280,7 +311,7 @@ export function PublicTracePage() {
         />
       ) : null}
 
-      {!loading && !error && logs.length > 0 ? (
+      {!loading && !error && logs.length > 0 && !tracePaused ? (
         <Card className="mb-6 space-y-4">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900">Hành trình GPS</h2>
@@ -290,12 +321,12 @@ export function PublicTracePage() {
         </Card>
       ) : null}
 
-      {!loading && !error && logs.length > 0 ? (
+      {!loading && !error && logs.length > 0 && !tracePaused ? (
         <div className="space-y-6">
           {groupedLogs.map((group) => (
             <Card key={group.stage} className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold tracking-tight text-slate-900">{group.stage}</h2>
+                <h2 className="text-xl font-semibold tracking-tight text-slate-900">{group.label}</h2>
                 <Badge variant="info">{t("public.eventsCount", { count: group.items.length })}</Badge>
               </div>
 

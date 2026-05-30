@@ -231,7 +231,7 @@ public class AnomalyDetectionService {
         // Actions that cannot occur before HARVESTING
         List<String> requiresHarvest = List.of("PROCESSING", "PACKAGING", "SHIPPING", "INSPECTION");
         // Actions that cannot occur after SHIPPING
-        List<String> cannotFollowShipping = List.of("PLANTING", "FERTILIZING", "WATERING", "HARVESTING");
+        List<String> cannotFollowShipping = List.of("PLANTING", "FERTILIZING", "WATERING", "SPRAYING", "HARVESTING", "PACKAGING");
 
         List<TraceLog> allBatchLogs = traceLogRepository.findByBatchIdOrderByCreatedAtDesc(newLog.getBatchId())
                 .stream()

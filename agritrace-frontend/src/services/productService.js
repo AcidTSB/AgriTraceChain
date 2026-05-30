@@ -19,7 +19,7 @@ export const productService = {
   },
 
   async getProductById(id) {
-    const response = await apiClient.get(`/api/v1/products/${id}`);
+    const response = await publicClient.get(`/api/v1/products/${id}`);
     return unwrapApiResponse(response);
   },
 

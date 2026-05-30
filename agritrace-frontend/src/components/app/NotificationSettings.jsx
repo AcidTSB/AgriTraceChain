@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { notificationService } from '../../services/notificationService';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 
 export function NotificationSettings() {
   const { user } = useAuth();
+  const toast = useToast();
   const [settings, setSettings] = useState({
     pushEnabled: true,
     smsEnabled: false,
@@ -24,6 +26,8 @@ export function NotificationSettings() {
         }
       } catch (error) {
         console.error("Error fetching notification settings", error);
+        setSaveStatus('error');
+        toast.error('Không thể tải cài đặt thông báo.');
       }
     };
     fetchSettings();
@@ -42,9 +46,11 @@ export function NotificationSettings() {
     try {
       await notificationService.updateSettings(settings);
       setSaveStatus('success');
+      toast.success('Đã lưu cài đặt thông báo.');
     } catch (error) {
       console.error("Error saving settings", error);
       setSaveStatus('error');
+      toast.error('Không thể lưu cài đặt thông báo.');
     } finally {
       setIsLoading(false);
       setTimeout(() => setSaveStatus(''), 3000);

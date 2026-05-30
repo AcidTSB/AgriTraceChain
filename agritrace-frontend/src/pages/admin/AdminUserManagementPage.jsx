@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { OffsetPagination } from "../../components/ui/OffsetPagination";
@@ -53,6 +52,28 @@ export function AdminUserManagementPage() {
 
   const rows = useMemo(() => usersPage.content ?? [], [usersPage.content]);
 
+  const getStatusLabel = (user) => {
+    const status = String(user?.status ?? "").toUpperCase();
+    if (status === "LOCKED" || user?.active === false) {
+      return "Đã khóa";
+    }
+    if (status === "PENDING" || status === "PENDING_VERIFICATION") {
+      return "Chờ xác minh";
+    }
+    return "Tài khoản đang kích hoạt";
+  };
+
+  const getStatusClassName = (user) => {
+    const status = String(user?.status ?? "").toUpperCase();
+    if (status === "LOCKED" || user?.active === false) {
+      return "border-rose-200 bg-rose-50 text-rose-700";
+    }
+    if (status === "PENDING" || status === "PENDING_VERIFICATION") {
+      return "border-amber-200 bg-amber-50 text-amber-800";
+    }
+    return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  };
+
   return (
     <div className="space-y-5 md:space-y-6">
       <div>
@@ -93,7 +114,9 @@ export function AdminUserManagementPage() {
                     <p className="truncate text-sm font-semibold text-on-surface">{user.username}</p>
                     <p className="mt-0.5 truncate text-xs text-on-surface-variant">{user.email || "—"}</p>
                   </div>
-                  <Badge status={user?.active === false ? "INACTIVE" : "ACTIVE"} />
+                  <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${getStatusClassName(user)}`}>
+                    {getStatusLabel(user)}
+                  </span>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                   <div className="min-w-0">
@@ -128,7 +151,9 @@ export function AdminUserManagementPage() {
                     <td className="py-3 px-1 text-slate-700">{user.email || "—"}</td>
                     <td className="py-3 px-1 text-slate-700">{user.role}</td>
                     <td className="py-3 px-1">
-                      <Badge status={user?.active === false ? "INACTIVE" : "ACTIVE"} />
+                      <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${getStatusClassName(user)}`}>
+                        {getStatusLabel(user)}
+                      </span>
                     </td>
                   </tr>
                 ))}

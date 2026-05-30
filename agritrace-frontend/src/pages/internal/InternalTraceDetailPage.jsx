@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
+import { formatIntegrityLabel, formatTraceActionLabel } from "../../helpers/displayLabels";
 
 function renderValue(value, t) {
   if (value === null || value === undefined || value === "") {
@@ -40,12 +41,12 @@ export function InternalTraceDetailPage() {
   const fields = [
     ["Trace ID", traceId],
     [t("public.batchCode"), batchCode],
-    [t("farmer.action"), record.action],
+    [t("farmer.action"), formatTraceActionLabel(record.action)],
     [t("public.time"), record.timestamp],
     [t("internalTrace.actor"), record.actor || record.actorName || record.createdBy],
     [t("public.location"), record.location],
     [t("public.quantity"), record.quantity],
-    [t("internalTrace.integrity"), record.integrityStatus],
+    [t("internalTrace.integrity"), formatIntegrityLabel(record.integrityStatus)],
     [t("farmer.notes"), record.notes],
   ];
 
@@ -57,7 +58,7 @@ export function InternalTraceDetailPage() {
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">{t("internalTrace.detailTitle")}</h1>
         </div>
         <Badge variant={record.integrityStatus === "COMPROMISED" ? "danger" : "success"}>
-          {record.integrityStatus || t("common.unknown")}
+            {formatIntegrityLabel(record.integrityStatus)}
         </Badge>
       </div>
 

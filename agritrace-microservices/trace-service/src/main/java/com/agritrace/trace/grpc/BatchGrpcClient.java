@@ -44,4 +44,21 @@ public class BatchGrpcClient {
                 batchId, userId, throwable.getMessage());
         return OwnershipResponse.newBuilder().setIsOwner(false).build();
     }
+
+    @CircuitBreaker(name = "productServiceGrpc", fallbackMethod = "markBatchCompromisedFallback")
+    public BatchResponse markBatchCompromised(String batchCode, String reason, String auditId) {
+        return batchServiceStub.markBatchCompromised(
+                com.agritrace.proto.batch.MarkBatchCompromisedRequest.newBuilder()
+                        .setBatchCode(batchCode)
+                        .setReason(reason)
+                        .setCompromisedByAuditId(auditId != null ? auditId : "")
+                        .build()
+        );
+    }
+
+    private BatchResponse markBatchCompromisedFallback(String batchCode, String reason, String auditId, Throwable throwable) {
+        log.warn("Circuit breaker fallback for markBatchCompromised, batchCode={}, reason={}, error={}",
+                batchCode, reason, throwable.getMessage());
+        return BatchResponse.newBuilder().build();
+    }
 }

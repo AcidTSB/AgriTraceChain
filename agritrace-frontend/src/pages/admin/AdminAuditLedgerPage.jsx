@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { StatCard } from "../../components/ui/StatCard";
 import { traceService } from "../../services/traceService";
+import { formatRoleLabel } from "../../helpers/displayLabels";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const ACTION_STYLES = {
@@ -72,8 +73,8 @@ function toLedgerItem(item) {
     role: (item.actorRole || "SYSTEM").toUpperCase(),
     action: (item.operation || "VERIFY").toUpperCase(),
     target: item.batchCode
-      ? `Batch / ${item.batchCode}`
-      : `TraceLog / ${item.traceLogId ?? "N/A"}`,
+      ? `Lô / ${item.batchCode}`
+      : `Nhật ký / ${item.traceLogId ?? "N/A"}`,
     detail: item.notes || "Không có mô tả",
     ipAddress: item.actorRegion || "-",
     status: resolveStatus(item),
@@ -231,7 +232,7 @@ export function AdminAuditLedgerPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-semibold text-on-surface">{entry.user}</span>
                     <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${ROLE_STYLES[entry.role] ?? "bg-surface-container text-on-surface"}`}>
-                      {entry.role}
+                      {formatRoleLabel(entry.role)}
                     </span>
                   </div>
                   <p className="truncate font-mono text-xs font-medium text-on-surface" title={entry.target}>{entry.target}</p>
@@ -296,7 +297,7 @@ export function AdminAuditLedgerPage() {
               <div className="col-span-2 flex flex-col gap-1">
                 <span className="font-mono text-xs font-semibold text-on-surface">{entry.user}</span>
                 <span className={`inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${ROLE_STYLES[entry.role] ?? "bg-surface-container text-on-surface"}`}>
-                  {entry.role}
+                  {formatRoleLabel(entry.role)}
                 </span>
               </div>
 

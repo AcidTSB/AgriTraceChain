@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { formatTraceActionLabel } from "../../helpers/displayLabels";
 
 const SCAN_DELAY_MS = 420;
 
@@ -118,12 +119,12 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
             # AgriTrace Chain Engine v2.1.0 — Blockchain Integrity Auditor
           </p>
           <p className="mt-1 text-slate-600">
-            # Hash algorithm: SHA-256 + RSA-2048 Digital Signature
+            # Thuật toán băm: SHA-256 + chữ ký số RSA-2048
           </p>
 
           <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/60 p-3">
             <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.28em] text-slate-500">
-              <span>Chain scan</span>
+              <span>Quét chuỗi</span>
               <span>{progressPercent}%</span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
@@ -136,7 +137,7 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
 
           {phase === "idle" && (
             <p className="mt-3 animate-pulse text-emerald-500">
-              ▶ Nhấn "Bắt đầu quét" để chạy Security Audit...
+              ▶ Nhấn "Bắt đầu quét" để chạy kiểm toán bảo mật...
             </p>
           )}
 
@@ -145,7 +146,7 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
               <div key={entry.id ?? i} className="mt-2 border-t border-slate-800 pt-2">
                 <p className="text-slate-400">
                   <span className="text-yellow-400">[{String(i + 1).padStart(2, "0")}]</span>{" "}
-                  Verifying block:{" "}
+                  Đang kiểm tra bản ghi:{" "}
                   <span className="text-cyan-300 font-bold">{entry.action}</span>
                 </p>
                 <p className="text-slate-500">
@@ -162,11 +163,11 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
                 <p>
                   &nbsp;&nbsp;result&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{" "}
                   {entry.status === "VERIFIED" ? (
-                    <span className="text-emerald-400 font-bold">✓ VERIFIED</span>
+                    <span className="text-emerald-400 font-bold">✓ Đã xác minh</span>
                   ) : entry.status === "COMPROMISED" ? (
-                    <span className="text-red-400 font-bold">✗ COMPROMISED</span>
+                    <span className="text-red-400 font-bold">✗ Cảnh báo xâm phạm</span>
                   ) : (
-                    <span className="text-slate-500">~ UNKNOWN</span>
+                    <span className="text-slate-500">~ Không rõ</span>
                   )}
                 </p>
               </div>
@@ -174,35 +175,35 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
 
           {phase === "scanning" && scanned.length < logs.length && (
             <p className="mt-2 animate-pulse text-emerald-500">
-              ⠿ Scanning block {scanned.length + 1}/{logs.length}...
+              ⠿ Đang quét bản ghi {scanned.length + 1}/{logs.length}...
             </p>
           )}
 
           {phase === "result" && summary && (
             <div className="mt-4 border-t border-emerald-800 pt-3">
-              <p className="text-emerald-400 font-bold">═══ AUDIT COMPLETE ═══</p>
+              <p className="text-emerald-400 font-bold">═══ KIỂM TOÁN HOÀN TẤT ═══</p>
               <div className="mt-3 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Scanned</p>
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Đã quét</p>
                   <p className="mt-1 text-2xl font-bold text-slate-100">{summary.total}</p>
                 </div>
                 <div className="rounded-xl border border-emerald-900/60 bg-emerald-950/50 p-3">
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-emerald-300">Verified</p>
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-emerald-300">Đã xác minh</p>
                   <p className="mt-1 text-2xl font-bold text-emerald-300">{summary.verified}</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Integrity</p>
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Toàn vẹn</p>
                   <p className={`mt-1 text-sm font-bold ${summary.chainOk ? "text-emerald-400" : "text-red-400"}`}>
-                    {summary.chainOk ? "INTACT" : `${summary.compromised} compromised`}
+                    {summary.chainOk ? "Nguyên vẹn" : `${summary.compromised} bản ghi bị xâm phạm`}
                   </p>
                 </div>
               </div>
               <p className="mt-3 text-slate-300">
                 Chain integrity&nbsp;&nbsp;: {" "}
                 {summary.chainOk ? (
-                  <span className="text-emerald-400">✓ INTACT — No tampering detected</span>
+                  <span className="text-emerald-400">✓ Nguyên vẹn — Không phát hiện can thiệp</span>
                 ) : (
-                  <span className="text-red-400">✗ BREACH — {summary.compromised} block(s) compromised</span>
+                  <span className="text-red-400">✗ Vi phạm — {summary.compromised} bản ghi bị xâm phạm</span>
                 )}
               </p>
             </div>
@@ -235,7 +236,7 @@ export function VerifyIntegrityModal({ open, logs = [], onClose }) {
               disabled={logs.length === 0}
               className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-bold text-white transition-all hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              🔍 Bắt đầu Security Audit
+              🔍 Bắt đầu kiểm toán bảo mật
             </button>
           )}
           {phase === "scanning" && (

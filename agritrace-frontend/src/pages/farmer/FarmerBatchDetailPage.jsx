@@ -3,19 +3,22 @@ import { Link, useParams } from "react-router-dom";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Badge } from "../../components/ui/Badge";
 import { Skeleton } from "../../components/ui/Skeleton";
+import { StateCard } from "../../components/ui/StateCard";
 import { TimelineCard } from "../../components/timeline/TimelineCard";
 import { MapTracking } from "../../components/map/MapTracking";
 import { VerifyIntegrityModal } from "../../components/ui/VerifyIntegrityModal";
 import { resolveBatchId } from "../../services/batchResolver";
 import { batchService } from "../../services/batchService";
+import { productService } from "../../services/productService";
 import { traceService } from "../../services/traceService";
+import { formatIntegrityLabel, formatTraceActionLabel, formatUnitLabel } from "../../helpers/displayLabels";
 
 /** Export logs to CSV format */
 function exportToCSV(batch, logs) {
   const headers = ["Thời gian", "Hành động", "Người thao tác", "Địa điểm", "Số lượng", "Ghi chú"];
   const rows = logs.map((log) => [
     new Date(log.createdAt).toLocaleString("vi-VN"),
-    log.action,
+    formatTraceActionLabel(log.action),
     log.createdBy || "Không rõ",
     log.location || "-",
     log.quantity || "-",
@@ -96,7 +99,7 @@ function exportToPDF(batch, logs) {
           ${logs.map((log) => `
             <tr>
               <td>${new Date(log.createdAt).toLocaleString("vi-VN")}</td>
-              <td><strong>${log.action}</strong></td>
+              <td><strong>${formatTraceActionLabel(log.action)}</strong></td>
               <td>${log.createdBy || "-"}</td>
               <td>${log.location || "-"}</td>
               <td>${log.quantity || "-"}</td>
@@ -143,6 +146,7 @@ function MetaRow({ icon, label, value, highlight = false }) {
 export function FarmerBatchDetailPage() {
   const { batchCode } = useParams();
   const [batch, setBatch] = useState(null);
+  const [product, setProduct] = useState(null);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -158,9 +162,11 @@ export function FarmerBatchDetailPage() {
           batchService.getBatchByCode(batchCode),
           resolveBatchId(batchCode),
         ]);
+        const productDetail = batchDetail?.productId ? await productService.getProductById(batchDetail.productId) : null;
         const traceLogs = await traceService.getTraceLogsByBatchId(batchId);
         if (!active) return;
         setBatch(batchDetail);
+        setProduct(productDetail);
         setLogs(traceLogs);
       } catch (err) {
         if (!active) return;
@@ -202,6 +208,8 @@ export function FarmerBatchDetailPage() {
   const createdLabel = batch?.createdAt
     ? new Date(batch.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
     : "Không rõ";
+
+  const tracePaused = product?.isActive === false;
 
   const recentActivity = logs.slice(0, 4);
 
@@ -263,6 +271,14 @@ export function FarmerBatchDetailPage() {
         }
       />
 
+      {tracePaused ? (
+        <StateCard
+          tone="warning"
+          title="Truy xuất tạm ngừng"
+          message="Truy xuất nguồn gốc của lô hàng này đang tạm ngừng bởi quản trị viên. Dữ liệu nội bộ vẫn được giữ để đối chiếu." 
+        />
+      ) : null}
+
       {/* Bento Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Col: Summary - Đã sửa lỗi overlap ở đây bằng lg:sticky lg:top-28 */}
@@ -305,7 +321,7 @@ export function FarmerBatchDetailPage() {
                   <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Số lượng</p>
                   <p className="font-headline text-lg font-bold text-emerald-300">
                     {batch?.quantity ?? "Chưa cập nhật"}
-                    {batch?.unit && <span className="text-sm font-normal text-slate-400 ml-1">{batch.unit}</span>}
+                    {batch?.unit && <span className="text-sm font-normal text-slate-400 ml-1">{formatUnitLabel(batch.unit)}</span>}
                   </p>
                 </div>
               </div>
@@ -361,7 +377,7 @@ export function FarmerBatchDetailPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="truncate text-sm font-semibold text-on-surface">{log.action}</p>
+                        <p className="truncate text-sm font-semibold text-on-surface">{formatTraceActionLabel(log.action)}</p>
                         <span className="text-[11px] text-on-surface-variant">
                           {log.createdAt ? new Date(log.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }) : "Không rõ"}
                         </span>
@@ -369,7 +385,7 @@ export function FarmerBatchDetailPage() {
                       <p className="mt-1 text-xs text-on-surface-variant">{log.location || "Không rõ"}</p>
                       <div className="mt-2 flex items-center gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${log.integrityStatus === "VERIFIED" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
-                          {log.integrityStatus || "Không rõ"}
+                          {formatIntegrityLabel(log.integrityStatus)}
                         </span>
                         {log.quantity != null && (
                           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">

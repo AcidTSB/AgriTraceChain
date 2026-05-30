@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { realtimeNotificationService } from "../../services/realtimeNotificationService";
 import { notificationService } from "../../services/notificationService";
+import { formatRoleLabel } from "../../helpers/displayLabels";
 
 const SEARCH_HISTORY_KEY = "agritrace-topbar-search-history";
 const MAX_SEARCH_HISTORY = 8;
@@ -244,10 +245,10 @@ export function Topbar({ onMenuToggle }) {
               <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-slate-900">Hoạt động gần đây</p>
-                  <p className="text-xs text-slate-500">Feedback loop giữa Farmer, Inspector và Public</p>
+                  <p className="text-xs text-slate-500">Luồng phản hồi giữa Farmer, Inspector và Public</p>
                 </div>
                 <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
-                  Live
+                  Trực tiếp
                 </span>
               </div>
 
@@ -321,10 +322,10 @@ export function Topbar({ onMenuToggle }) {
                                 <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-600">{item.batchCode}</span>
                               )}
                               {item.actorRole && (
-                                <span className="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{item.actorRole}</span>
+                                <span className="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{formatRoleLabel(item.actorRole)}</span>
                               )}
                               {item.route && (
-                                <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">Open</span>
+                                <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">Mở</span>
                               )}
                             </div>
                           </div>

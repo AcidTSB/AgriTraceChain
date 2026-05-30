@@ -101,7 +101,7 @@ function FeaturesSection() {
                 <span className="material-symbols-outlined text-primary">lock</span>
               </div>
               <div>
-                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Hash + Signature protection</h4>
+                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Bảo vệ bằng hash + chữ ký số</h4>
                 <p className="mt-1 font-body text-sm text-on-surface-variant sm:text-base">Dữ liệu được mã hóa và ký số, đảm bảo tính toàn vẹn của thông tin truy xuất.</p>
               </div>
             </div>
@@ -110,7 +110,7 @@ function FeaturesSection() {
                 <span className="material-symbols-outlined text-primary">my_location</span>
               </div>
               <div>
-                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Real-time tracking</h4>
+                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Theo dõi thời gian thực</h4>
                 <p className="mt-1 font-body text-sm text-on-surface-variant sm:text-base">Theo dõi quá trình vận chuyển và trạng thái lô hàng theo thời gian thực.</p>
               </div>
             </div>
@@ -119,7 +119,7 @@ function FeaturesSection() {
                 <span className="material-symbols-outlined text-primary">verified_user</span>
               </div>
               <div>
-                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Independent Inspection</h4>
+                <h4 className="font-headline text-base font-bold text-on-surface sm:text-lg">Kiểm định độc lập</h4>
                 <p className="mt-1 font-body text-sm text-on-surface-variant sm:text-base">Tích hợp dữ liệu kiểm định độc lập, tăng cường độ tin cậy cho sản phẩm.</p>
               </div>
             </div>

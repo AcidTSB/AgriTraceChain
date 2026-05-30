@@ -248,6 +248,36 @@ public class TraceLogService {
         if (hasCompromised) {
             String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
             traceAuditService.recordPublicRead(batchCode, "READ_COMPROMISED", "Public trace returned with compromised integrity status", batchOwnerId);
+
+            // Decoupled compromised update: check status and call markCompromised via gRPC (idempotent, try-catch)
+            try {
+                String targetBatchId = responses.get(0).getBatchId();
+                if (targetBatchId != null && !targetBatchId.isBlank()) {
+                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(targetBatchId);
+                    if (batchInfo != null && !batchInfo.getIsCompromised()) {
+                        String firstCompromisedLogId = responses.stream()
+                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                                .map(TraceLogResponse::getId)
+                                .findFirst()
+                                .orElse(null);
+                        String compromiseReason = responses.stream()
+                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                                .map(r -> {
+                                    if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                                    if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                                    return "Chain broken on action " + r.getAction();
+                                })
+                                .findFirst()
+                                .orElse("Integrity verification failed");
+
+                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC", batchCode);
+                    }
+                }
+            } catch (Exception ex) {
+                log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
+            }
+
             return responses;
         }
 
@@ -385,28 +415,75 @@ public class TraceLogService {
         return normalized;
     }
 
+    private String getActionNameVi(TraceAction action) {
+        if (action == null) return "hành động";
+        return switch (action) {
+            case PLANTING -> "gieo hạt / trồng cây";
+            case FERTILIZING -> "bón phân";
+            case WATERING -> "tưới nước";
+            case SPRAYING -> "phun thuốc";
+            case HARVESTING -> "thu hoạch";
+            case PACKAGING -> "đóng gói";
+            case SHIPPING -> "vận chuyển";
+            case INSPECTION -> "kiểm định";
+        };
+    }
+
     private void validateBusinessRules(List<TraceLog> existingLogs,
                                        UUID batchId,
                                        TraceAction nextAction,
                                        BigDecimal nextQuantity) {
+        boolean hasPlanting = existingLogs.stream().anyMatch(l -> TraceAction.PLANTING.name().equals(l.getActionType()));
         boolean hasHarvesting = existingLogs.stream().anyMatch(l -> TraceAction.HARVESTING.name().equals(l.getActionType()));
-        boolean hasInspection = existingLogs.stream().anyMatch(l -> TraceAction.INSPECTION.name().equals(l.getActionType()));
+        boolean hasShipping = existingLogs.stream().anyMatch(l -> TraceAction.SHIPPING.name().equals(l.getActionType()));
+        boolean hasPackaging = existingLogs.stream().anyMatch(l -> TraceAction.PACKAGING.name().equals(l.getActionType()));
 
-        if (hasHarvesting && (nextAction == TraceAction.PLANTING
-                || nextAction == TraceAction.FERTILIZING
-                || nextAction == TraceAction.WATERING
-                || nextAction == TraceAction.SPRAYING)) {
-            throw new IllegalArgumentException("Business rule violation: cannot add pre-harvest actions after HARVESTING");
+        // Rule 1: PLANTING only allowed if no logs exist.
+        if (nextAction == TraceAction.PLANTING && !existingLogs.isEmpty()) {
+            throw new IllegalArgumentException("Không thể gieo hạt / trồng cây khi lô hàng đã có nhật ký.");
         }
 
-        if (nextAction == TraceAction.SHIPPING && !hasHarvesting) {
-            throw new IllegalArgumentException("Business rule violation: SHIPPING requires prior HARVESTING");
+        // Rule 2: FERTILIZING, WATERING, SPRAYING only allowed after PLANTING and before HARVESTING/SHIPPING.
+        if (nextAction == TraceAction.FERTILIZING || nextAction == TraceAction.WATERING || nextAction == TraceAction.SPRAYING) {
+            if (!hasPlanting) {
+                throw new IllegalArgumentException("Không thể ghi nhật ký " + getActionNameVi(nextAction) + " trước khi gieo hạt / trồng cây.");
+            }
+            if (hasHarvesting) {
+                throw new IllegalArgumentException("Không thể ghi nhật ký " + getActionNameVi(nextAction) + " vì lô hàng đã được thu hoạch.");
+            }
+            if (hasShipping) {
+                throw new IllegalArgumentException("Không thể ghi nhật ký " + getActionNameVi(nextAction) + " vì lô hàng đã được vận chuyển.");
+            }
         }
 
-        if ((nextAction == TraceAction.PACKAGING || nextAction == TraceAction.SHIPPING) && !hasInspection) {
-            throw new IllegalArgumentException("Business rule violation: PACKAGING/SHIPPING requires prior INSPECTION approval");
+        // Rule 3: HARVESTING requires PLANTING, and is blocked after SHIPPING.
+        if (nextAction == TraceAction.HARVESTING) {
+            if (!hasPlanting) {
+                throw new IllegalArgumentException("Không thể thu hoạch vì lô hàng chưa được gieo hạt / trồng cây.");
+            }
+            if (hasShipping) {
+                throw new IllegalArgumentException("Không thể ghi nhật ký thu hoạch vì lô hàng đã được vận chuyển.");
+            }
         }
 
+        // Rule 4: PACKAGING requires HARVESTING, and is blocked after SHIPPING.
+        if (nextAction == TraceAction.PACKAGING) {
+            if (!hasHarvesting) {
+                throw new IllegalArgumentException("Không thể đóng gói vì lô hàng chưa được thu hoạch.");
+            }
+            if (hasShipping) {
+                throw new IllegalArgumentException("Không thể đóng gói vì lô hàng đã được vận chuyển.");
+            }
+        }
+
+        // Rule 5: SHIPPING requires HARVESTING. If packaging exists in the timeline, it is already before shipping.
+        if (nextAction == TraceAction.SHIPPING) {
+            if (!hasHarvesting) {
+                throw new IllegalArgumentException("Không thể vận chuyển lô hàng trước khi thu hoạch.");
+            }
+        }
+
+        // Quantity checks for SHIPPING or PACKAGING
         if (nextAction == TraceAction.SHIPPING || nextAction == TraceAction.PACKAGING) {
             BigDecimal totalProduced = traceLogRepository.sumQuantityByBatchIdAndActionType(batchId, TraceAction.HARVESTING.name());
             BigDecimal totalExported = traceLogRepository.sumQuantityByBatchIdAndActionType(batchId, nextAction.name());

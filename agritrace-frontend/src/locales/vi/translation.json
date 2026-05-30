@@ -109,6 +109,8 @@
     "manualBatchCode": "Mã lô thủ công",
     "openingTrace": "Đang mở truy xuất...",
     "openPublicTrace": "Mở truy xuất public",
+    "tracePausedTitle": "Truy xuất tạm ngừng",
+    "tracePausedByAdmin": "Truy xuất nguồn gốc của lô hàng này đang tạm ngừng bởi quản trị viên.",
     "aboutTitle": "Vì sao hệ thống truy xuất này quan trọng",
     "aboutDesc": "AgriTrace ghi nhận sự kiện từ nông trại đến bàn ăn trên timeline bất biến. Nông dân ghi dữ liệu vận hành, kiểm định viên xác nhận checkpoint chất lượng, người dùng công khai xác minh niềm tin qua QR.",
     "sourceTransparency": "Minh bạch nguồn gốc",

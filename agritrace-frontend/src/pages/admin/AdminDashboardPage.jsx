@@ -5,7 +5,7 @@ import { PageHeader } from "../../components/ui/PageHeader";
 import { StatCard } from "../../components/ui/StatCard";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { productService } from "../../services/productService";
-import { apiClient } from "../../services/apiClient";
+import { apiClient, unwrapApiResponse } from "../../services/apiClient";
 
 function todayLabel() {
   return new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long" });
@@ -43,6 +43,7 @@ function normalizeCount(value, fallback = 0) {
 export function AdminDashboardPage() {
   const { t } = useTranslation();
   const [stats, setStats] = useState({ products: 0, users: 0, facilities: 0 });
+  const [compromisedBatches, setCompromisedBatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,10 +52,11 @@ export function AdminDashboardPage() {
       setLoading(true);
       try {
         if (!active) return;
-        const [productsResult, usersResult, farmsResult] = await Promise.allSettled([
+        const [productsResult, usersResult, farmsResult, compromisedResult] = await Promise.allSettled([
           productService.getProducts(),
           apiClient.get("/api/v1/users/count"),
           apiClient.get("/api/v1/farms/count"),
+          apiClient.get("/api/v1/batches/page?page=0&size=100&status=COMPROMISED"),
         ]);
 
         if (!active) return;
@@ -72,11 +74,20 @@ export function AdminDashboardPage() {
             ? normalizeCount(farmsResult.value?.data, 0)
             : 0;
 
+        const compromisedData =
+          compromisedResult.status === "fulfilled"
+            ? unwrapApiResponse(compromisedResult.value)
+            : null;
+        const compromisedList = Array.isArray(compromisedData?.content)
+          ? compromisedData.content
+          : [];
+
         setStats({
           products: productsCount,
           users: usersCount,
           facilities: farmsCount,
         });
+        setCompromisedBatches(compromisedList);
       } finally {
         if (active) setLoading(false);
       }
@@ -135,6 +146,48 @@ export function AdminDashboardPage() {
           iconColor="text-tertiary"
         />
       </div>
+
+      {/* Compromised Batches Warnings Card */}
+      {compromisedBatches.length > 0 && (
+        <div className="rounded-2xl border border-error/30 bg-error-container/10 p-5 md:p-6 lg:p-8">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="material-symbols-outlined text-error text-3xl">warning</span>
+            <div>
+              <h3 className="font-headline text-lg font-bold tracking-tight text-on-error-container">
+                Cảnh báo xâm phạm dữ liệu ({compromisedBatches.length})
+              </h3>
+              <p className="text-xs text-on-error-container/80">
+                Phát hiện các lô hàng có dấu hiệu vi phạm tính toàn vẹn dữ liệu. Cần kiểm tra ngay lập tức.
+              </p>
+            </div>
+          </div>
+          
+          <div className="divide-y divide-error/10 max-h-[300px] overflow-y-auto pr-2">
+            {compromisedBatches.map((batch) => (
+              <div key={batch.id} className="py-3 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-sm text-error">{batch.batchCode}</span>
+                    <span className="text-xs px-2 py-0.5 rounded bg-error-container/20 text-on-error-container font-medium">
+                      {batch.productName}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Lý do: {batch.compromiseReason || "Không có lý do chi tiết"}
+                  </p>
+                </div>
+                <Link
+                  to={`/trace/${encodeURIComponent(batch.batchCode)}`}
+                  className="inline-flex items-center gap-1 text-sm font-semibold text-error hover:underline"
+                >
+                  Xem chi tiết
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Quick Links Grid */}
       <div className="rounded-2xl bg-surface-container-low p-4 sm:p-5 md:p-6 lg:p-8">

@@ -11,6 +11,18 @@ import { batchService } from "../../services/batchService";
 import { farmService } from "../../services/farmService";
 import { inspectorQueueService } from "../../services/inspectorQueueService";
 import { productService } from "../../services/productService";
+import { formatUnitLabel } from "../../helpers/displayLabels";
+
+const UNIT_OPTIONS = [
+  { value: "kg", label: formatUnitLabel("kg") },
+  { value: "g", label: formatUnitLabel("g") },
+  { value: "ton", label: formatUnitLabel("ton") },
+  { value: "l", label: formatUnitLabel("l") },
+  { value: "chai", label: formatUnitLabel("chai") },
+  { value: "thung", label: formatUnitLabel("thung") },
+  { value: "bao", label: formatUnitLabel("bao") },
+  { value: "hop", label: formatUnitLabel("hop") },
+];
 
 export function FarmerCreateBatchPage() {
   const navigate = useNavigate();
@@ -245,21 +257,31 @@ export function FarmerCreateBatchPage() {
                 required
               />
 
-              <Input
-                id="unit"
-                type="text"
-                label={t("farmer.unit")}
-                placeholder={t("farmer.unitPlaceholder")}
-                value={form.unit}
-                onChange={(event) => {
-                  setForm((prev) => ({ ...prev, unit: event.target.value }));
-                  if (fieldErrors.unit) {
-                    setFieldErrors((prev) => ({ ...prev, unit: "" }));
-                  }
-                }}
-                error={fieldErrors.unit}
-                required
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="unit">
+                  {t("farmer.unit")}
+                </label>
+                <select
+                  id="unit"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  value={form.unit}
+                  onChange={(event) => {
+                    setForm((prev) => ({ ...prev, unit: event.target.value }));
+                    if (fieldErrors.unit) {
+                      setFieldErrors((prev) => ({ ...prev, unit: "" }));
+                    }
+                  }}
+                  required
+                >
+                  <option value="">-- Chọn đơn vị --</option>
+                  {UNIT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {fieldErrors.unit ? <p className="text-sm text-rose-600">{fieldErrors.unit}</p> : null}
+              </div>
             </div>
 
             <Input

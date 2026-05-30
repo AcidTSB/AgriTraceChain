@@ -61,9 +61,10 @@ public class BatchController {
     public ResponseEntity<ApiResponse<BatchResponse>> createBatch(
                         @Valid @RequestBody CreateBatchRequest request,
                         @RequestHeader("X-User-Id") String userId,
-                        @RequestHeader(value = "X-User-Role", required = false) String role) {
+                        @RequestHeader(value = "X-User-Role", required = false) String role,
+                        @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
 
-                if (!hasRole(role, "FARMER")) {
+                if (!"agritrace-gateway-trusted-token".equals(gatewayToken) || !hasRole(role, "FARMER")) {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only FARMER can create batch");
                 }
 
@@ -112,6 +113,50 @@ public class BatchController {
         );
     }
 
+    public static class MarkCompromisedRequest {
+        private String reason;
+        private String auditId;
+
+        public String getReason() { return reason; }
+        public void setReason(String reason) { this.reason = reason; }
+        public String getAuditId() { return auditId; }
+        public void setAuditId(String auditId) { this.auditId = auditId; }
+    }
+
+    /**
+     * Mark a batch as compromised.
+     * Protected: Only internal service (with Gateway Token) AND ADMIN role can call.
+     */
+    @PutMapping("/{code}/compromise")
+    public ResponseEntity<ApiResponse<BatchResponse>> markBatchCompromised(
+            @PathVariable String code,
+            @RequestBody MarkCompromisedRequest request,
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
+        
+        log.warn("PUT /api/v1/batches/{}/compromise - REST call to compromise, role={}, token={}", code, role, gatewayToken);
+        
+        boolean isGatewayApproved = "agritrace-gateway-trusted-token".equals(gatewayToken);
+        boolean isAdmin = "ADMIN".equals(normalizeRole(role));
+
+        if (!isGatewayApproved || !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: untrusted request path or insufficient privileges");
+        }
+
+        if (request == null || request.getReason() == null || request.getReason().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reason is required");
+        }
+
+        BatchResponse response = batchService.markCompromised(code, request.getReason(), request.getAuditId());
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Batch marked compromised successfully",
+                        response
+                )
+        );
+    }
+
     /**
      * Get all batches for a specific farm
      * 
@@ -149,8 +194,9 @@ public class BatchController {
     @GetMapping(params = "productId")
     public ResponseEntity<ApiResponse<List<BatchResponse>>> getBatchesByProduct(
             @RequestParam UUID productId,
-            @RequestHeader(value = "X-User-Role", required = false) String role) {
-        if (!hasRole(role, "ADMIN")) {
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
+        if (!"agritrace-gateway-trusted-token".equals(gatewayToken) || !hasRole(role, "ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can query batches by product");
         }
 
@@ -171,12 +217,16 @@ public class BatchController {
     public ResponseEntity<ApiResponse<Page<BatchResponse>>> getBatchesPage(
             @RequestHeader("X-User-Id") String userId,
             @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "updatedAt,desc") String sort,
             @RequestParam(required = false) UUID farmId,
             @RequestParam(defaultValue = "PENDING_INSPECTION") String status,
             @RequestParam(defaultValue = "") String q) {
+        if (!"agritrace-gateway-trusted-token".equals(gatewayToken)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: untrusted request path");
+        }
         String normalizedRole = normalizeRole(role);
         if (!"ADMIN".equals(normalizedRole) && !"FARMER".equals(normalizedRole) && !"INSPECTOR".equals(normalizedRole)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Role is required for paginated batch access");

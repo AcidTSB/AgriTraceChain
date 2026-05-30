@@ -57,6 +57,16 @@ public class Batch {
     @Column(name = "is_compromised", nullable = false)
     @Builder.Default
     private Boolean isCompromised = false;
+
+    @Column(name = "compromised_at")
+    private LocalDateTime compromisedAt;
+
+    @Column(name = "compromise_reason")
+    private String compromiseReason;
+
+    @Column(name = "compromised_by_audit_id")
+    private String compromisedByAuditId;
+
     
     @Column(name = "qr_code_url")
     private String qrCodeUrl;

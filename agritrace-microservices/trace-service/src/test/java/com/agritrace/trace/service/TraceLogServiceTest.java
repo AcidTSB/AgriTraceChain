@@ -165,7 +165,10 @@ class TraceLogServiceTest {
                 .thenReturn(OwnershipResponse.newBuilder().setIsOwner(true).build());
 
         TraceLog previousLog = new TraceLog();
+        previousLog.setActionType("PLANTING");
         previousLog.setCurrentHash("prev_hash_xyz");
+        when(traceLogRepository.findByBatchIdOrderByCreatedAtAsc(UUID.fromString(batchId)))
+                .thenReturn(List.of(previousLog));
         when(traceLogRepository.findFirstByBatchIdOrderByCreatedAtDesc(UUID.fromString(batchId)))
                 .thenReturn(Optional.of(previousLog));
 

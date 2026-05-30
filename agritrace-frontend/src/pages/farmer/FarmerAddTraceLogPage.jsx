@@ -19,25 +19,39 @@ const actionOptions = [
 ];
 
 const quantityRequiredActions = new Set(["HARVESTING", "PACKAGING", "SHIPPING"]);
-const PRE_HARVEST_ACTIONS = new Set(["PLANTING", "FERTILIZING", "WATERING", "SPRAYING"]);
 
-function detectTemporalViolations(selectedAction, existingLogs) {
-  const violations = [];
-  const harvestLog = existingLogs.find((l) => l.action === "HARVESTING");
-  if (harvestLog && PRE_HARVEST_ACTIONS.has(selectedAction)) {
-    violations.push(
-      `"${selectedAction}" là hoạt động canh tác — không thể xảy ra sau HARVESTING (${
-        harvestLog.timestamp ? new Date(harvestLog.timestamp).toLocaleString("vi-VN") : "N/A"
-      }).`,
-    );
+export function getActionDisabledReason(optVal, logs = []) {
+  const hasPlanting = logs.some((l) => l.action === "PLANTING");
+  const hasHarvesting = logs.some((l) => l.action === "HARVESTING");
+  const hasShipping = logs.some((l) => l.action === "SHIPPING");
+
+  if (optVal === "PLANTING" && logs.length > 0) {
+    return "Lô đã có nhật ký";
   }
-  const shipLog = existingLogs.find((l) => l.action === "SHIPPING");
-  if (shipLog && ["PLANTING", "FERTILIZING", "WATERING", "SPRAYING", "HARVESTING", "PACKAGING"].includes(selectedAction)) {
-    violations.push(
-      `"${selectedAction}" không thể xảy ra sau SHIPPING (${
-        shipLog.timestamp ? new Date(shipLog.timestamp).toLocaleString("vi-VN") : "N/A"
-      }).`,
-    );
+  if (["FERTILIZING", "WATERING", "SPRAYING"].includes(optVal)) {
+    if (!hasPlanting) return "Chưa gieo hạt / trồng cây";
+    if (hasHarvesting) return "Lô đã thu hoạch";
+    if (hasShipping) return "Lô đã vận chuyển";
+  }
+  if (optVal === "HARVESTING") {
+    if (!hasPlanting) return "Chưa gieo hạt / trồng cây";
+    if (hasShipping) return "Lô đã vận chuyển";
+  }
+  if (optVal === "PACKAGING") {
+    if (!hasHarvesting) return "Chưa thu hoạch";
+    if (hasShipping) return "Lô đã vận chuyển";
+  }
+  if (optVal === "SHIPPING") {
+    if (!hasHarvesting) return "Chưa thu hoạch";
+  }
+  return "";
+}
+
+function detectTemporalViolations(selectedAction, existingLogs = []) {
+  const violations = [];
+  const reason = getActionDisabledReason(selectedAction, existingLogs);
+  if (reason) {
+    violations.push(reason);
   }
   return violations;
 }
@@ -100,6 +114,19 @@ export function FarmerAddTraceLogPage() {
     loadBatchData();
     return () => { active = false; };
   }, [batchCode]);
+
+  useEffect(() => {
+    if (existingLogs && existingLogs.length > 0) {
+      const firstEnabledOpt = actionOptions.find(
+        (opt) => !getActionDisabledReason(opt.value, existingLogs)
+      );
+      if (firstEnabledOpt) {
+        setForm((prev) => ({ ...prev, action: firstEnabledOpt.value }));
+      }
+    } else {
+      setForm((prev) => ({ ...prev, action: "PLANTING" }));
+    }
+  }, [existingLogs]);
 
   const quantityRequired = useMemo(() => quantityRequiredActions.has(form.action), [form.action]);
   const hasGpsCoords = useMemo(
@@ -270,9 +297,15 @@ export function FarmerAddTraceLogPage() {
                 onChange={(e) => setForm((prev) => ({ ...prev, action: e.target.value }))}
                 className="block w-full rounded-lg border-0 bg-transparent py-3 pl-4 pr-10 text-on-surface focus:ring-0 text-sm cursor-pointer appearance-none"
               >
-                {actionOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
+                {actionOptions.map((opt) => {
+                  const reason = getActionDisabledReason(opt.value, existingLogs);
+                  const isDisabled = !!reason;
+                  return (
+                    <option key={opt.value} value={opt.value} disabled={isDisabled}>
+                      {opt.label} {reason ? `(${reason})` : ""}
+                    </option>
+                  );
+                })}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                 <span className="material-symbols-outlined text-on-surface-variant">expand_more</span>
@@ -351,9 +384,10 @@ export function FarmerAddTraceLogPage() {
                 required={quantityRequired}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-                <span className="text-outline text-sm font-medium">kg/L</span>
+                <span className="text-outline text-sm font-medium">theo đơn vị lô</span>
               </div>
             </div>
+            <p className="mt-1 text-xs text-outline">Số lượng được hiểu theo đơn vị đã khai báo cho lô hàng.</p>
             {fieldErrors.quantity && <p className="text-xs text-error mt-1">{fieldErrors.quantity}</p>}
           </FieldGroup>
 

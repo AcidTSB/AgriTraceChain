@@ -26,7 +26,7 @@ const iconMap = {
 // ─── CTA config per role ──────────────────────────────────────────────────
 const roleCTA = {
   FARMER:    { label: "Tạo lô mới", icon: "add", to: "/farmer/batches/new" },
-  INSPECTOR: { label: "Kiểm định mới", icon: "add_task", to: "/inspector/review" },
+  INSPECTOR: { label: "Tạo kiểm định cho lô hàng", icon: "add_task", to: "/inspector/review" },
   ADMIN:     { label: "Thêm người dùng", icon: "person_add", to: "/admin/users" },
 };
 

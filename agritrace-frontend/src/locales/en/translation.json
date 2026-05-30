@@ -107,6 +107,8 @@
     "manualBatchCode": "Manual batch code",
     "openingTrace": "Opening trace...",
     "openPublicTrace": "Open Public Trace",
+    "tracePausedTitle": "Traceability paused",
+    "tracePausedByAdmin": "Traceability for this batch is currently paused by an administrator.",
     "aboutTitle": "Why this traceability system matters",
     "aboutDesc": "AgriTrace records farm-to-table events in an immutable timeline. Farmers publish operational data, inspectors validate quality checkpoints, and public users verify trust from QR code.",
     "sourceTransparency": "Source Transparency",

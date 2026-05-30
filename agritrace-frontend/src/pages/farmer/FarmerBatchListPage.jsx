@@ -81,6 +81,9 @@ export function FarmerBatchListPage() {
             if (batch.isCompromised) {
               displayStatus = "COMPROMISED";
             }
+            if (batch.productActive === false) {
+              displayStatus = "SUSPENDED";
+            }
             return { ...batch, displayStatus };
           });
 
@@ -116,7 +119,9 @@ export function FarmerBatchListPage() {
       filtered = filtered.filter(b => b.farmId === farmFilter);
     }
 
-    if (statusFilter !== "ALL") {
+    if (statusFilter === "NORMAL") {
+      filtered = filtered.filter(b => b.displayStatus !== "COMPROMISED" && b.displayStatus !== "SUSPENDED");
+    } else if (statusFilter !== "ALL") {
       filtered = filtered.filter(b => b.displayStatus === statusFilter);
     }
 
@@ -209,10 +214,10 @@ export function FarmerBatchListPage() {
           onChange={handleStatusChange}
           className="bg-slate-50 rounded-xl px-3 py-2 text-sm ghost-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-on-surface"
         >
-          <option value="ALL">{t("farmer.filterAllInspections")}</option>
-          <option value="PENDING_INSPECTION">{t("inspection.awaiting")}</option>
-          <option value="INSPECTED">{t("inspection.inspected")}</option>
-          <option value="COMPROMISED">{t("inspection.compromised")}</option>
+          <option value="ALL">Tất cả</option>
+          <option value="NORMAL">Bình thường</option>
+          <option value="COMPROMISED">Bị cảnh báo</option>
+          <option value="SUSPENDED">Tạm ngừng truy xuất</option>
         </select>
       </div>
 

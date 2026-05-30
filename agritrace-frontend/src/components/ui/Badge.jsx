@@ -1,3 +1,5 @@
+import { formatBatchStatusLabel } from "../../helpers/displayLabels";
+
 /**
  * Badge — standardized status badge
  * Props:
@@ -50,6 +52,12 @@ const STATUS_CONFIG = {
   },
   INACTIVE: {
     label: "Ngừng hoạt động",
+    dot: "bg-error",
+    bg: "bg-error-container/30",
+    text: "text-on-error-container",
+  },
+  SUSPENDED: {
+    label: "Tạm ngừng truy xuất",
     dot: "bg-error",
     bg: "bg-error-container/30",
     text: "text-on-error-container",
@@ -119,7 +127,7 @@ export function Badge({ status = "", variant = "", className = "", children }) {
           label: variantLabel || "Không rõ",
         }
       : {
-          label: normalizedStatus || variantLabel || "Không rõ",
+          label: normalizedStatus ? formatBatchStatusLabel(normalizedStatus) : variantLabel || "Không rõ",
           dot: "bg-outline",
           bg: "bg-surface-container-high",
           text: "text-on-surface",

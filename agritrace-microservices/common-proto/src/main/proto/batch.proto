@@ -13,6 +13,7 @@ service BatchService {
   rpc ValidateBatchOwnership (ValidateBatchOwnershipRequest) returns (OwnershipResponse);
   rpc CheckBatchStatus (CheckBatchStatusRequest) returns (BatchStatusResponse);
   rpc GetBatchesByFarmer (GetBatchesByFarmerRequest) returns (BatchListResponse);
+  rpc MarkBatchCompromised (MarkBatchCompromisedRequest) returns (BatchResponse);
 }
 
 message GetBatchByIdRequest {
@@ -31,6 +32,12 @@ message CheckBatchStatusRequest {
 message GetBatchesByFarmerRequest {
   string farmer_id = 1;
   agritrace.common.PageRequest page = 2;
+}
+
+message MarkBatchCompromisedRequest {
+  string batch_code = 1;
+  string reason = 2;
+  string compromised_by_audit_id = 3;
 }
 
 message BatchResponse {
@@ -53,6 +60,10 @@ message BatchResponse {
   double farm_longitude = 17;
   string batch_code = 18;
   string product_type = 19;
+  string compromised_at = 20;
+  string compromise_reason = 21;
+  string compromised_by_audit_id = 22;
+  bool product_active = 23;
 }
 
 message OwnershipResponse {
@@ -75,3 +86,4 @@ message BatchListResponse {
   agritrace.common.PageMetadata page_metadata = 2;
   agritrace.common.Status status = 3;
 }
+

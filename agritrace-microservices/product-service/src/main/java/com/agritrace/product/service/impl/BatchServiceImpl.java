@@ -127,12 +127,11 @@ public class BatchServiceImpl implements BatchService {
         Batch batch = batchRepository.findByBatchCode(batchCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Batch", "batchCode", batchCode));
 
-        // ⚠️ KILL SWITCH (Phase 3.4 Refinement): Block compromised batches from consumer access
-        // Security: Prevent information leakage about compromised batches
-        // Consumer experience: Batch appears non-existent (404) instead of showing compromise warning
+        // ⚠️ RELAXED KILL SWITCH (Phase 3.4 Refinement):
+        // We no longer throw 404 ResourceNotFoundException here so that the public trace page
+        // can load the batch and display a strong warnings banner to the consumer instead of looking like a broken link.
         if (Boolean.TRUE.equals(batch.getIsCompromised())) {
-            log.warn("🚨 KILL SWITCH: Blocked access to compromised batch {} from consumer API", batchCode);
-            throw new ResourceNotFoundException("Batch", "batchCode", batchCode);
+            log.warn("🚨 WARNING: Accessing compromised batch {} from API", batchCode);
         }
 
         return mapToResponse(batch);
@@ -143,12 +142,11 @@ public class BatchServiceImpl implements BatchService {
     public List<BatchResponse> getBatchesByFarm(UUID farmId) {
         log.debug("Fetching batches for farm: {}", farmId);
 
-        // No farm verification in microservices - trust Gateway/gRPC
-        // Get batches using facility ID
         List<Batch> batches = batchRepository.findByFacilityId(farmId);
+        java.util.Map<UUID, Boolean> productActiveMap = getProductActiveMap(batches);
 
         return batches.stream()
-                .map(this::mapToResponse)
+                .map(b -> mapToResponse(b, productActiveMap))
                 .collect(Collectors.toList());
     }
 
@@ -156,8 +154,10 @@ public class BatchServiceImpl implements BatchService {
     @Transactional(readOnly = true)
     public List<BatchResponse> getBatchesByProduct(UUID productId) {
         log.debug("Fetching batches for product: {}", productId);
-        return batchRepository.findByProductId(productId).stream()
-                .map(this::mapToResponse)
+        List<Batch> batches = batchRepository.findByProductId(productId);
+        java.util.Map<UUID, Boolean> productActiveMap = getProductActiveMap(batches);
+        return batches.stream()
+                .map(b -> mapToResponse(b, productActiveMap))
                 .collect(Collectors.toList());
     }
 
@@ -177,8 +177,45 @@ public class BatchServiceImpl implements BatchService {
     public Page<BatchResponse> getBatchesPage(UUID ownerId, UUID farmId, String status, String keyword, Pageable pageable) {
         String normalizedStatus = status == null ? "" : status.trim().toUpperCase();
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
-        return batchRepository.searchBatches(ownerId, farmId, normalizedStatus, normalizedKeyword, pageable)
-                .map(this::mapToResponse);
+        Page<Batch> batchPage = batchRepository.searchBatches(ownerId, farmId, normalizedStatus, normalizedKeyword, pageable);
+        java.util.Map<UUID, Boolean> productActiveMap = getProductActiveMap(batchPage.getContent());
+        return batchPage.map(b -> mapToResponse(b, productActiveMap));
+    }
+
+    @Override
+    public BatchResponse markCompromised(String batchCode, String reason, String auditId) {
+        log.warn("🚨 markCompromised triggered for batchCode: {}, reason: {}", batchCode, reason);
+        Batch batch = batchRepository.findByBatchCode(batchCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Batch", "batchCode", batchCode));
+
+        // Idempotency guardrail: only update and trigger notification if not already compromised
+        if (!Boolean.TRUE.equals(batch.getIsCompromised())) {
+            batch.setIsCompromised(true);
+            batch.setCompromisedAt(LocalDateTime.now());
+            batch.setCompromiseReason(reason);
+            batch.setCompromisedByAuditId(auditId);
+            batch = batchRepository.save(batch);
+
+            try {
+                java.util.Map<String, Object> auditMsg = new java.util.LinkedHashMap<>();
+                auditMsg.put("batchId", batch.getId());
+                auditMsg.put("batchCode", batch.getBatchCode());
+                auditMsg.put("operation", "BATCH_COMPROMISED");
+                auditMsg.put("actorId", batch.getOwnerId());
+                auditMsg.put("actorRole", "SYSTEM");
+                auditMsg.put("afterSnapshot", batch);
+                auditMsg.put("timestamp", LocalDateTime.now().toString());
+                
+                kafkaTemplate.send("audit-ledger-topic", batch.getBatchCode(), objectMapper.writeValueAsString(auditMsg));
+                log.warn("Published BATCH_COMPROMISED event to Kafka for batch: {}", batchCode);
+            } catch (Exception ex) {
+                log.warn("Failed to publish audit event for batch compromise: {}", ex.getMessage());
+            }
+        } else {
+            log.info("Batch {} is already marked compromised, skipping redundant update.", batchCode);
+        }
+
+        return mapToResponse(batch);
     }
 
     /**
@@ -214,19 +251,62 @@ public class BatchServiceImpl implements BatchService {
     }
 
     /**
-     * Get current user from SecurityContext
-     * REMOVED - Auth handled by Gateway
+     * N+1 query prevention: bulk fetch product active state for batch collection.
      */
-    // private User getCurrentUser() {
-    //     // Authentication from gateway
-    //     return null;
-    // }
+    private java.util.Map<UUID, Boolean> getProductActiveMap(java.util.Collection<Batch> batches) {
+        java.util.Set<UUID> productIds = batches.stream()
+                .map(Batch::getProductId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (productIds.isEmpty()) {
+            return java.util.Collections.emptyMap();
+        }
+        try {
+            List<Product> products = productRepository.findAllById(productIds);
+            return products.stream()
+                    .collect(Collectors.toMap(Product::getId, Product::getIsActive, (v1, v2) -> v1));
+        } catch (Exception ex) {
+            log.warn("Failed to prefetch product active status: {}", ex.getMessage());
+            return java.util.Collections.emptyMap();
+        }
+    }
 
     /**
      * Map Batch entity to BatchResponse DTO.
      * Exposes all meaningful fields including unit, harvestDate, productType, isCompromised.
      */
     private BatchResponse mapToResponse(Batch batch) {
+        Boolean productActive = null;
+        if (batch.getProductId() != null) {
+            try {
+                productActive = productRepository.findById(batch.getProductId())
+                        .map(Product::getIsActive)
+                        .orElse(true);
+            } catch (Exception ex) {
+                log.warn("Failed to find product active state for batch {}: {}", batch.getBatchCode(), ex.getMessage());
+            }
+        }
+        return mapToResponse(batch, productActive);
+    }
+
+    private BatchResponse mapToResponse(Batch batch, java.util.Map<UUID, Boolean> productActiveMap) {
+        Boolean productActive = null;
+        if (batch.getProductId() != null && productActiveMap != null) {
+            productActive = productActiveMap.getOrDefault(batch.getProductId(), true);
+        } else if (batch.getProductId() != null) {
+            // fallback
+            try {
+                productActive = productRepository.findById(batch.getProductId())
+                        .map(Product::getIsActive)
+                        .orElse(true);
+            } catch (Exception ex) {
+                log.warn("Failed to find product active state for batch {}: {}", batch.getBatchCode(), ex.getMessage());
+            }
+        }
+        return mapToResponse(batch, productActive);
+    }
+
+    private BatchResponse mapToResponse(Batch batch, Boolean productActive) {
         BatchStatus status = Boolean.TRUE.equals(batch.getIsCompromised())
                 ? BatchStatus.COMPROMISED
                 : BatchStatus.PENDING_INSPECTION;
@@ -244,6 +324,10 @@ public class BatchServiceImpl implements BatchService {
                 .harvestDate(batch.getHarvestDate())
                 .status(status)
                 .isCompromised(batch.getIsCompromised())
+                .compromisedAt(batch.getCompromisedAt())
+                .compromiseReason(batch.getCompromiseReason())
+                .compromisedByAuditId(batch.getCompromisedByAuditId())
+                .productActive(productActive != null ? productActive : true)
                 .createdAt(batch.getCreatedAt())
                 .updatedAt(batch.getUpdatedAt())
                 .build();

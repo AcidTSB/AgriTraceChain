@@ -60,9 +60,10 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
                         @Valid @RequestBody CreateProductRequest request,
-                        @RequestHeader(value = "X-User-Role", required = false) String role) {
+                        @RequestHeader(value = "X-User-Role", required = false) String role,
+                        @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
 
-                if (!hasRole(role, "ADMIN")) {
+                if (!"agritrace-gateway-trusted-token".equals(gatewayToken) || !hasRole(role, "ADMIN")) {
                         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can create products");
                 }
         
@@ -142,9 +143,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateProductRequest request,
-            @RequestHeader(value = "X-User-Role", required = false) String role) {
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
 
-        if (!hasRole(role, "ADMIN")) {
+        if (!"agritrace-gateway-trusted-token".equals(gatewayToken) || !hasRole(role, "ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can update products");
         }
 
@@ -162,9 +164,10 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(
             @PathVariable UUID id,
-            @RequestHeader(value = "X-User-Role", required = false) String role) {
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-Gateway-Token", required = false) String gatewayToken) {
 
-        if (!hasRole(role, "ADMIN")) {
+        if (!"agritrace-gateway-trusted-token".equals(gatewayToken) || !hasRole(role, "ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only ADMIN can delete products");
         }
 

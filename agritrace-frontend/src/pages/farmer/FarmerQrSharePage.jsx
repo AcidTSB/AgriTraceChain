@@ -91,7 +91,7 @@ export function FarmerQrSharePage() {
   if (error) {
     return (
       <Card>
-        <h2 className="text-xl font-semibold text-slate-900">QR share unavailable</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Không thể chia sẻ QR</h2>
         <p className="mt-2 text-sm text-slate-600">{error}</p>
       </Card>
     );
@@ -101,25 +101,25 @@ export function FarmerQrSharePage() {
     <div className="max-w-4xl space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Farmer Share</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">QR Access / Share</h1>
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Chia sẻ cho nông dân</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Truy cập / chia sẻ QR</h1>
           <p className="mt-2 text-sm text-slate-600">Batch {batch?.batchCode || batchCode}</p>
         </div>
-        <Badge variant="info">Public-ready link</Badge>
+        <Badge variant="info">Liên kết công khai</Badge>
       </div>
 
       <Card className="space-y-4">
-        <p className="text-sm text-slate-600">Public trace link</p>
+        <p className="text-sm text-slate-600">Liên kết truy xuất công khai</p>
         <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 break-all">
           {publicLink}
         </p>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={copyLink}>Copy link</Button>
+          <Button onClick={copyLink}>Sao chép liên kết</Button>
           <Button variant="secondary" onClick={downloadQr} disabled={!qrDataUrl}>
-            Download QR
+            Tải QR
           </Button>
           <a href={publicLink} target="_blank" rel="noreferrer">
-            <Button variant="ghost">Open Public Trace</Button>
+            <Button variant="ghost">Mở truy xuất công khai</Button>
           </a>
         </div>
       </Card>
@@ -128,13 +128,13 @@ export function FarmerQrSharePage() {
         {qrDataUrl ? (
           <img src={qrDataUrl} alt={`QR for ${batchCode}`} className="h-72 w-72 rounded-xl border border-slate-200" />
         ) : (
-          <p className="text-sm text-slate-500">QR not generated.</p>
+          <p className="text-sm text-slate-500">Chưa tạo QR.</p>
         )}
       </Card>
 
       <div>
         <Link to={`/farmer/batches/${encodeURIComponent(batchCode)}`}>
-          <Button variant="secondary">Back to batch detail</Button>
+          <Button variant="secondary">Quay lại chi tiết lô</Button>
         </Link>
       </div>
     </div>

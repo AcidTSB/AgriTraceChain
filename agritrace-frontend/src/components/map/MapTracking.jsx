@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
+import { formatIntegrityLabel, formatTraceActionLabel } from "../../helpers/displayLabels";
 
 // Fix the default Leaflet marker icon broken by bundlers (Vite/Webpack)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -94,7 +95,7 @@ export function MapTracking({ logs = [] }) {
                   className="mb-1 text-base font-bold"
                   style={{ color: ACTION_COLORS[log.action] ?? "#334155" }}
                 >
-                  {log.action}
+                  {formatTraceActionLabel(log.action)}
                 </p>
                 <p className="text-xs text-slate-600">📍 {log.location || "N/A"}</p>
                 <p className="mt-0.5 text-xs text-slate-500">🕐 {formatTs(log.timestamp)}</p>
@@ -111,7 +112,7 @@ export function MapTracking({ logs = [] }) {
                           : "bg-slate-100 text-slate-500"
                     }`}
                   >
-                    {log.integrityStatus || "UNKNOWN"}
+                    {formatIntegrityLabel(log.integrityStatus)}
                   </span>
                 </div>
               </div>
