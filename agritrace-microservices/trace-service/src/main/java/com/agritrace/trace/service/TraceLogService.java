@@ -224,8 +224,63 @@ public class TraceLogService {
     }
 
     public List<TraceLogResponse> getTraceLogsByBatch(String batchId) {
+        return getTraceLogsByBatch(batchId, null, null, null, null);
+    }
+
+    public List<TraceLogResponse> getTraceLogsByBatch(String batchId,
+                                                      String actorId,
+                                                      String actorRole,
+                                                      String actorFacilityId,
+                                                      String actorRegion) {
         List<TraceLog> logs = traceLogRepository.findByBatchIdOrderByCreatedAtAsc(UUID.fromString(batchId));
-        return verifyAndMap(logs);
+        List<TraceLogResponse> responses = verifyAndMap(logs);
+
+        boolean hasCompromised = responses.stream().anyMatch(r -> "COMPROMISED".equals(r.getIntegrityStatus()));
+
+        if (hasCompromised) {
+            String batchCode = responses.isEmpty() ? null : responses.get(0).getBatchCode();
+            String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
+
+            if (batchCode != null) {
+                // Record Audit Event
+                traceAuditService.recordReadCompromised(
+                        batchCode,
+                        actorId,
+                        actorRole,
+                        actorRegion,
+                        actorFacilityId,
+                        batchOwnerId
+                );
+
+                // Decoupled compromised update: check status and call markCompromised via gRPC (idempotent, try-catch)
+                try {
+                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(batchId);
+                    if (batchInfo != null && !batchInfo.getIsCompromised()) {
+                        String firstCompromisedLogId = responses.stream()
+                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                                .map(TraceLogResponse::getId)
+                                .findFirst()
+                                .orElse(null);
+                        String compromiseReason = responses.stream()
+                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                                .map(r -> {
+                                    if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                                    if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                                    return "Chain broken on action " + r.getAction();
+                                })
+                                .findFirst()
+                                .orElse("Integrity verification failed");
+
+                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC (triggered by internal user)", batchCode);
+                    }
+                } catch (Exception ex) {
+                    log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
+                }
+            }
+        }
+
+        return responses;
     }
 
     public List<TraceLogResponse> getTraceLogsByBatchCode(String batchCode) {
@@ -247,7 +302,7 @@ public class TraceLogService {
 
         if (hasCompromised) {
             String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
-            traceAuditService.recordPublicRead(batchCode, "READ_COMPROMISED", "Public trace returned with compromised integrity status", batchOwnerId);
+            traceAuditService.recordReadCompromised(batchCode, null, "PUBLIC", null, null, batchOwnerId);
 
             // Decoupled compromised update: check status and call markCompromised via gRPC (idempotent, try-catch)
             try {

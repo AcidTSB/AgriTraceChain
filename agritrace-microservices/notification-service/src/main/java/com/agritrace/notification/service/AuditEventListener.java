@@ -73,6 +73,31 @@ public class AuditEventListener {
                 UUID userId = UUID.fromString(targetUserIdStr);
                 String alertMessage = "Lô hàng " + batchCode + " bị cảnh báo gian lận dữ liệu!";
 
+                // Dedup check: skip if unread alert or recent alert (within 10 minutes) exists for this batch
+                boolean shouldSkip = false;
+                try {
+                    java.util.List<Alert> existingAlerts = alertRepository.findAlertsByBatch(userId, batchCode);
+                    java.time.LocalDateTime tenMinutesAgo = java.time.LocalDateTime.now().minusMinutes(10);
+                    for (Alert existing : existingAlerts) {
+                        if (Boolean.FALSE.equals(existing.getIsRead())) {
+                            shouldSkip = true;
+                            log.info("Skipping duplicate notification: unread alert already exists for batch {}", batchCode);
+                            break;
+                        }
+                        if (existing.getCreatedAt() != null && existing.getCreatedAt().isAfter(tenMinutesAgo)) {
+                            shouldSkip = true;
+                            log.info("Skipping duplicate notification: alert for batch {} was created recently (within 10 mins)", batchCode);
+                            break;
+                        }
+                    }
+                } catch (Exception ex) {
+                    log.error("Failed to perform notification dedup check, proceeding as fallback", ex);
+                }
+
+                if (shouldSkip) {
+                    return;
+                }
+
                 // Fetch settings
                 NotificationSetting setting = settingRepository.findById(userId)
                     .orElse(NotificationSetting.builder().userId(userId).build());

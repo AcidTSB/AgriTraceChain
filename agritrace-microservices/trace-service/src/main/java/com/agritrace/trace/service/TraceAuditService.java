@@ -80,6 +80,50 @@ public class TraceAuditService {
         );
     }
 
+    public void recordReadCompromised(String batchCode,
+                                      String actorId,
+                                      String actorRole,
+                                      String actorRegion,
+                                      String actorFacilityId,
+                                      String receiverUserId) {
+        String key = batchCode + ":READ_COMPROMISED:" + (actorId != null ? actorId : "PUBLIC");
+        long now = System.currentTimeMillis();
+        Long lastTime = lastPublicReadMap.get(key);
+        
+        // Skip if same operation on same batch happened within the last 30 seconds (debounce)
+        if (lastTime != null && (now - lastTime) < 30000) {
+            return;
+        }
+        lastPublicReadMap.put(key, now);
+
+        UUID actorUuid = null;
+        if (actorId != null && !actorId.isBlank()) {
+            try {
+                actorUuid = UUID.fromString(actorId);
+            } catch (Exception ignored) {}
+        }
+        UUID facilityUuid = null;
+        if (actorFacilityId != null && !actorFacilityId.isBlank()) {
+            try {
+                facilityUuid = UUID.fromString(actorFacilityId);
+            } catch (Exception ignored) {}
+        }
+
+        writeAudit(
+                null,
+                batchCode,
+                "READ_COMPROMISED",
+                actorUuid,
+                actorRole != null ? actorRole : "PUBLIC",
+                actorRegion,
+                facilityUuid,
+                null,
+                null,
+                "Trace returned with compromised integrity status",
+                receiverUserId
+        );
+    }
+
     private void writeAudit(UUID traceLogId,
                             String batchCode,
                             String operation,

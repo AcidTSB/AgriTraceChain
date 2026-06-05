@@ -41,36 +41,36 @@ export function BatchRow({ batchCode, productName, status, updatedAt, detailTo, 
     : null;
 
   return (
-    <div className="bg-surface-container-lowest rounded-xl ghost-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-sm transition-shadow relative overflow-hidden group">
+    <div className="bg-surface-container-lowest rounded-xl ghost-border grid grid-cols-[48px_minmax(0,1fr)_140px_110px_120px] items-center gap-4 hover:shadow-sm transition-shadow relative overflow-hidden group p-4 pl-5 max-md:grid-cols-[48px_1fr] max-md:items-start max-md:gap-y-3">
       {/* Left accent bar */}
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent} group-hover:w-1.5 transition-all duration-200`} />
 
-      {/* Left: monogram + info */}
-      <div className="flex items-center gap-4 pl-5 pr-4 py-4">
-        <div className="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center text-primary font-headline font-bold text-sm shrink-0">
-          {mono}
-        </div>
-        <div>
-          <h4 className="font-headline font-bold text-on-surface text-sm">{batchCode}</h4>
-          <p className="text-xs text-on-surface-variant mt-0.5">{productName}</p>
-          {extra && <p className="text-xs text-outline mt-0.5">{extra}</p>}
-        </div>
+      {/* Monogram logo */}
+      <div className="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center text-primary font-headline font-bold text-sm shrink-0">
+        {mono}
       </div>
 
-      {/* Right: status + date + action */}
-      <div className="flex items-center gap-6 pr-4 pb-4 sm:pb-0 pl-5 sm:pl-0">
-        <div className="hidden md:block">
-          <p className="text-xs text-on-surface-variant mb-1">Trạng thái</p>
-          <Badge status={status} />
-        </div>
+      {/* Info column */}
+      <div className="min-w-0">
+        <h4 className="font-headline font-bold text-on-surface text-sm truncate" title={batchCode}>{batchCode}</h4>
+        <p className="text-xs text-on-surface-variant mt-0.5 truncate" title={productName}>{productName}</p>
+        {extra && <p className="text-xs text-outline mt-0.5 truncate" title={extra}>{extra}</p>}
+      </div>
 
-        {timeLabel && (
-          <div className="hidden sm:block">
-            <p className="text-xs text-on-surface-variant mb-1">Cập nhật</p>
-            <p className="text-sm font-medium text-on-surface">{timeLabel}</p>
-          </div>
-        )}
+      {/* Status column */}
+      <div className="w-[140px] flex flex-col items-start max-md:col-span-2 max-md:w-full max-md:flex-row max-md:items-center max-md:justify-between max-md:border-t max-md:border-slate-100 max-md:pt-2">
+        <p className="text-xs text-on-surface-variant mb-1 max-md:mb-0">Trạng thái</p>
+        <Badge status={status} className="whitespace-nowrap w-fit inline-flex" />
+      </div>
 
+      {/* Date column */}
+      <div className="w-[110px] flex flex-col items-start max-md:col-span-2 max-md:w-full max-md:flex-row max-md:items-center max-md:justify-between max-md:border-t max-md:border-slate-100 max-md:pt-2">
+        <p className="text-xs text-on-surface-variant mb-1 max-md:mb-0">Cập nhật</p>
+        <p className="text-sm font-medium text-on-surface">{timeLabel || "—"}</p>
+      </div>
+
+      {/* Action column */}
+      <div className="w-[120px] flex justify-end max-md:col-span-2 max-md:w-full max-md:border-t max-md:border-slate-100 max-md:pt-2">
         {detailTo && (
           <Link
             to={detailTo}

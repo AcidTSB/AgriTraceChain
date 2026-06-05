@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { StatCard } from "../../components/ui/StatCard";
 import { traceService } from "../../services/traceService";
-import { formatRoleLabel } from "../../helpers/displayLabels";
+import { formatRoleLabel, getAuditActionLabel } from "../../helpers/displayLabels";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const ACTION_STYLES = {
@@ -11,6 +11,11 @@ const ACTION_STYLES = {
   DELETE: "bg-error-container text-on-error-container",
   VERIFY: "bg-surface-container-high text-primary",
   REJECT: "bg-tertiary-container/30 text-on-tertiary-container",
+  READ_COMPROMISED: "bg-error-container text-on-error-container",
+  READ_OK: "bg-secondary-container/50 text-on-secondary-container",
+  INSPECTION: "bg-surface-container-high text-primary",
+  SUSPEND: "bg-error-container text-on-error-container",
+  RESUME: "bg-secondary-container text-on-secondary-container",
 };
 
 const STATUS_DOT = {
@@ -32,15 +37,6 @@ const ROLE_STYLES = {
   INSPECTOR: "bg-surface-container-highest text-on-surface",
   ADMIN: "bg-surface-container-high text-on-surface",
   SYSTEM: "bg-surface-variant/30 text-on-surface-variant",
-};
-
-const ACTION_LABELS = {
-  ALL: "Tất cả",
-  CREATE: "Tạo",
-  UPDATE: "Cập nhật",
-  DELETE: "Xóa",
-  VERIFY: "Xác minh",
-  REJECT: "Từ chối",
 };
 
 const STATUS_LABELS = {
@@ -193,7 +189,7 @@ export function AdminAuditLedgerPage() {
                   : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
               }`}
             >
-              {ACTION_LABELS[a] ?? a}
+              {a === "ALL" ? "Tất cả" : getAuditActionLabel(a)}
             </button>
           ))}
         </div>
@@ -224,8 +220,8 @@ export function AdminAuditLedgerPage() {
                     <p className="font-mono text-[11px] text-outline">#{String(idx + 1).padStart(3, "0")}</p>
                     <p className="mt-1 truncate font-mono text-xs text-on-surface-variant">{formatTs(entry.timestamp)}</p>
                   </div>
-                  <span className={`inline-flex shrink-0 rounded px-2 py-0.5 text-[10px] font-bold uppercase ${ACTION_STYLES[entry.action] ?? "bg-surface-container text-on-surface"}`}>
-                    {ACTION_LABELS[entry.action] ?? entry.action}
+                  <span className={`inline-flex shrink-0 items-center rounded-md px-2 py-1 text-xs font-semibold leading-snug whitespace-normal break-words ${ACTION_STYLES[entry.action] ?? "bg-surface-container text-on-surface"}`}>
+                    {getAuditActionLabel(entry.action)}
                   </span>
                 </div>
                 <div className="mt-3 space-y-2">
@@ -252,81 +248,81 @@ export function AdminAuditLedgerPage() {
 
         <div className="hidden overflow-x-auto sm:block">
           {/* Table Header */}
-          <div className="min-w-[1000px] grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-high/50 font-headline text-xs font-bold text-on-surface-variant tracking-wider uppercase">
-            <div className="col-span-1">#</div>
-            <div className="col-span-2">Thời gian</div>
-            <div className="col-span-2">Người dùng / Vai trò</div>
-            <div className="col-span-1">Hành động</div>
-            <div className="col-span-4">Mục tiêu / Chi tiết</div>
-            <div className="col-span-1">IP</div>
-            <div className="col-span-1 text-right">Trạng thái</div>
+          <div className="min-w-[1070px] grid grid-cols-[60px_180px_190px_150px_minmax(260px,1fr)_100px_130px] gap-4 px-6 py-4 bg-surface-container-high/50 font-headline text-xs font-bold text-on-surface-variant tracking-wider uppercase overflow-hidden">
+            <div>#</div>
+            <div>Thời gian</div>
+            <div>Người dùng / Vai trò</div>
+            <div>Hành động</div>
+            <div>Mục tiêu / Chi tiết</div>
+            <div>IP</div>
+            <div className="text-right">Trạng thái</div>
           </div>
 
-        {/* Table Body */}
-        {filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-outline">manage_search</span>
-            <p className="text-sm text-on-surface-variant mt-3">Không tìm thấy bản ghi nào phù hợp.</p>
-          </div>
-        ) : (
-          filtered.map((entry, idx) => (
-            <div
-              key={entry.id}
-              className={`min-w-[1000px] grid grid-cols-12 gap-4 items-center px-6 py-4 hover:bg-surface-container-low transition-colors group relative border-t border-surface-container-high/20 ${
-                entry.status === "ALERT" || entry.status === "FAILED"
-                  ? "bg-error-container/5"
-                  : entry.status === "BLOCKED"
-                    ? "bg-orange-50/5"
-                    : ""
-              }`}
-            >
-              {/* Accent bar */}
-              <div className={`absolute left-0 top-0 bottom-0 w-1 transition-colors ${STATUS_DOT[entry.status] ?? "bg-surface-container-high"} opacity-0 group-hover:opacity-100`} />
-
-              {/* # */}
-              <div className="col-span-1 font-mono text-xs text-outline">
-                {String(idx + 1).padStart(3, "0")}
-              </div>
-
-              {/* Timestamp */}
-              <div className="col-span-2 font-mono text-xs text-on-surface-variant whitespace-nowrap">
-                {formatTs(entry.timestamp)}
-              </div>
-
-              {/* User / Role */}
-              <div className="col-span-2 flex flex-col gap-1">
-                <span className="font-mono text-xs font-semibold text-on-surface">{entry.user}</span>
-                <span className={`inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${ROLE_STYLES[entry.role] ?? "bg-surface-container text-on-surface"}`}>
-                  {formatRoleLabel(entry.role)}
-                </span>
-              </div>
-
-              {/* Action */}
-              <div className="col-span-1">
-                <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase ${ACTION_STYLES[entry.action] ?? "bg-surface-container text-on-surface"}`}>
-                  {ACTION_LABELS[entry.action] ?? entry.action}
-                </span>
-              </div>
-
-              {/* Target / Detail */}
-              <div className="col-span-4 min-w-0">
-                <p className="font-mono text-xs font-medium text-on-surface truncate" title={entry.target}>{entry.target}</p>
-                <p className="text-[11px] text-on-surface-variant truncate mt-0.5" title={entry.detail}>{entry.detail}</p>
-              </div>
-
-              {/* IP */}
-              <div className="col-span-1 font-mono text-[11px] text-outline whitespace-nowrap">{entry.ipAddress}</div>
-
-              {/* Status */}
-              <div className="col-span-1 flex justify-end items-center gap-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[entry.status] ?? "bg-outline"}`} />
-                <span className={`font-mono text-[11px] font-bold ${STATUS_TEXT[entry.status] ?? "text-on-surface"}`}>
-                  {STATUS_LABELS[entry.status] ?? entry.status}
-                </span>
-              </div>
+          {/* Table Body */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <span className="material-symbols-outlined text-4xl text-outline">manage_search</span>
+              <p className="text-sm text-on-surface-variant mt-3">Không tìm thấy bản ghi nào phù hợp.</p>
             </div>
-          ))
-        )}
+          ) : (
+            filtered.map((entry, idx) => (
+              <div
+                key={entry.id}
+                className={`min-w-[1070px] grid grid-cols-[60px_180px_190px_150px_minmax(260px,1fr)_100px_130px] gap-4 items-start px-6 py-4 hover:bg-surface-container-low transition-colors group relative border-t border-surface-container-high/20 overflow-hidden ${
+                  entry.status === "ALERT" || entry.status === "FAILED"
+                    ? "bg-error-container/5"
+                    : entry.status === "BLOCKED"
+                      ? "bg-orange-50/5"
+                      : ""
+                }`}
+              >
+                {/* Accent bar */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1 transition-colors ${STATUS_DOT[entry.status] ?? "bg-surface-container-high"} opacity-0 group-hover:opacity-100`} />
+
+                {/* # */}
+                <div className="font-mono text-xs text-outline">
+                  {String(idx + 1).padStart(3, "0")}
+                </div>
+
+                {/* Timestamp */}
+                <div className="font-mono text-xs text-on-surface-variant whitespace-nowrap">
+                  {formatTs(entry.timestamp)}
+                </div>
+
+                {/* User / Role */}
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="font-mono text-xs font-semibold text-on-surface truncate" title={entry.user}>{entry.user}</span>
+                  <span className={`inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide truncate ${ROLE_STYLES[entry.role] ?? "bg-surface-container text-on-surface"}`} title={formatRoleLabel(entry.role)}>
+                    {formatRoleLabel(entry.role)}
+                  </span>
+                </div>
+
+                {/* Action */}
+                <div className="min-w-0">
+                  <span className={`inline-flex max-w-[150px] items-center rounded-md px-2 py-1 text-xs font-semibold leading-snug whitespace-normal break-words ${ACTION_STYLES[entry.action] ?? "bg-surface-container text-on-surface"}`}>
+                    {getAuditActionLabel(entry.action)}
+                  </span>
+                </div>
+
+                {/* Target / Detail */}
+                <div className="min-w-0 max-w-full flex flex-col gap-0.5">
+                  <p className="font-mono text-xs font-medium text-on-surface truncate" title={entry.target}>{entry.target}</p>
+                  <p className="text-xs text-slate-500 break-words line-clamp-2" title={entry.detail}>{entry.detail}</p>
+                </div>
+
+                {/* IP */}
+                <div className="font-mono text-[11px] text-outline whitespace-nowrap">{entry.ipAddress}</div>
+
+                {/* Status */}
+                <div className="flex justify-end items-center gap-1.5 min-w-0">
+                  <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[entry.status] ?? "bg-outline"} shrink-0`} />
+                  <span className={`font-mono text-[11px] font-bold truncate ${STATUS_TEXT[entry.status] ?? "text-on-surface"}`}>
+                    {STATUS_LABELS[entry.status] ?? entry.status}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Footer */}

@@ -44,8 +44,13 @@ public class TraceLogController {
     }
 
     @GetMapping("/batch/{batchId}")
-    public ResponseEntity<List<TraceLogResponse>> getTraceLogsByBatch(@PathVariable String batchId) {
-        List<TraceLogResponse> logs = traceLogService.getTraceLogsByBatch(batchId);
+    public ResponseEntity<List<TraceLogResponse>> getTraceLogsByBatch(
+            @PathVariable String batchId,
+            @RequestHeader(value = "X-User-Id", required = false) String userId,
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-User-Facility-Id", required = false) String facilityId,
+            @RequestHeader(value = "X-User-Region", required = false) String region) {
+        List<TraceLogResponse> logs = traceLogService.getTraceLogsByBatch(batchId, userId, role, facilityId, region);
         return ResponseEntity.ok(logs);
     }
 

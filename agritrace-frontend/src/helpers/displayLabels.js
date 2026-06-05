@@ -140,3 +140,20 @@ export function formatBatchStatusLabel(value) {
     SUBMITTED: "Đã gửi",
   });
 }
+
+export const AUDIT_ACTION_LABELS = {
+  READ_COMPROMISED: "Truy xuất cảnh báo",
+  READ_OK: "Truy xuất thành công",
+  CREATE: "Tạo mới",
+  UPDATE: "Cập nhật",
+  DELETE: "Xóa",
+  INSPECTION: "Kiểm định",
+  SUSPEND: "Tạm dừng",
+  RESUME: "Kích hoạt lại",
+  VERIFY: "Xác minh",
+  REJECT: "Từ chối",
+};
+
+export const getAuditActionLabel = (action) => {
+  return AUDIT_ACTION_LABELS[action] || action;
+};
