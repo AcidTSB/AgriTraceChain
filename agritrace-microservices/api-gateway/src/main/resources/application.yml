@@ -72,7 +72,7 @@ spring:
         - id: product-service-v1
           uri: lb://product-service
           predicates:
-            - Path=/api/v1/batches/**, /api/v1/products/**
+            - Path=/api/v1/batches/**, /api/v1/products/**, /api/v1/product-requests/**
           filters:
             - StripPrefix=0
 

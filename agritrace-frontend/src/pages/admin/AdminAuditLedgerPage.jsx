@@ -11,11 +11,12 @@ const ACTION_STYLES = {
   DELETE: "bg-error-container text-on-error-container",
   VERIFY: "bg-surface-container-high text-primary",
   REJECT: "bg-tertiary-container/30 text-on-tertiary-container",
-  READ_COMPROMISED: "bg-error-container text-on-error-container",
+  READ_COMPROMISED: "bg-slate-100 text-slate-600 font-medium",
   READ_OK: "bg-secondary-container/50 text-on-secondary-container",
   INSPECTION: "bg-surface-container-high text-primary",
   SUSPEND: "bg-error-container text-on-error-container",
   RESUME: "bg-secondary-container text-on-secondary-container",
+  COMPROMISE_DETECTED: "bg-error text-white font-bold animate-pulse px-2 py-0.5 rounded shadow-sm",
 };
 
 const STATUS_DOT = {
@@ -23,6 +24,7 @@ const STATUS_DOT = {
   BLOCKED: "bg-orange-500",
   ALERT: "bg-amber-500",
   FAILED: "bg-error",
+  INFO: "bg-slate-400",
 };
 
 const STATUS_TEXT = {
@@ -30,6 +32,7 @@ const STATUS_TEXT = {
   BLOCKED: "text-orange-600",
   ALERT: "text-amber-600",
   FAILED: "text-error",
+  INFO: "text-slate-500",
 };
 
 const ROLE_STYLES = {
@@ -44,6 +47,7 @@ const STATUS_LABELS = {
   BLOCKED: "BỊ CHẶN",
   ALERT: "CẢNH BÁO",
   FAILED: "THẤT BẠI",
+  INFO: "THÔNG TIN",
 };
 
 function formatTs(iso) {
@@ -53,10 +57,12 @@ function formatTs(iso) {
 }
 
 function resolveStatus(item) {
+  const op = (item.operation ?? "").toUpperCase();
   const text = `${item.operation ?? ""} ${item.notes ?? ""}`.toUpperCase();
   if (text.includes("FAILED")) return "FAILED";
-  if (text.includes("REJECT")) return "BLOCKED";
-  if (text.includes("COMPROMISED") || text.includes("ALERT")) return "ALERT";
+  if (op === "REJECT" || text.includes("REJECT")) return "BLOCKED";
+  if (op === "COMPROMISE_DETECTED" || op === "SUSPEND" || text.includes("ALERT") || (text.includes("COMPROMISED") && op !== "READ_COMPROMISED")) return "ALERT";
+  if (op === "READ_COMPROMISED") return "INFO";
   return "SUCCESS";
 }
 
@@ -81,10 +87,12 @@ function toLedgerItem(item) {
 export function AdminAuditLedgerPage() {
   const [query, setQuery] = useState("");
   const [actionFilter, setActionFilter] = useState("ALL");
+  const [activeTab, setActiveTab] = useState("ALL"); // ALL or ALERT
   const [entries, setEntries] = useState([]);
   const [nextCursor, setNextCursor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [scanning, setScanning] = useState(false);
   const [stats, setStats] = useState({
     totalEvents: 0,
     successCount: 0,
@@ -132,14 +140,36 @@ export function AdminAuditLedgerPage() {
     fetchStats();
   }, []);
 
+  const handleScan = async () => {
+    setScanning(true);
+    try {
+      const result = await traceService.scanIntegrity();
+      alert(
+        `Quét toàn vẹn dữ liệu hoàn tất!\n\n` +
+        `- Tổng số lô đã quét: ${result.scannedBatches}\n` +
+        `- Số lô phát hiện vi phạm: ${result.compromisedDetected}\n` +
+        `- Số lô mới bị đánh dấu vi phạm: ${result.newlyMarkedCompromised}\n` +
+        `- Số lô đã vi phạm từ trước: ${result.alreadyCompromised}\n` +
+        `- Thời gian thực hiện: ${result.durationMs} ms`
+      );
+      await fetchStats();
+      await fetchCursorPage(null);
+    } catch (err) {
+      alert("Quét toàn vẹn thất bại: " + (err?.userMessage || err?.message || "Lỗi hệ thống"));
+    } finally {
+      setScanning(false);
+    }
+  };
+
   const filtered = useMemo(() => {
     const kw = query.trim().toLowerCase();
     return entries.filter((e) => {
+      const matchTab = activeTab === "ALL" || e.status === "ALERT" || e.status === "FAILED" || e.status === "BLOCKED";
       const matchAction = actionFilter === "ALL" || e.action === actionFilter;
       const matchQuery = !kw || e.user.toLowerCase().includes(kw) || e.target.toLowerCase().includes(kw) || e.detail.toLowerCase().includes(kw) || e.ipAddress.includes(kw);
-      return matchAction && matchQuery;
+      return matchTab && matchAction && matchQuery;
     });
-  }, [entries, query, actionFilter]);
+  }, [entries, query, actionFilter, activeTab]);
 
   return (
     <div className="space-y-6 md:space-y-10">
@@ -148,9 +178,21 @@ export function AdminAuditLedgerPage() {
         title="Sổ kiểm toán hệ thống"
         subtitle="Bản ghi hoạt động bất biến — theo dõi toàn bộ sự kiện hệ thống."
         rightSlot={
-          <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-surface-container-lowest px-3 py-2 text-[11px] font-mono text-outline ghost-border sm:w-auto sm:justify-start sm:px-4 sm:text-xs">
-            <span className="material-symbols-outlined text-primary text-[14px]">lock</span>
-            {stats.totalEvents} bản ghi • Bất biến
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              onClick={handleScan}
+              disabled={scanning}
+              className="inline-flex items-center gap-2 rounded-xl btn-primary-gradient px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90 disabled:opacity-50"
+            >
+              <span className={`material-symbols-outlined text-[16px] ${scanning ? "animate-spin" : ""}`}>
+                {scanning ? "sync" : "security"}
+              </span>
+              {scanning ? "Đang quét..." : "Quét toàn vẹn dữ liệu"}
+            </button>
+            <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-surface-container-lowest px-3 py-2 text-[11px] font-mono text-outline ghost-border sm:w-auto sm:justify-start sm:px-4 sm:text-xs">
+              <span className="material-symbols-outlined text-primary text-[14px]">lock</span>
+              {stats.totalEvents} bản ghi • Bất biến
+            </div>
           </div>
         }
       />
@@ -161,6 +203,32 @@ export function AdminAuditLedgerPage() {
         <StatCard icon="check_circle" label="Thành công" value={stats.successCount} iconColor="text-secondary" orbColor="bg-secondary-container/20" />
         <StatCard icon="warning" label="Cảnh báo / Chặn" value={stats.warningOrBlockedCount} iconColor="text-tertiary" orbColor="bg-tertiary-container/10" />
         <StatCard icon="cancel" label="Thất bại" value={stats.failedCount} iconColor="text-error" orbColor="bg-error-container/10" />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-slate-200 gap-6 px-1">
+        <button
+          onClick={() => setActiveTab("ALL")}
+          className={`pb-3 text-sm font-bold border-b-2 transition-all relative ${
+            activeTab === "ALL"
+              ? "border-primary text-primary"
+              : "border-transparent text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          Tất cả nhật ký
+        </button>
+        <button
+          id="alert-tab"
+          onClick={() => setActiveTab("ALERT")}
+          className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-1.5 relative ${
+            activeTab === "ALERT"
+              ? "border-red-500 text-red-600"
+              : "border-transparent text-slate-500 hover:text-red-500"
+          }`}
+        >
+          <span className="material-symbols-outlined text-[18px]">warning</span>
+          Cảnh báo & Vi phạm
+        </button>
       </div>
 
       {/* Filters */}

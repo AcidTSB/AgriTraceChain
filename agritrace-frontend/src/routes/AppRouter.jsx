@@ -13,6 +13,8 @@ import { AdminFacilityManagementPage } from "../pages/admin/AdminFacilityManagem
 import { AdminProductManagementPage } from "../pages/admin/AdminProductManagementPage";
 import { AdminUserManagementPage } from "../pages/admin/AdminUserManagementPage";
 import { AdminAuditLedgerPage } from "../pages/admin/AdminAuditLedgerPage";
+import { AdminProductRequestPage } from "../pages/admin/AdminProductRequestPage";
+import { AdminTraceDetailPage } from "../pages/admin/AdminTraceDetailPage";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
@@ -23,6 +25,7 @@ import { FarmerCreateBatchPage } from "../pages/farmer/FarmerCreateBatchPage";
 import { FarmerCreateFarmPage } from "../pages/farmer/FarmerCreateFarmPage";
 import { FarmerDashboardPage } from "../pages/farmer/FarmerDashboardPage";
 import { FarmerProductListPage } from "../pages/farmer/FarmerProductListPage";
+import { FarmerProductRequestPage } from "../pages/farmer/FarmerProductRequestPage";
 import { FarmerQrSharePage } from "../pages/farmer/FarmerQrSharePage";
 import { InternalTraceDetailPage } from "../pages/internal/InternalTraceDetailPage";
 import { InternalTraceExplorerPage } from "../pages/internal/InternalTraceExplorerPage";
@@ -71,6 +74,7 @@ export const router = createBrowserRouter(
         <Route path="dashboard" element={<FarmerDashboardPage />} />
         <Route path="farms/new" element={<FarmerCreateFarmPage />} />
         <Route path="products" element={<FarmerProductListPage />} />
+        <Route path="product-requests" element={<FarmerProductRequestPage />} />
         <Route path="batches" element={<FarmerBatchListPage />} />
         <Route path="batches/new" element={<FarmerCreateBatchPage />} />
         <Route path="batches/:batchCode" element={<FarmerBatchDetailPage />} />
@@ -108,6 +112,17 @@ export const router = createBrowserRouter(
         <Route path="users" element={<AdminUserManagementPage />} />
         <Route path="facilities" element={<AdminFacilityManagementPage />} />
         <Route path="audit" element={<AdminAuditLedgerPage />} />
+        <Route path="product-requests" element={<AdminProductRequestPage />} />
+      </Route>
+
+      <Route
+        element={
+          <RoleGuard allowedRoles={["ADMIN", "INSPECTOR"]}>
+            <AppShellLayout />
+          </RoleGuard>
+        }
+      >
+        <Route path="/admin/trace/:batchCode" element={<AdminTraceDetailPage />} />
       </Route>
 
       <Route

@@ -29,6 +29,7 @@
       "dashboard": "Tổng quan",
       "createFarm": "Tạo nông trại",
       "products": "Sản phẩm",
+      "productRequests": "Yêu cầu sản phẩm",
       "batchList": "Danh sách lô",
       "createBatch": "Tạo lô",
       "internalExplorer": "Tra cứu nội bộ",
@@ -46,6 +47,7 @@
       "users": "Người dùng",
       "facilities": "Cơ sở",
       "auditLedger": "Sổ kiểm toán hệ thống",
+      "productRequests": "Duyệt sản phẩm mới",
       "internalExplorer": "Tra cứu nội bộ"
     }
   },

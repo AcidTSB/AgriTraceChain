@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
@@ -10,7 +10,7 @@ import { TimelineCard } from "../../components/timeline/TimelineCard";
 import { MapTracking } from "../../components/map/MapTracking";
 import { batchService } from "../../services/batchService";
 import { productService } from "../../services/productService";
-import { publicClient, unwrapApiResponse } from "../../services/apiClient";
+import { traceService } from "../../services/traceService";
 import { formatTraceStageLabel } from "../../helpers/displayLabels";
 
 const STAGE_ORDER = [
@@ -148,7 +148,7 @@ function TraceTimelineSkeleton() {
   );
 }
 
-export function PublicTracePage() {
+export function AdminTraceDetailPage() {
   const { batchCode } = useParams();
   const { t } = useTranslation();
   const [product, setProduct] = useState(null);
@@ -166,30 +166,20 @@ export function PublicTracePage() {
 
       try {
         const batchDetail = await batchService.getBatchByCode(batchCode);
-        const [traceResponse, productDetail] = await Promise.all([
-          publicClient.get(`/api/public/trace/${encodeURIComponent(batchCode)}`),
+        const [traceLogs, productDetail] = await Promise.all([
+          traceService.getAdminTraceLogsByBatchCode(batchCode),
           batchDetail?.productId ? productService.getProductById(batchDetail.productId) : Promise.resolve(null),
         ]);
 
-        const payload = unwrapApiResponse(traceResponse);
-        const nextLogs = Array.isArray(payload) ? payload : [];
-
         if (active) {
           setProduct(productDetail);
-          setLogs(nextLogs);
+          setLogs(traceLogs);
         }
       } catch (err) {
         if (!active) {
           return;
         }
-        const status = err?.response?.status;
-        if (status === 404) {
-          setError(t("public.invalidQr"));
-        } else if (status === 403) {
-          setError("TRUY CẬP BỊ HẠN CHẾ: Nhật ký truy xuất nguồn gốc của lô hàng này hiện chưa được công bố công khai (chưa qua kiểm định) hoặc có vấn đề về tính toàn vẹn dữ liệu.");
-        } else {
-          setError(err?.userMessage ?? t("public.unableLoadTraceData"));
-        }
+        setError(err?.userMessage || "Không thể tải dữ liệu truy xuất nội bộ cho Admin");
       } finally {
         if (active) {
           setLoading(false);
@@ -209,80 +199,47 @@ export function PublicTracePage() {
   }, [logs]);
 
   const tracePaused = product?.isActive === false;
-
   const groupedLogs = useMemo(() => groupLogsByStage(logs), [logs]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 md:px-6 md:py-14">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Báo cáo Truy xuất nguồn gốc dành cho Admin / Kiểm định viên</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+            Lô hàng: {batchCode}
+          </h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link to="/admin/dashboard">
+            <Button variant="secondary">Quay lại Dashboard</Button>
+          </Link>
+          <Link to="/admin/audit">
+            <Button variant="secondary">Lịch sử Audit</Button>
+          </Link>
+        </div>
+      </div>
+
       {overallStatus === "COMPROMISED" ? (
         <StateCard
           tone="error"
-          title="CẢNH BÁO AN TOÀN DỮ LIỆU"
-          message="CẢNH BÁO: Dữ liệu truy xuất của lô hàng này có dấu hiệu bị xâm phạm. Vui lòng liên hệ đơn vị quản lý hoặc kiểm định viên để xác minh."
-          className="mb-6"
+          title="CẢNH BÁO AN TOÀN DỮ LIỆU (NỘI BỘ)"
+          message="CẢNH BÁO: Hệ thống phát hiện dữ liệu truy xuất của lô hàng này bị thay đổi trái phép (mismatch Hash hoặc Signature). Dưới tư cách Admin/Kiểm định viên, vui lòng kiểm tra kỹ chi tiết chữ ký số của từng nhật ký bên dưới."
+          className="border-rose-400 bg-rose-50"
         />
       ) : null}
 
-      {tracePaused ? (
-        <StateCard
-          tone="warning"
-          title={t("public.tracePausedTitle")}
-          message={t("public.tracePausedByAdmin")}
-          className="mb-6"
-        />
-      ) : null}
-
-      <Card
-        className={`mb-6 border-2 ${getTrustCardClass(overallStatus)}`}
-      >
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{t("public.trustStatus")}</p>
+      <Card className={`border-2 ${getTrustCardClass(overallStatus)}`}>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Trạng thái tin cậy</p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl" data-testid="trust-headline">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
             {getTrustHeadline(overallStatus, t)}
           </h2>
-          <Badge
-            variant={mapTrustVariant(overallStatus)}
-            className="px-5 py-2 text-base font-bold tracking-wide"
-            data-testid="trust-badge"
-          >
+          <Badge variant={mapTrustVariant(overallStatus)} className="px-5 py-2 text-base font-bold tracking-wide">
             {getTrustHeadline(overallStatus, t)}
           </Badge>
         </div>
         <p className="mt-2 text-sm text-slate-700">{getTrustDescription(overallStatus, t)}</p>
-      </Card>
-
-      <div className="mb-6 grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">{t("public.publicTraceabilityReport")}</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            {t("public.batchCode")} {batchCode}
-          </h1>
-          <p className="mt-2 text-sm text-slate-600">{t("public.immutableTimeline")}</p>
-        </div>
-        <div className="justify-self-start md:justify-self-end">
-          <div className="flex items-center gap-2">
-            <Badge variant={mapIntegrityVariant(overallStatus)} className="px-3 py-1.5 text-sm font-bold">
-              {getTrustHeadline(overallStatus, t)}
-            </Badge>
-            <Button type="button" variant="secondary" className="px-3 py-1.5 text-xs" onClick={() => setShowIntegrityModal(true)}>
-              {t("public.why")}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <Card className="mb-6 bg-slate-50">
-        <h2 className="text-lg font-semibold text-slate-900">{t("public.integrityBadgeMeaning")}</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-            <p className="text-sm font-semibold text-emerald-800">{t("public.verified")}</p>
-            <p className="mt-1 text-sm text-emerald-900">{t("public.hashSignaturePass")}</p>
-          </div>
-          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
-            <p className="text-sm font-semibold text-rose-800">{t("public.compromised")}</p>
-            <p className="mt-1 text-sm text-rose-900">{t("public.tamperingRisk")}</p>
-          </div>
-        </div>
       </Card>
 
       {loading ? <TraceTimelineSkeleton /> : null}
@@ -290,34 +247,24 @@ export function PublicTracePage() {
       {!loading && error ? (
         <StateCard
           tone="error"
-          title={t("public.unableLoadTraceData")}
+          title="Lỗi tải dữ liệu"
           message={error}
-          action={{ label: t("public.tryAnotherCode"), to: "/trace-entry", variant: "secondary" }}
         />
       ) : null}
 
       {!loading && !error && logs.length === 0 ? (
         <StateCard
           tone="neutral"
-          title={t("public.noTraceLogs")}
-          message={t("public.noTraceLogsDesc")}
-          action={{ label: t("public.backToTraceEntry"), to: "/trace-entry", variant: "secondary" }}
-        />
-      ) : null}
-
-      {!loading && !error && logs.length > 0 && overallStatus === "AWAITING_INSPECTION" ? (
-        <StateCard
-          tone="warning"
-          title={t("public.inspectionGateNotPublished")}
-          message={t("public.inspectionGateNotPublishedDesc")}
+          title="Chưa có nhật ký truy xuất"
+          message="Lô hàng này hiện chưa được ghi nhận bất kỳ hoạt động truy xuất nào."
         />
       ) : null}
 
       {!loading && !error && logs.length > 0 && !tracePaused ? (
-        <Card className="mb-6 space-y-4">
+        <Card className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900">Hành trình GPS</h2>
-            <Badge variant="info">{t("public.eventsCount", { count: logs.length })}</Badge>
+            <Badge variant="info">Tổng cộng {logs.length} sự kiện</Badge>
           </div>
           <MapTracking logs={logs} />
         </Card>
@@ -329,7 +276,7 @@ export function PublicTracePage() {
             <Card key={group.stage} className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold tracking-tight text-slate-900">{group.label}</h2>
-                <Badge variant="info">{t("public.eventsCount", { count: group.items.length })}</Badge>
+                <Badge variant="info">{group.items.length} sự kiện</Badge>
               </div>
 
               <div className="relative pl-6">
@@ -345,38 +292,13 @@ export function PublicTracePage() {
                             : "border-emerald-600 bg-emerald-100"
                         }`}
                       />
-
-                      <TimelineCard log={item} mode="public" />
+                      <TimelineCard log={item} mode="internal" showMetadata={true} />
                     </div>
                   ))}
                 </div>
               </div>
             </Card>
           ))}
-        </div>
-      ) : null}
-
-      {showIntegrityModal ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 px-4" role="dialog" aria-modal="true">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl">
-            <h2 className="text-xl font-semibold text-slate-900">{t("public.integrityBadgeMeaning")}</h2>
-            <p className="mt-2 text-sm text-slate-600">{t("public.howToInterpretTrust")}</p>
-            <div className="mt-4 space-y-3">
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                <p className="text-sm font-semibold text-emerald-800">{t("public.verified")}</p>
-                <p className="mt-1 text-sm text-emerald-900">{t("public.hashSignaturePass")}</p>
-              </div>
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
-                <p className="text-sm font-semibold text-rose-800">{t("public.compromised")}</p>
-                <p className="mt-1 text-sm text-rose-900">{t("public.tamperingRisk")}</p>
-              </div>
-            </div>
-            <div className="mt-5 flex justify-end">
-              <Button variant="secondary" onClick={() => setShowIntegrityModal(false)}>
-                {t("common.close")}
-              </Button>
-            </div>
-          </div>
         </div>
       ) : null}
     </div>

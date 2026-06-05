@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.agritrace.trace.dto.CreateTraceLogRequest;
 import com.agritrace.trace.dto.TraceLogResponse;
+import com.agritrace.trace.dto.IntegrityScanResponse;
 import com.agritrace.trace.service.TraceLogService;
 
 import jakarta.validation.Valid;
@@ -67,5 +68,22 @@ public class TraceLogController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trace log integrity compromised");
         }
         return ResponseEntity.ok(Map.of("traceId", traceId, "isValid", true));
+    }
+
+    @PostMapping("/admin/integrity/scan")
+    public ResponseEntity<IntegrityScanResponse> scanIntegrity() {
+        IntegrityScanResponse summary = traceLogService.scanIntegrityAllBatches();
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/admin/batch-code/{batchCode}")
+    public ResponseEntity<List<TraceLogResponse>> getAdminTraceLogsByBatchCode(
+            @PathVariable String batchCode,
+            @RequestHeader(value = "X-User-Id", required = false) String userId,
+            @RequestHeader(value = "X-User-Role", required = false) String role,
+            @RequestHeader(value = "X-User-Facility-Id", required = false) String facilityId,
+            @RequestHeader(value = "X-User-Region", required = false) String region) {
+        List<TraceLogResponse> logs = traceLogService.getTraceLogsByBatchCodeInternal(batchCode, userId, role, facilityId, region);
+        return ResponseEntity.ok(logs);
     }
 }

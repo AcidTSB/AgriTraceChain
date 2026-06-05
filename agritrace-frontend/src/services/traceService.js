@@ -35,4 +35,15 @@ export const traceService = {
     const response = await apiClient.get(`/api/v1/internal/search?${params.toString()}`);
     return unwrapApiResponse(response);
   },
+
+  async getAdminTraceLogsByBatchCode(batchCode) {
+    const response = await apiClient.get(`/api/v1/trace-logs/admin/batch-code/${batchCode}`);
+    const payload = unwrapApiResponse(response);
+    return Array.isArray(payload) ? payload : [];
+  },
+
+  async scanIntegrity() {
+    const response = await apiClient.post("/api/v1/trace-logs/admin/integrity/scan");
+    return unwrapApiResponse(response);
+  },
 };

@@ -7,6 +7,7 @@ const iconMap = {
   "sidebar.farmer.dashboard": "dashboard",
   "sidebar.farmer.createFarm": "add_home",
   "sidebar.farmer.products": "inventory_2",
+  "sidebar.farmer.productRequests": "pending_actions",
   "sidebar.farmer.batchList": "layers",
   "sidebar.farmer.createBatch": "add_circle",
   "sidebar.farmer.internalExplorer": "travel_explore",
@@ -20,6 +21,7 @@ const iconMap = {
   "sidebar.admin.users": "group",
   "sidebar.admin.facilities": "warehouse",
   "sidebar.admin.auditLedger": "policy",
+  "sidebar.admin.productRequests": "rate_review",
   "sidebar.admin.internalExplorer": "travel_explore",
 };
 
@@ -35,6 +37,7 @@ const roleMenus = {
     { labelKey: "sidebar.farmer.dashboard", to: "/farmer/dashboard", end: true },
     { labelKey: "sidebar.farmer.createFarm", to: "/farmer/farms/new", end: true },
     { labelKey: "sidebar.farmer.products", to: "/farmer/products", end: true },
+    { labelKey: "sidebar.farmer.productRequests", to: "/farmer/product-requests", end: true },
     { labelKey: "sidebar.farmer.batchList", to: "/farmer/batches", end: true },
     { labelKey: "sidebar.farmer.createBatch", to: "/farmer/batches/new", end: true },
     { labelKey: "sidebar.farmer.internalExplorer", to: "/internal/trace", end: true },
@@ -52,6 +55,7 @@ const roleMenus = {
     { labelKey: "sidebar.admin.users", to: "/admin/users", end: true },
     { labelKey: "sidebar.admin.facilities", to: "/admin/facilities", end: true },
     { labelKey: "sidebar.admin.auditLedger", to: "/admin/audit", end: true },
+    { labelKey: "sidebar.admin.productRequests", to: "/admin/product-requests", end: true },
     { labelKey: "sidebar.admin.internalExplorer", to: "/internal/trace", end: true },
   ],
 };

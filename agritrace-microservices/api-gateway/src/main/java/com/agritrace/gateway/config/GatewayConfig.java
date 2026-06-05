@@ -27,11 +27,11 @@ public class GatewayConfig {
                                 .rewritePath("/api/(?<segment>.*)", "/api/v1/${segment}"))
                         .uri("lb://user-service"))
                 .route("product-service-v1", r -> r
-                        .path("/api/v1/batches/**", "/api/v1/products/**")
+                        .path("/api/v1/batches/**", "/api/v1/products/**", "/api/v1/product-requests/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("lb://product-service"))
                 .route("product-service-legacy", r -> r
-                        .path("/api/batches/**", "/api/products/**")
+                        .path("/api/batches/**", "/api/products/**", "/api/product-requests/**")
                         .filters(f -> f
                                 .filter(jwtAuthenticationFilter)
                                 .rewritePath("/api/(?<segment>.*)", "/api/v1/${segment}"))

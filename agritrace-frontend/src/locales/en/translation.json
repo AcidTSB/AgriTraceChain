@@ -29,6 +29,7 @@
       "dashboard": "Dashboard",
       "createFarm": "Create Farm",
       "products": "Products",
+      "productRequests": "Product Requests",
       "batchList": "Batch List",
       "createBatch": "Create Batch",
       "internalExplorer": "Internal Explorer"
@@ -44,6 +45,7 @@
       "users": "Users",
       "facilities": "Facilities",
       "auditLedger": "System Audit Ledger",
+      "productRequests": "Approve Products",
       "internalExplorer": "Internal Explorer"
     }
   },

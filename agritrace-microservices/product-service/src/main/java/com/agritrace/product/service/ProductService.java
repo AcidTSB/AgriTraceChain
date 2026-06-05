@@ -54,6 +54,8 @@ public class ProductService {
                 .description(normalizeNullableText(request.getDescription()))
                 .sku(normalizeNullableText(request.getSku()))
                 .category(normalizeNullableText(request.getCategory()))
+                .unit(normalizeNullableText(request.getUnit()))
+                .imageUrl(normalizeNullableText(request.getImageUrl()))
                 .isActive(request.getIsActive() == null ? true : request.getIsActive())
                 .build();
 
@@ -169,6 +171,8 @@ public class ProductService {
                 .description(product.getDescription())
                 .sku(product.getSku())
                 .category(product.getCategory())
+                .unit(product.getUnit())
+                .imageUrl(product.getImageUrl())
                 .isActive(product.getIsActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

@@ -28,6 +28,10 @@ public class ProductResponse {
     private String sku;
     /** Product category, e.g. Rau củ, Trái cây. Null if not yet assigned. */
     private String category;
+    /** Unit of measure, e.g. kg, tấn, hộp. */
+    private String unit;
+    /** Optional product image URL. */
+    private String imageUrl;
     private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

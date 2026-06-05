@@ -24,4 +24,7 @@ public interface TraceLogRepository extends JpaRepository<TraceLog, UUID> {
 
     @Query("SELECT COALESCE(SUM(t.quantity), 0) FROM TraceLog t WHERE t.batchId = :batchId AND t.actionType = :actionType")
     BigDecimal sumQuantityByBatchIdAndActionType(UUID batchId, String actionType);
+
+    @Query("SELECT DISTINCT t.batchCode, t.batchId FROM TraceLog t WHERE t.batchCode IS NOT NULL")
+    List<Object[]> findDistinctBatchCodesAndIds();
 }

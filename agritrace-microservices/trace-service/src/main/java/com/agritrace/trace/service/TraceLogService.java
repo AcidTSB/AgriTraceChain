@@ -6,6 +6,7 @@ import com.agritrace.proto.user.UserResponse;
 import com.agritrace.common.exception.ResourceNotFoundException;
 import com.agritrace.trace.dto.CreateTraceLogRequest;
 import com.agritrace.trace.dto.TraceLogResponse;
+import com.agritrace.trace.dto.IntegrityScanResponse;
 import com.agritrace.trace.entity.TraceAction;
 import com.agritrace.trace.entity.TraceLog;
 import com.agritrace.trace.entity.TraceOutboxEvent;
@@ -242,7 +243,36 @@ public class TraceLogService {
             String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
 
             if (batchCode != null) {
-                // Record Audit Event
+                String firstCompromisedLogId = responses.stream()
+                        .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                        .map(TraceLogResponse::getId)
+                        .findFirst()
+                        .orElse(null);
+                String compromiseReason = responses.stream()
+                        .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                        .map(r -> {
+                            if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                            if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                            return "Chain broken on action " + r.getAction();
+                        })
+                        .findFirst()
+                        .orElse("Integrity verification failed");
+
+                // Always log COMPROMISE_DETECTED first (idempotent via unique partial index and soft exists check)
+                traceAuditService.recordCompromiseDetected(batchCode, compromiseReason, batchOwnerId);
+
+                // Call gRPC only if not already marked compromised in product-service
+                try {
+                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(batchId);
+                    if (batchInfo != null && !batchInfo.getIsCompromised()) {
+                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC (triggered by internal user)", batchCode);
+                    }
+                } catch (Exception ex) {
+                    log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
+                }
+
+                // Record Audit Event for reading (throttled to 10 minutes)
                 traceAuditService.recordReadCompromised(
                         batchCode,
                         actorId,
@@ -251,32 +281,6 @@ public class TraceLogService {
                         actorFacilityId,
                         batchOwnerId
                 );
-
-                // Decoupled compromised update: check status and call markCompromised via gRPC (idempotent, try-catch)
-                try {
-                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(batchId);
-                    if (batchInfo != null && !batchInfo.getIsCompromised()) {
-                        String firstCompromisedLogId = responses.stream()
-                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
-                                .map(TraceLogResponse::getId)
-                                .findFirst()
-                                .orElse(null);
-                        String compromiseReason = responses.stream()
-                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
-                                .map(r -> {
-                                    if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
-                                    if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
-                                    return "Chain broken on action " + r.getAction();
-                                })
-                                .findFirst()
-                                .orElse("Integrity verification failed");
-
-                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
-                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC (triggered by internal user)", batchCode);
-                    }
-                } catch (Exception ex) {
-                    log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
-                }
             }
         }
 
@@ -302,9 +306,78 @@ public class TraceLogService {
 
         if (hasCompromised) {
             String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
+            String firstCompromisedLogId = responses.stream()
+                    .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                    .map(TraceLogResponse::getId)
+                    .findFirst()
+                    .orElse(null);
+            String compromiseReason = responses.stream()
+                    .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                    .map(r -> {
+                        if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                        if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                        return "Chain broken on action " + r.getAction();
+                    })
+                    .findFirst()
+                    .orElse("Integrity verification failed");
+
+            // Always log COMPROMISE_DETECTED first (idempotent via unique partial index and soft exists check)
+            traceAuditService.recordCompromiseDetected(batchCode, compromiseReason, batchOwnerId);
+
+            // Call gRPC only if not already marked compromised in product-service
+            try {
+                String targetBatchId = responses.get(0).getBatchId();
+                if (targetBatchId != null && !targetBatchId.isBlank()) {
+                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(targetBatchId);
+                    if (batchInfo != null && !batchInfo.getIsCompromised()) {
+                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC", batchCode);
+                    }
+                }
+            } catch (Exception ex) {
+                log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
+            }
+
+            // Record Audit Event for reading (throttled to 10 minutes)
             traceAuditService.recordReadCompromised(batchCode, null, "PUBLIC", null, null, batchOwnerId);
 
-            // Decoupled compromised update: check status and call markCompromised via gRPC (idempotent, try-catch)
+            return responses;
+        }
+
+        traceAuditService.recordPublicRead(batchCode, "READ_OK", "Public trace returned", null);
+        return responses;
+    }
+
+    public List<TraceLogResponse> getTraceLogsByBatchCodeInternal(String batchCode,
+                                                                  String actorId,
+                                                                  String actorRole,
+                                                                  String actorFacilityId,
+                                                                  String actorRegion) {
+        List<TraceLog> logs = traceLogRepository.findByBatchCodeOrderByCreatedAtAsc(batchCode);
+        if (logs.isEmpty()) {
+            throw new ResourceNotFoundException("TraceLog", "batchCode", batchCode);
+        }
+
+        List<TraceLogResponse> responses = verifyAndMap(logs);
+
+        boolean hasCompromised = responses.stream().anyMatch(r -> "COMPROMISED".equals(r.getIntegrityStatus()));
+
+        if (hasCompromised) {
+            String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
+            String compromiseReason = responses.stream()
+                    .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                    .map(r -> {
+                        if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                        if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                        return "Chain broken on action " + r.getAction();
+                    })
+                    .findFirst()
+                    .orElse("Integrity verification failed");
+
+            // Always log COMPROMISE_DETECTED first (idempotent via unique partial index and soft exists check)
+            traceAuditService.recordCompromiseDetected(batchCode, compromiseReason, batchOwnerId);
+
+            // Call gRPC only if not already marked compromised in product-service
             try {
                 String targetBatchId = responses.get(0).getBatchId();
                 if (targetBatchId != null && !targetBatchId.isBlank()) {
@@ -315,29 +388,112 @@ public class TraceLogService {
                                 .map(TraceLogResponse::getId)
                                 .findFirst()
                                 .orElse(null);
-                        String compromiseReason = responses.stream()
-                                .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
-                                .map(r -> {
-                                    if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
-                                    if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
-                                    return "Chain broken on action " + r.getAction();
-                                })
-                                .findFirst()
-                                .orElse("Integrity verification failed");
-
                         batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
-                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC", batchCode);
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via gRPC (internal user details API)", batchCode);
                     }
                 }
             } catch (Exception ex) {
                 log.error("Failed to mark batch compromised in product-service (non-blocking): {}", ex.getMessage());
             }
 
-            return responses;
+            // Record Audit Event for reading (throttled to 10 minutes)
+            traceAuditService.recordReadCompromised(
+                    batchCode,
+                    actorId,
+                    actorRole,
+                    actorRegion,
+                    actorFacilityId,
+                    batchOwnerId
+            );
         }
 
-        traceAuditService.recordPublicRead(batchCode, "READ_OK", "Public trace returned", null);
         return responses;
+    }
+
+    public IntegrityScanResponse scanIntegrityAllBatches() {
+        long startTime = System.currentTimeMillis();
+        List<Object[]> distinctBatches = traceLogRepository.findDistinctBatchCodesAndIds();
+        
+        long scannedBatches = 0;
+        long compromisedDetected = 0;
+        long newlyMarkedCompromised = 0;
+        long alreadyCompromised = 0;
+
+        for (Object[] batchRow : distinctBatches) {
+            String batchCode = (String) batchRow[0];
+            UUID batchId = (UUID) batchRow[1];
+            if (batchCode == null || batchId == null) {
+                continue;
+            }
+            
+            scannedBatches++;
+            
+            List<TraceLog> logs = traceLogRepository.findByBatchIdOrderByCreatedAtAsc(batchId);
+            if (logs.isEmpty()) {
+                continue;
+            }
+            
+            List<TraceLogResponse> responses = verifyAndMap(logs);
+            boolean hasCompromised = responses.stream().anyMatch(r -> "COMPROMISED".equals(r.getIntegrityStatus()));
+            
+            if (hasCompromised) {
+                compromisedDetected++;
+                String batchOwnerId = responses.isEmpty() ? null : responses.get(0).getCreatedById();
+                String firstCompromisedLogId = responses.stream()
+                        .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                        .map(TraceLogResponse::getId)
+                        .findFirst()
+                        .orElse(null);
+                String compromiseReason = responses.stream()
+                        .filter(r -> "COMPROMISED".equals(r.getIntegrityStatus()))
+                        .map(r -> {
+                            if (Boolean.FALSE.equals(r.getHashVerified())) return "Hash mismatch on action " + r.getAction();
+                            if (Boolean.FALSE.equals(r.getSignatureVerified())) return "Signature invalid on action " + r.getAction();
+                            return "Chain broken on action " + r.getAction();
+                        })
+                        .findFirst()
+                        .orElse("Integrity verification failed");
+
+                // Idempotently create COMPROMISE_DETECTED event with Farmer owner as receiverUserId
+                traceAuditService.recordCompromiseDetected(batchCode, compromiseReason, batchOwnerId);
+                
+                // Fetch current status from product-service
+                boolean isAlreadyCompromised = false;
+                try {
+                    com.agritrace.proto.batch.BatchResponse batchInfo = batchGrpcClient.getBatchById(batchId.toString());
+                    if (batchInfo != null) {
+                        isAlreadyCompromised = batchInfo.getIsCompromised();
+                    }
+                } catch (Exception ex) {
+                    log.error("Failed to fetch batch status via gRPC for batchId={}: {}", batchId, ex.getMessage());
+                }
+
+                if (isAlreadyCompromised) {
+                    alreadyCompromised++;
+                } else {
+                    boolean markedSuccess = false;
+                    try {
+                        batchGrpcClient.markBatchCompromised(batchCode, compromiseReason, firstCompromisedLogId);
+                        markedSuccess = true;
+                        log.warn("🚨 Successfully marked batch {} compromised in product-service via integrity scan", batchCode);
+                    } catch (Exception ex) {
+                        log.error("Failed to mark batch compromised in product-service (non-blocking) during integrity scan: {}", ex.getMessage());
+                    }
+                    if (markedSuccess) {
+                        newlyMarkedCompromised++;
+                    }
+                }
+            }
+        }
+
+        long durationMs = System.currentTimeMillis() - startTime;
+        return IntegrityScanResponse.builder()
+                .scannedBatches(scannedBatches)
+                .compromisedDetected(compromisedDetected)
+                .newlyMarkedCompromised(newlyMarkedCompromised)
+                .alreadyCompromised(alreadyCompromised)
+                .durationMs(durationMs)
+                .build();
     }
 
     public boolean verifyTraceLogIntegrity(String traceId) {

@@ -42,7 +42,7 @@ public class AuditEventListener {
             boolean isCompromisedEvent = false;
 
             // Check operation name
-            if (operation != null && operation.contains("COMPROMISED")) {
+            if ("COMPROMISE_DETECTED".equals(operation)) {
                 isCompromisedEvent = true;
             }
 
@@ -130,6 +130,75 @@ public class AuditEventListener {
 
         } catch (Exception e) {
             log.error("Error processing audit event", e);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Product Request Review Events (product-request-topic)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @KafkaListener(topics = "product-request-topic", groupId = "notification-group")
+    @Transactional
+    public void onProductRequestEvent(String message) {
+        log.info("Received message from product-request-topic: {}", message);
+        try {
+            if (message != null && message.startsWith("\"") && message.endsWith("\"")) {
+                message = objectMapper.readValue(message, String.class);
+            }
+            Map<String, Object> payload = objectMapper.readValue(message,
+                    new TypeReference<Map<String, Object>>() {});
+
+            String operation    = (String) payload.get("operation");
+            String productName  = (String) payload.get("productName");
+            String receiverStr  = (String) payload.get("receiverUserId");
+
+            if (receiverStr == null) {
+                log.warn("product-request-topic event missing receiverUserId — skipping");
+                return;
+            }
+
+            UUID farmerId = UUID.fromString(receiverStr);
+
+            String alertMessage;
+            if ("PRODUCT_REQUEST_APPROVED".equals(operation)) {
+                alertMessage = "✅ Yêu cầu sản phẩm \"" + productName + "\" đã được Admin duyệt! "
+                        + "Bạn có thể tạo lô hàng mới từ sản phẩm này.";
+            } else if ("PRODUCT_REQUEST_REJECTED".equals(operation)) {
+                String reason = (String) payload.get("rejectionReason");
+                alertMessage = "❌ Yêu cầu sản phẩm \"" + productName + "\" đã bị từ chối."
+                        + (reason != null ? " Lý do: " + reason : "");
+            } else {
+                log.warn("Unknown operation on product-request-topic: {}", operation);
+                return;
+            }
+
+            NotificationSetting setting = settingRepository.findById(farmerId)
+                    .orElse(NotificationSetting.builder().userId(farmerId).build());
+
+            if (setting.getInAppEnabled()) {
+                Alert alert = Alert.builder()
+                        .userId(farmerId)
+                        .message(alertMessage)
+                        .build();
+                alertRepository.save(alert);
+                log.info("In-app alert saved for farmer {} — operation: {}", farmerId, operation);
+            }
+
+            if (setting.getSmsEnabled()) {
+                smsSender.sendSms("+84999999999", alertMessage);
+            }
+
+            if (setting.getEmailEnabled()) {
+                emailSender.sendEmail("farmer_" + farmerId + "@agritrace.mock",
+                        "Kết quả duyệt sản phẩm", alertMessage);
+            }
+
+            if (setting.getPushEnabled()) {
+                log.info("MOCK PUSH NOTIFICATION to farmer {}: {}", farmerId, alertMessage);
+            }
+
+        } catch (Exception e) {
+            log.error("Error processing product-request event", e);
         }
     }
 }

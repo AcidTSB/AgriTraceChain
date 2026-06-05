@@ -6,6 +6,7 @@ import { StatCard } from "../../components/ui/StatCard";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { productService } from "../../services/productService";
 import { apiClient, unwrapApiResponse } from "../../services/apiClient";
+import { traceService } from "../../services/traceService";
 
 function todayLabel() {
   return new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long" });
@@ -45,56 +46,79 @@ export function AdminDashboardPage() {
   const [stats, setStats] = useState({ products: 0, users: 0, facilities: 0 });
   const [compromisedBatches, setCompromisedBatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scanning, setScanning] = useState(false);
+
+  const loadData = async (showLoadingState = true) => {
+    if (showLoadingState) setLoading(true);
+    try {
+      const [productsResult, usersResult, farmsResult, compromisedResult] = await Promise.allSettled([
+        productService.getProducts(),
+        apiClient.get("/api/v1/users/count"),
+        apiClient.get("/api/v1/farms/count"),
+        apiClient.get("/api/v1/batches/page?page=0&size=100&status=COMPROMISED"),
+      ]);
+
+      const productsCount =
+        productsResult.status === "fulfilled" && Array.isArray(productsResult.value)
+          ? productsResult.value.length
+          : 0;
+      const usersCount =
+        usersResult.status === "fulfilled"
+          ? normalizeCount(usersResult.value?.data, 0)
+          : 0;
+      const farmsCount =
+        farmsResult.status === "fulfilled"
+          ? normalizeCount(farmsResult.value?.data, 0)
+          : 0;
+
+      const compromisedData =
+        compromisedResult.status === "fulfilled"
+          ? unwrapApiResponse(compromisedResult.value)
+          : null;
+      const compromisedList = Array.isArray(compromisedData?.content)
+        ? compromisedData.content
+        : [];
+
+      setStats({
+        products: productsCount,
+        users: usersCount,
+        facilities: farmsCount,
+      });
+      setCompromisedBatches(compromisedList);
+    } catch (err) {
+      console.error("Failed to load dashboard data:", err);
+    } finally {
+      if (showLoadingState) setLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
-    const load = async () => {
-      setLoading(true);
-      try {
-        if (!active) return;
-        const [productsResult, usersResult, farmsResult, compromisedResult] = await Promise.allSettled([
-          productService.getProducts(),
-          apiClient.get("/api/v1/users/count"),
-          apiClient.get("/api/v1/farms/count"),
-          apiClient.get("/api/v1/batches/page?page=0&size=100&status=COMPROMISED"),
-        ]);
-
-        if (!active) return;
-
-        const productsCount =
-          productsResult.status === "fulfilled" && Array.isArray(productsResult.value)
-            ? productsResult.value.length
-            : 0;
-        const usersCount =
-          usersResult.status === "fulfilled"
-            ? normalizeCount(usersResult.value?.data, 0)
-            : 0;
-        const farmsCount =
-          farmsResult.status === "fulfilled"
-            ? normalizeCount(farmsResult.value?.data, 0)
-            : 0;
-
-        const compromisedData =
-          compromisedResult.status === "fulfilled"
-            ? unwrapApiResponse(compromisedResult.value)
-            : null;
-        const compromisedList = Array.isArray(compromisedData?.content)
-          ? compromisedData.content
-          : [];
-
-        setStats({
-          products: productsCount,
-          users: usersCount,
-          facilities: farmsCount,
-        });
-        setCompromisedBatches(compromisedList);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
+    if (active) {
+      loadData(true);
+    }
     return () => { active = false; };
   }, []);
+
+  const handleScan = async () => {
+    setScanning(true);
+    try {
+      const result = await traceService.scanIntegrity();
+      alert(
+        `Quét toàn vẹn dữ liệu hoàn tất!\n\n` +
+        `- Tổng số lô đã quét: ${result.scannedBatches}\n` +
+        `- Số lô phát hiện vi phạm: ${result.compromisedDetected}\n` +
+        `- Số lô mới bị đánh dấu vi phạm: ${result.newlyMarkedCompromised}\n` +
+        `- Số lô đã vi phạm từ trước: ${result.alreadyCompromised}\n` +
+        `- Thời gian thực hiện: ${result.durationMs} ms`
+      );
+      await loadData(false);
+    } catch (err) {
+      alert("Quét toàn vẹn thất bại: " + (err?.userMessage || err?.message || "Lỗi hệ thống"));
+    } finally {
+      setScanning(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -115,9 +139,21 @@ export function AdminDashboardPage() {
         title={t("admin.dashboard")}
         subtitle="Trung tâm điều hành hệ thống AgriTrace."
         rightSlot={
-          <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-lowest px-3 py-2 ambient-shadow sm:w-auto sm:justify-start sm:px-4">
-            <span className="material-symbols-outlined text-outline text-[16px]">calendar_today</span>
-            <span className="truncate text-xs font-medium text-on-surface-variant sm:text-sm">{todayLabel()}</span>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              onClick={handleScan}
+              disabled={scanning}
+              className="inline-flex items-center gap-2 rounded-xl btn-primary-gradient px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90 disabled:opacity-50"
+            >
+              <span className={`material-symbols-outlined text-[16px] ${scanning ? "animate-spin" : ""}`}>
+                {scanning ? "sync" : "security"}
+              </span>
+              {scanning ? "Đang quét..." : "Quét toàn vẹn dữ liệu"}
+            </button>
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-surface-container-lowest px-3 py-2 ambient-shadow sm:px-4">
+              <span className="material-symbols-outlined text-outline text-[16px]">calendar_today</span>
+              <span className="truncate text-xs font-medium text-on-surface-variant sm:text-sm">{todayLabel()}</span>
+            </div>
           </div>
         }
       />
@@ -177,7 +213,7 @@ export function AdminDashboardPage() {
                   </p>
                 </div>
                 <Link
-                  to={`/trace/${encodeURIComponent(batch.batchCode)}`}
+                  to={`/admin/trace/${encodeURIComponent(batch.batchCode)}`}
                   className="inline-flex items-center gap-1 text-sm font-semibold text-error hover:underline"
                 >
                   Xem chi tiết

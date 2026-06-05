@@ -58,13 +58,17 @@ public class TraceAuditLogCursorRepository {
                     COUNT(*) as total,
                     SUM(CASE WHEN UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%FAILED%'
                              AND UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%REJECT%'
-                             AND UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%COMPROMISED%'
+                             AND (UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%COMPROMISED%'
+                                  OR UPPER(operation) = 'READ_COMPROMISED')
+                             AND UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%COMPROMISE_DETECTED%'
                              AND UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) NOT LIKE '%ALERT%'
                         THEN 1 ELSE 0 END) as success,
                     SUM(CASE WHEN UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%FAILED%'
                         THEN 1 ELSE 0 END) as failed,
                     SUM(CASE WHEN UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%REJECT%'
-                             OR UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%COMPROMISED%'
+                             OR (UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%COMPROMISED%'
+                                 AND UPPER(operation) != 'READ_COMPROMISED')
+                             OR UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%COMPROMISE_DETECTED%'
                              OR UPPER(CONCAT(COALESCE(operation, ''), ' ', COALESCE(notes, ''))) LIKE '%ALERT%'
                         THEN 1 ELSE 0 END) as warning_or_blocked
                 FROM trace_audit_logs

@@ -86,16 +86,6 @@ public class TraceAuditService {
                                       String actorRegion,
                                       String actorFacilityId,
                                       String receiverUserId) {
-        String key = batchCode + ":READ_COMPROMISED:" + (actorId != null ? actorId : "PUBLIC");
-        long now = System.currentTimeMillis();
-        Long lastTime = lastPublicReadMap.get(key);
-        
-        // Skip if same operation on same batch happened within the last 30 seconds (debounce)
-        if (lastTime != null && (now - lastTime) < 30000) {
-            return;
-        }
-        lastPublicReadMap.put(key, now);
-
         UUID actorUuid = null;
         if (actorId != null && !actorId.isBlank()) {
             try {
@@ -107,6 +97,33 @@ public class TraceAuditService {
             try {
                 facilityUuid = UUID.fromString(actorFacilityId);
             } catch (Exception ignored) {}
+        }
+
+        try {
+            boolean recentLogExists;
+            if (actorUuid == null) {
+                recentLogExists = Boolean.TRUE.equals(jdbcTemplate.queryForObject(
+                        "SELECT EXISTS(SELECT 1 FROM trace_audit_logs WHERE batch_code = ? AND operation = 'READ_COMPROMISED' AND actor_id IS NULL AND created_at >= ?)",
+                        Boolean.class,
+                        batchCode,
+                        LocalDateTime.now().minusMinutes(10)
+                ));
+            } else {
+                recentLogExists = Boolean.TRUE.equals(jdbcTemplate.queryForObject(
+                        "SELECT EXISTS(SELECT 1 FROM trace_audit_logs WHERE batch_code = ? AND operation = 'READ_COMPROMISED' AND actor_id = ? AND created_at >= ?)",
+                        Boolean.class,
+                        batchCode,
+                        actorUuid,
+                        LocalDateTime.now().minusMinutes(10)
+                ));
+            }
+
+            if (recentLogExists) {
+                log.info("Duplicate READ_COMPROMISED audit log within 10 minutes for batchCode: {}, actorId: {}. Skipping.", batchCode, actorId);
+                return;
+            }
+        } catch (Exception ex) {
+            log.error("Failed to perform DB deduplication check for READ_COMPROMISED, proceeding as fallback", ex);
         }
 
         writeAudit(
@@ -123,6 +140,39 @@ public class TraceAuditService {
                 receiverUserId
         );
     }
+
+    public void recordCompromiseDetected(String batchCode, String compromiseReason, String receiverUserId) {
+        try {
+            Boolean exists = jdbcTemplate.queryForObject(
+                    "SELECT EXISTS(SELECT 1 FROM trace_audit_logs WHERE batch_code = ? AND operation = 'COMPROMISE_DETECTED')",
+                    Boolean.class,
+                    batchCode
+            );
+            if (Boolean.TRUE.equals(exists)) {
+                log.info("COMPROMISE_DETECTED already exists in database for batchCode: {}, skipping.", batchCode);
+                return;
+            }
+
+            writeAudit(
+                    null,
+                    batchCode,
+                    "COMPROMISE_DETECTED",
+                    null,
+                    "SYSTEM",
+                    null,
+                    null,
+                    null,
+                    null,
+                    compromiseReason != null ? compromiseReason : "Batch compromise detected",
+                    receiverUserId
+            );
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            log.info("COMPROMISE_DETECTED unique constraint violation for batchCode: {}, ignoring duplicate.", batchCode);
+        } catch (Exception ex) {
+            log.error("Failed to record COMPROMISE_DETECTED for batchCode: {}", batchCode, ex);
+        }
+    }
+
 
     private void writeAudit(UUID traceLogId,
                             String batchCode,

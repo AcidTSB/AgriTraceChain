@@ -142,7 +142,8 @@ export function formatBatchStatusLabel(value) {
 }
 
 export const AUDIT_ACTION_LABELS = {
-  READ_COMPROMISED: "Truy xuất cảnh báo",
+  COMPROMISE_DETECTED: "Phát hiện vi phạm",
+  READ_COMPROMISED: "Truy cập lô vi phạm",
   READ_OK: "Truy xuất thành công",
   CREATE: "Tạo mới",
   UPDATE: "Cập nhật",

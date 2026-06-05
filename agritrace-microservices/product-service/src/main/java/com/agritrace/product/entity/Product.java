@@ -62,6 +62,20 @@ public class Product {
     private String category;
 
     /**
+     * Unit of measure for this product (e.g. kg, tấn, hộp, thùng).
+     * Optional — set by Admin when creating from a request or manually.
+     */
+    @Column(name = "unit", length = 50)
+    private String unit;
+
+    /**
+     * Optional product image URL.
+     * Nullable — no file upload required, just a URL string.
+     */
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl;
+
+    /**
      * Soft activation flag for traceability catalog governance.
      * True = selectable in admin/farmer UI. False = suspended.
      */

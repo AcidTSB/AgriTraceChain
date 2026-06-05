@@ -153,10 +153,35 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             return false;
         }
 
+        // Admin integrity scan: ADMIN only
+        if (path.startsWith("/api/v1/trace-logs/admin/integrity") || path.startsWith("/api/trace-logs/admin/integrity")) {
+            return "ADMIN".equals(role);
+        }
+        // Admin trace details: ADMIN or INSPECTOR
+        if (path.startsWith("/api/v1/trace-logs/admin/batch-code") || path.startsWith("/api/trace-logs/admin/batch-code")) {
+            return "ADMIN".equals(role) || "INSPECTOR".equals(role);
+        }
+
         // Product catalog writes: ADMIN only.
         if ((path.startsWith("/api/v1/products") || path.startsWith("/api/products"))
                 && !HttpMethod.GET.equals(method)) {
             return "ADMIN".equals(role);
+        }
+
+        // Product creation requests: POST/GET /my = FARMER, POST /review or general GET = ADMIN
+        if (path.startsWith("/api/v1/product-requests") || path.startsWith("/api/product-requests")) {
+            if (HttpMethod.POST.equals(method)) {
+                if (path.endsWith("/review") || path.contains("/review/")) {
+                    return "ADMIN".equals(role);
+                }
+                return "FARMER".equals(role);
+            }
+            if (HttpMethod.GET.equals(method)) {
+                if (path.endsWith("/my") || path.contains("/my/")) {
+                    return "FARMER".equals(role);
+                }
+                return "ADMIN".equals(role);
+            }
         }
 
         // Batch creation and management: FARMER only.

@@ -45,6 +45,12 @@ public class CreateProductRequest {
      */
     private String category;
 
+    /** Unit of measure, e.g. kg, tấn, hộp, thùng. */
+    private String unit;
+
+    /** Optional product image URL. */
+    private String imageUrl;
+
     /**
      * Optional activation flag for admin-managed catalog lifecycle.
      * Defaults to true when not provided.

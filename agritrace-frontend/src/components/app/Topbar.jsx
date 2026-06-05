@@ -54,6 +54,7 @@ export function Topbar({ onMenuToggle }) {
   const [searchHistory, setSearchHistory] = useState(() => readSearchHistory());
   const [notifications, setNotifications] = useState(() => realtimeNotificationService.getAll());
   const [apiAlerts, setApiAlerts] = useState([]);
+  const [serviceError, setServiceError] = useState(false);
   const inputRef = useRef(null);
 
   const initials = useMemo(() => getInitials(user?.username ?? ""), [user?.username]);
@@ -72,10 +73,12 @@ export function Topbar({ onMenuToggle }) {
           const res = await notificationService.getUnreadAlerts();
           if (res && res.data) {
             setApiAlerts(res.data);
+            setServiceError(false);
           }
         }
       } catch (error) {
-        console.error("Error fetching alerts:", error);
+        setServiceError(true);
+        console.warn("Notification service is temporarily unavailable:", error.message || error);
       }
     };
     fetchAlerts();
@@ -253,7 +256,12 @@ export function Topbar({ onMenuToggle }) {
               </div>
 
               <div className="max-h-80 overflow-y-auto">
-                {notifications.length === 0 && apiAlerts.length === 0 ? (
+                {serviceError ? (
+                  <div className="px-4 py-6 text-sm text-slate-500 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[18px] text-slate-400">cloud_off</span>
+                    <span>Dịch vụ thông báo tạm thời chưa sẵn sàng</span>
+                  </div>
+                ) : notifications.length === 0 && apiAlerts.length === 0 ? (
                   <div className="px-4 py-6 text-sm text-slate-500">
                     Chưa có thông báo nào. Khi Inspector submit kết quả, bạn sẽ thấy ở đây.
                   </div>
